@@ -91,7 +91,47 @@
     text-decoration: none;
   }
   .report-link:hover { opacity: 0.85; }
+  .report-toggle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--surface-1);
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    cursor: pointer;
+  }
+  .report-toggle:hover { background: var(--surface-0); }
   .loading { color: var(--text-muted); font-size: 14px; }
+
+  .report-content {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 0.5px solid var(--border);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .report-content h1, .report-content h2, .report-content h3 { font-weight: 600; margin: 1.2em 0 0.5em; }
+  .report-content h1 { font-size: 19px; }
+  .report-content h2 { font-size: 16px; }
+  .report-content h3 { font-size: 14.5px; }
+  .report-content p { margin: 0.6em 0; }
+  .report-content ul, .report-content ol { padding-left: 1.4em; margin: 0.6em 0; }
+  .report-content li { margin: 0.2em 0; }
+  .report-content blockquote {
+    margin: 0.8em 0;
+    padding: 0.4em 1em;
+    border-left: 3px solid var(--border-strong);
+    color: var(--text-secondary);
+    background: var(--surface-1);
+    border-radius: 0 6px 6px 0;
+  }
+  .report-content table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 13px; }
+  .report-content th, .report-content td { border: 0.5px solid var(--border); padding: 6px 8px; text-align: left; }
+  .report-content th { background: var(--surface-1); font-weight: 600; }
+  .report-content code { background: var(--surface-1); padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+  .report-content hr { border: none; border-top: 0.5px solid var(--border); margin: 1.2em 0; }
+  .report-content a { color: var(--accent-text); }
 
   #lock-screen {
     min-height: 100vh;
@@ -153,6 +193,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 const SUPABASE_URL = 'https://lnfnstmhxuaxeubjxjiu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_yLkQNC-S0Y03ebDV5UNOPA_WpYzVkp9';
@@ -161,6 +202,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let reports = [];
 let realtimeSubscribed = false;
+const expandedIds = {};
 
 async function unlock() {
   const pwd = document.getElementById('pwd-input').value;
@@ -206,7 +248,9 @@ function render() {
     app.innerHTML = `<p class="loading">还没有调研报告，先在上面新增一条吧。</p>`;
     return;
   }
-  app.innerHTML = reports.map(r => `
+  app.innerHTML = reports.map(r => {
+    const isOpen = !!expandedIds[r.id];
+    return `
     <div class="report-card">
       <div class="report-top">
         <div class="report-title">${r.title}</div>
@@ -214,11 +258,21 @@ function render() {
       </div>
       ${r.note ? `<p class="report-note">${r.note}</p>` : ''}
       <div class="report-actions">
-        <a class="report-link" href="${r.url}" target="_blank" rel="noopener">查看完整报告 →</a>
+        ${r.content
+          ? `<button class="report-toggle" onclick="toggleReport('${r.id}')">${isOpen ? '收起全文 ▲' : '展开全文 ▼'}</button>`
+          : ''}
+        <a class="report-link" href="${r.url}" target="_blank" rel="noopener">${r.content ? '原始链接（扣子）' : '查看完整报告'} →</a>
         <button aria-label="删除" onclick="removeReport('${r.id}', '${r.title.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
       </div>
+      ${isOpen && r.content ? `<div class="report-content">${marked.parse(r.content)}</div>` : ''}
     </div>
-  `).join('');
+  `;
+  }).join('');
+}
+
+function toggleReport(id) {
+  expandedIds[id] = !expandedIds[id];
+  render();
 }
 
 async function addReport() {
