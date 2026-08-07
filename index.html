@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKY 工作台</title>
+<style>
+  :root {
+    --surface-0: #f5f4f0;
+    --surface-1: #eeece5;
+    --surface-2: #ffffff;
+    --text-primary: #1c1c1a;
+    --text-secondary: #5f5e5a;
+    --text-muted: #888780;
+    --border: #dedcd3;
+    --border-strong: #c7c4b8;
+    --radius: 8px;
+    --accent-bg: #e6f1fb;
+    --accent-text: #0c447c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 3rem 1rem 4rem; }
+  .header { margin-bottom: 2.5rem; }
+  .header h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; }
+  .header p { font-size: 14px; color: var(--text-secondary); margin: 0; }
+
+  .dept-section { margin-bottom: 2.5rem; }
+  .dept-title { font-size: 17px; font-weight: 600; margin: 0 0 4px; }
+  .dept-desc { font-size: 13px; color: var(--text-secondary); margin: 0 0 14px; white-space: pre-line; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .tool-card {
+    display: block;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .tool-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .tool-card .icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .tool-card .name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .tool-card .desc { font-size: 12.5px; color: var(--text-secondary); }
+  .tool-card .lock-note { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+
+  .more-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 1.25rem;
+    color: var(--text-muted);
+    font-size: 13px;
+    min-height: 96px;
+  }
+
+  .market-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .market-title { font-size: 15px; font-weight: 600; margin: 0 0 12px; }
+  .market-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .market-table th {
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .market-table th:first-child, .market-table td:first-child { text-align: left; }
+  .market-table td {
+    text-align: right;
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--surface-1);
+  }
+  .market-table tr:last-child td { border-bottom: none; }
+  .market-empty { color: var(--text-muted); font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>SKY 工作台</h1>
+  </div>
+
+  <div class="market-card">
+    <div class="market-title">📈 本周行情记录</div>
+    <div id="market-body"><p class="market-empty">加载中…</p></div>
+  </div>
+
+  <div class="dept-section">
+    <div class="dept-title">市场部</div>
+    <div class="card-grid">
+      <a class="tool-card" href="./tracker/">
+        <div class="icon">◧</div>
+        <div class="name">客户开发项目跟踪看板</div>
+        <div class="desc">跟踪各客户开发项目的进度、状态与最新跟进情况</div>
+        <div class="lock-note">🔒 需要团队密码</div>
+      </a>
+      <a class="tool-card" href="./social/">
+        <div class="icon">◨</div>
+        <div class="name">社媒运营看板</div>
+        <div class="desc">管理各平台内容选题、排期与发布状态</div>
+        <div class="lock-note">🔒 需要团队密码</div>
+      </a>
+      <a class="tool-card" href="./research/">
+        <div class="icon">◫</div>
+        <div class="name">市场调研报告</div>
+        <div class="desc">存放各类行业/市场分析报告的归档列表</div>
+        <div class="lock-note">🔒 需要团队密码</div>
+      </a>
+      <div class="more-card">更多工具陆续加入…</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://lnfnstmhxuaxeubjxjiu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_yLkQNC-S0Y03ebDV5UNOPA_WpYzVkp9';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const WEEKDAY_NAMES = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+function fmtDate(d) {
+  return `${d.getMonth() + 1}-${String(d.getDate()).padStart(2, '0')} ${WEEKDAY_NAMES[d.getDay()]}`;
+}
+
+function toDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function getWeekdays() {
+  const now = new Date();
+  const day = now.getDay();
+  const diffToMonday = day === 0 ? 6 : day - 1;
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diffToMonday);
+  return Array.from({ length: 5 }, (_, i) => new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i));
+}
+
+function perUnit(rawPer100) {
+  const n = parseFloat(rawPer100);
+  if (isNaN(n)) return '—';
+  return (n / 100).toFixed(4);
+}
+
+async function loadMarketRates() {
+  const body = document.getElementById('market-body');
+  const weekdays = getWeekdays();
+  const startStr = toDateStr(weekdays[0]);
+  const endStr = toDateStr(weekdays[4]);
+  const { data, error } = await sb
+    .from('market_rates_history')
+    .select('*')
+    .gte('record_date', startStr)
+    .lte('record_date', endStr);
+  if (error) {
+    body.innerHTML = `<p class="market-empty">暂无数据</p>`;
+    return;
+  }
+  const byDate = {};
+  (data || []).forEach(r => { byDate[r.record_date] = r; });
+  const rows = weekdays.map(d => byDate[toDateStr(d)] || null);
+  body.innerHTML = `
+    <table class="market-table">
+      <thead>
+        <tr>
+          <th>日期</th>
+          <th>长江A00铝（元/吨）</th>
+          <th>美元（中行现汇买入）</th>
+          <th>欧元（中行现汇买入）</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((r, i) => `
+          <tr>
+            <td>${fmtDate(weekdays[i])}</td>
+            <td>${r && r.al_price ? r.al_price : '—'}</td>
+            <td>${r && r.usd_rate ? perUnit(r.usd_rate) : '—'}</td>
+            <td>${r && r.eur_rate ? perUnit(r.eur_rate) : '—'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+loadMarketRates();
+</script>
+</body>
+</html>

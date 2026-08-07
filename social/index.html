@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKY 社媒运营看板</title>
+<style>
+  :root {
+    --surface-0: #f5f4f0;
+    --surface-1: #eeece5;
+    --surface-2: #ffffff;
+    --text-primary: #1c1c1a;
+    --text-secondary: #5f5e5a;
+    --text-muted: #888780;
+    --border: #dedcd3;
+    --border-strong: #c7c4b8;
+    --radius: 8px;
+    --accent-bg: #e6f1fb;
+    --accent-text: #0c447c;
+    --green-bg: #eaf3de;
+    --green-text: #27500a;
+    --amber-bg: #faeeda;
+    --amber-text: #854f0b;
+    --gray-bg: #f1efe8;
+    --gray-text: #5f5e5a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  h1 { font-size: 20px; font-weight: 500; margin: 0 0 1.5rem; display: flex; align-items: center; gap: 10px; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-text); flex-shrink: 0; }
+  .sync-dot.offline { background: var(--amber-text); }
+  .back-link { font-size: 13px; color: var(--text-muted); text-decoration: none; margin-bottom: 10px; display: inline-block; }
+  .back-link:hover { color: var(--text-primary); }
+
+  input, button, select {
+    font-family: inherit;
+    font-size: 14px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  input[type="text"], input[type="password"], input[type="date"], select { height: 36px; padding: 0 10px; }
+  button {
+    height: 36px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  button:hover { background: var(--surface-1); }
+  .icon-x { font-size: 16px; line-height: 1; color: var(--text-muted); }
+
+  .add-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+  .add-card .add-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr auto;
+    gap: 8px;
+  }
+  .add-card input, .add-card select { width: 100%; }
+  @media (max-width: 640px) {
+    .add-card .add-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .post-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .post-platform {
+    font-size: 12px;
+    background: var(--gray-bg);
+    color: var(--gray-text);
+    padding: 2px 8px;
+    border-radius: var(--radius);
+    white-space: nowrap;
+  }
+  .post-title { font-size: 14px; font-weight: 500; flex: 1; min-width: 160px; }
+  .post-date { font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; }
+  .badge { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: var(--radius); white-space: nowrap; }
+  .status-select { font-size: 12px; height: 28px; padding: 0 6px; }
+  .loading { color: var(--text-muted); font-size: 14px; }
+
+  #lock-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .lock-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+  .lock-card h2 { font-size: 16px; font-weight: 500; margin: 0 0 1.2rem; }
+  .lock-card input { width: 100%; text-align: center; margin-bottom: 10px; }
+  .lock-card button.unlock-btn {
+    width: 100%;
+    background: var(--text-primary);
+    color: #fff;
+    height: 36px;
+    border: none;
+  }
+  .lock-card button.unlock-btn:hover { opacity: 0.9; background: var(--text-primary); }
+  .lock-error { color: #b3261e; font-size: 13px; margin: 8px 0 0; min-height: 16px; }
+  #main-app { display: none; }
+</style>
+</head>
+<body>
+
+<div id="lock-screen">
+  <div class="lock-card">
+    <h2>请输入团队密码</h2>
+    <input type="password" id="pwd-input" placeholder="密码" onkeydown="if(event.key==='Enter') unlock()" />
+    <button class="unlock-btn" onclick="unlock()">进入看板</button>
+    <p class="lock-error" id="lock-error"></p>
+  </div>
+</div>
+
+<div id="main-app">
+  <div class="wrap">
+    <a class="back-link" href="../">← 返回工作台首页</a>
+    <h1><span class="sync-dot offline" id="sync-dot"></span>SKY 社媒运营看板</h1>
+
+    <div class="add-card">
+      <div class="add-grid">
+        <input type="text" id="new-platform" placeholder="平台（如小红书）" />
+        <input type="text" id="new-title" placeholder="内容选题/标题" onkeydown="if(event.key==='Enter') addPost()" />
+        <input type="date" id="new-date" />
+        <select id="new-status">
+          <option value="草稿">草稿</option>
+          <option value="待发布">待发布</option>
+          <option value="已发布">已发布</option>
+        </select>
+        <button onclick="addPost()">新增</button>
+      </div>
+    </div>
+
+    <div id="app"><p class="loading">加载中…</p></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://lnfnstmhxuaxeubjxjiu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_yLkQNC-S0Y03ebDV5UNOPA_WpYzVkp9';
+const TEAM_EMAIL = 'team@customer-dev-tracker.app';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const STATUS_STYLE = {
+  '草稿': { bg: 'var(--gray-bg)', text: 'var(--gray-text)' },
+  '待发布': { bg: 'var(--amber-bg)', text: 'var(--amber-text)' },
+  '已发布': { bg: 'var(--green-bg)', text: 'var(--green-text)' },
+};
+
+function badge(text) {
+  const s = STATUS_STYLE[text] || STATUS_STYLE['草稿'];
+  return `<span class="badge" style="background:${s.bg}; color:${s.text};">${text}</span>`;
+}
+
+let posts = [];
+let realtimeSubscribed = false;
+
+async function unlock() {
+  const pwd = document.getElementById('pwd-input').value;
+  const errEl = document.getElementById('lock-error');
+  errEl.textContent = '';
+  if (!pwd) return;
+  const { error } = await sb.auth.signInWithPassword({ email: TEAM_EMAIL, password: pwd });
+  if (error) {
+    errEl.textContent = '密码错误，请重试';
+    return;
+  }
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  load();
+  if (!realtimeSubscribed) {
+    realtimeSubscribed = true;
+    sb.channel('public:social_posts')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'social_posts' }, load)
+      .subscribe();
+  }
+}
+
+async function load() {
+  const { data, error } = await sb.from('social_posts').select('*').order('publish_date', { ascending: true, nullsFirst: false });
+  const dot = document.getElementById('sync-dot');
+  if (error) {
+    dot.classList.add('offline');
+    document.getElementById('app').innerHTML = `<p class="loading">连接数据库失败，请检查网络或联系管理员。</p>`;
+    return;
+  }
+  dot.classList.remove('offline');
+  posts = data || [];
+  render();
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (posts.length === 0) {
+    app.innerHTML = `<p class="loading">还没有内容，先在上面新增一条吧。</p>`;
+    return;
+  }
+  app.innerHTML = posts.map(p => `
+    <div class="post-card">
+      <span class="post-platform">${p.platform}</span>
+      <span class="post-title">${p.title}</span>
+      <span class="post-date">${p.publish_date || '未排期'}</span>
+      <select class="status-select" onchange="updateStatus('${p.id}', this.value)">
+        <option value="草稿" ${p.status === '草稿' ? 'selected' : ''}>草稿</option>
+        <option value="待发布" ${p.status === '待发布' ? 'selected' : ''}>待发布</option>
+        <option value="已发布" ${p.status === '已发布' ? 'selected' : ''}>已发布</option>
+      </select>
+      <button aria-label="删除" onclick="removePost('${p.id}', '${p.title.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
+    </div>
+  `).join('');
+}
+
+async function addPost() {
+  const platform = document.getElementById('new-platform').value.trim();
+  const title = document.getElementById('new-title').value.trim();
+  const date = document.getElementById('new-date').value;
+  const status = document.getElementById('new-status').value;
+  if (!platform || !title) { alert('平台和标题不能为空'); return; }
+  const { error } = await sb.from('social_posts').insert({
+    platform, title, publish_date: date || null, status,
+  });
+  if (error) { alert('保存失败：' + error.message); return; }
+  document.getElementById('new-platform').value = '';
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-date').value = '';
+  document.getElementById('new-status').value = '草稿';
+  load();
+}
+
+async function updateStatus(id, status) {
+  const { error } = await sb.from('social_posts').update({ status }).eq('id', id);
+  if (error) { alert('保存失败：' + error.message); return; }
+  load();
+}
+
+async function removePost(id, title) {
+  if (!confirm(`确定要删除"${title}"吗？删除后无法恢复。`)) return;
+  const { error } = await sb.from('social_posts').delete().eq('id', id);
+  if (error) { alert('删除失败：' + error.message); return; }
+  load();
+}
+
+sb.auth.getSession().then(({ data }) => {
+  if (data.session) showApp();
+});
+</script>
+</body>
+</html>

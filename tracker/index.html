@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKY 市场部开发项目进度看板</title>
+<style>
+  :root {
+    --surface-0: #f5f4f0;
+    --surface-1: #eeece5;
+    --surface-2: #ffffff;
+    --text-primary: #1c1c1a;
+    --text-secondary: #5f5e5a;
+    --text-muted: #888780;
+    --border: #dedcd3;
+    --border-strong: #c7c4b8;
+    --radius: 8px;
+    --accent-bg: #e6f1fb;
+    --accent-text: #0c447c;
+    --green-bg: #eaf3de;
+    --green-text: #27500a;
+    --amber-bg: #faeeda;
+    --amber-text: #854f0b;
+    --purple-bg: #eeedfe;
+    --purple-text: #3c3489;
+    --gray-bg: #f1efe8;
+    --gray-text: #5f5e5a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background-color: var(--surface-0);
+    background-image:
+      radial-gradient(circle at 8% 12%, rgba(230, 241, 251, 0.7) 0%, transparent 38%),
+      radial-gradient(circle at 92% 8%, rgba(238, 237, 254, 0.6) 0%, transparent 34%),
+      radial-gradient(circle at 88% 82%, rgba(234, 243, 222, 0.6) 0%, transparent 38%),
+      radial-gradient(circle at 10% 88%, rgba(250, 238, 218, 0.6) 0%, transparent 34%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .main-content { position: relative; }
+  .project-list { width: 480px; max-width: 100%; position: relative; }
+  @media (max-width: 1080px) {
+    .project-list { width: 100%; }
+    .branch-panel { position: static !important; margin: 10px 0 0 !important; width: 100% !important; box-shadow: none !important; }
+    .branch-panel::before { display: none; }
+  }
+  .weekly-card {
+    position: relative;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem 1rem 3.75rem;
+    margin-bottom: 1.5rem;
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .weekly-avatar {
+    position: absolute;
+    top: -16px;
+    left: 14px;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+    transform: rotate(-7deg);
+  }
+  .weekly-pin {
+    position: absolute;
+    top: -24px;
+    left: 34px;
+    font-size: 20px;
+    transform: rotate(18deg);
+    z-index: 2;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+  }
+  .weekly-card h3 { font-size: 13px; font-weight: 600; margin: 0; flex-shrink: 0; }
+  .weekly-range { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+  .weekly-sections { display: flex; gap: 2rem; flex-wrap: wrap; flex: 1; }
+  .weekly-section { min-width: 160px; }
+  .weekly-section-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+  .weekly-count { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+  .weekly-list { font-size: 12.5px; color: var(--text-secondary); margin: 0; padding-left: 16px; }
+  .weekly-list li { margin-bottom: 2px; }
+  .weekly-empty { font-size: 12px; color: var(--text-muted); }
+  h1 { font-size: 20px; font-weight: 500; margin: 0 0 1.5rem; display: flex; align-items: center; gap: 10px; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-text); flex-shrink: 0; }
+  .sync-dot.offline { background: var(--amber-text); }
+  input, button {
+    font-family: inherit;
+    font-size: 14px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  input[type="text"], input[type="password"] { height: 36px; padding: 0 10px; }
+  button {
+    height: 36px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  button:hover { background: var(--surface-1); }
+  .icon-x { font-size: 16px; line-height: 1; color: var(--text-muted); }
+  .icon-edit { font-size: 14px; line-height: 1; color: var(--text-muted); }
+  .icon-plus { font-size: 18px; line-height: 1; color: var(--text-muted); }
+  .icon-chevron { display: inline-block; font-size: 11px; color: var(--text-muted); width: 16px; text-align: center; }
+  .drag-handle { cursor: grab; color: var(--text-muted); font-size: 14px; padding: 0 2px; touch-action: none; user-select: none; }
+  .project-card {
+    position: relative;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+  .project-card.dragging { opacity: 0.5; }
+  .sub-project-card { margin-left: 22px; width: calc(480px - 22px); background: var(--surface-1); }
+  @media (max-width: 1080px) { .sub-project-card { width: calc(100% - 22px); } }
+  .sub-marker { color: var(--text-muted); font-size: 13px; width: 16px; text-align: center; }
+  .add-subproject-row { margin-top: 6px; }
+  .add-subproject-row input { font-size: 13px; }
+  .branch-panel {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 32px;
+    width: 380px;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 24px rgba(28, 28, 26, 0.10);
+    z-index: 5;
+  }
+  .branch-panel::before {
+    content: '';
+    position: absolute;
+    left: -32px;
+    top: 20px;
+    width: 32px;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .project-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.85rem 1.1rem;
+    cursor: pointer;
+  }
+  .project-name { font-weight: 500; font-size: 15px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .project-note { font-size: 13px; color: var(--text-secondary); margin: 0 0 10px; }
+  .items-tree { margin: 4px 0 0 6px; padding-left: 18px; border-left: 1px solid var(--border); }
+  .item-row {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 0;
+  }
+  .item-row::before {
+    content: '';
+    position: absolute;
+    left: -18px;
+    top: 22px;
+    width: 14px;
+    height: 1px;
+    background: var(--border);
+  }
+  .item-row:first-child { padding-top: 0; }
+  .item-row:first-child::before { top: 12px; }
+  .item-name { font-size: 14px; font-weight: 500; }
+  .item-note { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .editable { cursor: text; border-radius: 4px; padding: 1px 4px; margin: -1px -4px; }
+  .editable:hover { background: var(--surface-1); }
+  .item-note.placeholder { color: var(--text-muted); font-style: italic; }
+  .inline-edit-input { font-size: inherit; font-weight: inherit; font-style: normal; padding: 1px 4px; height: auto; width: 100%; }
+  .item-date-row { display: flex; align-items: center; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+  .item-date-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .overdue-tag { color: #b3261e; font-size: 12px; margin-left: 4px; font-weight: 500; white-space: nowrap; }
+  .item-row.overdue { background: #fdf0ef; margin-right: -1.1rem; padding-right: 1.1rem; border-radius: 0 8px 8px 0; }
+  .date-input { height: 24px; padding: 0 4px; font-size: 12px; border-color: var(--border); }
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: var(--radius);
+    white-space: nowrap;
+  }
+  .status-select {
+    font-size: 12px;
+    height: auto;
+    padding: 2px 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .add-row { display: flex; gap: 6px; margin-top: 10px; }
+  .add-row input { flex: 1; }
+  .loading { color: var(--text-muted); font-size: 14px; }
+  .back-link { font-size: 13px; color: var(--text-muted); text-decoration: none; margin-bottom: 10px; display: inline-block; }
+  .back-link:hover { color: var(--text-primary); }
+  .search-row { margin-bottom: 1rem; }
+  .search-row input { width: 100%; }
+
+  #lock-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .lock-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+  .lock-card h2 { font-size: 16px; font-weight: 500; margin: 0 0 1.2rem; }
+  .lock-card input { width: 100%; text-align: center; margin-bottom: 10px; }
+  .lock-card button.unlock-btn {
+    width: 100%;
+    background: var(--text-primary);
+    color: #fff;
+    height: 36px;
+    border: none;
+  }
+  .lock-card button.unlock-btn:hover { opacity: 0.9; background: var(--text-primary); }
+  .lock-error { color: #b3261e; font-size: 13px; margin: 8px 0 0; min-height: 16px; }
+  #main-app { display: none; }
+</style>
+</head>
+<body>
+
+<div id="lock-screen">
+  <div class="lock-card">
+    <h2>请输入团队密码</h2>
+    <input type="password" id="pwd-input" placeholder="密码" onkeydown="if(event.key==='Enter') unlock()" />
+    <button class="unlock-btn" onclick="unlock()">进入看板</button>
+    <p class="lock-error" id="lock-error"></p>
+  </div>
+</div>
+
+<div id="main-app">
+  <div class="wrap">
+    <a class="back-link" href="../">← 返回工作台首页</a>
+    <h1><span class="sync-dot offline" id="sync-dot"></span>SKY 市场部开发项目进度看板</h1>
+    <div class="weekly-card">
+      <img class="weekly-avatar" src="./avatar.png" alt="头像" />
+      <span class="weekly-pin">📌</span>
+      <h3>📅 本周工作重心</h3>
+      <div class="weekly-range" id="week-range"></div>
+      <div class="weekly-sections" id="weekly-summary"></div>
+    </div>
+    <div class="main-content">
+      <div class="search-row">
+        <input type="text" id="search-input" placeholder="搜索客户/项目名称…" oninput="onSearch(this.value)" />
+      </div>
+      <div id="app" class="project-list"><p class="loading">加载中…</p></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// 数据存储在 Supabase（多人共享的云端数据库），不再使用 localStorage。
+// 用一个团队共享账号做登录门槛：Row Level Security 只允许已登录（authenticated）用户读写数据。
+const SUPABASE_URL = 'https://lnfnstmhxuaxeubjxjiu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_yLkQNC-S0Y03ebDV5UNOPA_WpYzVkp9';
+const TEAM_EMAIL = 'team@customer-dev-tracker.app';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const STATUS_STYLE = {
+  '待启动': { bg: 'var(--gray-bg)', text: 'var(--gray-text)' },
+  '市场调研': { bg: 'var(--gray-bg)', text: 'var(--gray-text)' },
+  '进行中': { bg: 'var(--accent-bg)', text: 'var(--accent-text)' },
+  '已发-待回复': { bg: 'var(--accent-bg)', text: 'var(--accent-text)' },
+  '待发': { bg: 'var(--amber-bg)', text: 'var(--amber-text)' },
+  '沟通报价中': { bg: 'var(--amber-bg)', text: 'var(--amber-text)' },
+  '已结案': { bg: 'var(--green-bg)', text: 'var(--green-text)' },
+  '衍生线索': { bg: 'var(--purple-bg)', text: 'var(--purple-text)' },
+};
+
+function badge(text) {
+  const key = Object.keys(STATUS_STYLE).find(k => text.includes(k)) || '进行中';
+  const s = STATUS_STYLE[key];
+  return `<span class="badge" style="background:${s.bg}; color:${s.text};">${text}</span>`;
+}
+
+function statusSelect(current, onChangeCall) {
+  const key = Object.keys(STATUS_STYLE).find(k => current.includes(k)) || '进行中';
+  const s = STATUS_STYLE[key];
+  const options = Object.keys(STATUS_STYLE).map(k =>
+    `<option value="${k}" ${k === current ? 'selected' : ''}>${k}</option>`
+  ).join('');
+  return `<select class="status-select" style="background:${s.bg}; color:${s.text};" onclick="event.stopPropagation()" onchange="event.stopPropagation(); ${onChangeCall}">${options}</select>`;
+}
+
+const OVERDUE_DAYS = 14;
+
+function isOverdue(it) {
+  if (it.status === '已结案') return false;
+  if (!it.last_contact) return false;
+  const days = (Date.now() - new Date(it.last_contact + 'T00:00:00').getTime()) / 86400000;
+  return days > OVERDUE_DAYS;
+}
+
+let projects = [];
+let activeId = null; // 当前展开的项目/子项目 id（本地浏览器临时状态，同一时间只有一个的客户面板打开）
+let realtimeSubscribed = false;
+let searchTerm = '';
+
+function onSearch(value) {
+  searchTerm = value.trim().toLowerCase();
+  render();
+}
+
+async function unlock() {
+  const pwd = document.getElementById('pwd-input').value;
+  const errEl = document.getElementById('lock-error');
+  errEl.textContent = '';
+  if (!pwd) return;
+  const { error } = await sb.auth.signInWithPassword({ email: TEAM_EMAIL, password: pwd });
+  if (error) {
+    errEl.textContent = '密码错误，请重试';
+    return;
+  }
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  load();
+  if (!realtimeSubscribed) {
+    realtimeSubscribed = true;
+    sb.channel('public:board')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'items' }, load)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, load)
+      .subscribe();
+  }
+}
+
+async function load() {
+  const [{ data: projs, error: e1 }, { data: items, error: e2 }] = await Promise.all([
+    sb.from('projects').select('*').order('sort_order'),
+    sb.from('items').select('*').order('sort_order'),
+  ]);
+  const dot = document.getElementById('sync-dot');
+  if (e1 || e2) {
+    dot.classList.add('offline');
+    document.getElementById('app').innerHTML = `<p class="loading">连接数据库失败，请检查网络或联系管理员。</p>`;
+    return;
+  }
+  dot.classList.remove('offline');
+  const byId = {};
+  (projs || []).forEach(p => {
+    byId[p.id] = {
+      ...p,
+      items: (items || []).filter(it => it.project_id === p.id).sort(sortItems),
+      subProjects: [],
+    };
+  });
+  const roots = [];
+  Object.values(byId).forEach(p => {
+    if (p.parent_project_id && byId[p.parent_project_id]) {
+      byId[p.parent_project_id].subProjects.push(p);
+    } else {
+      roots.push(p);
+    }
+  });
+  roots.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+  Object.values(byId).forEach(p => p.subProjects.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)));
+  projects = roots;
+  render();
+  renderWeeklySummary();
+}
+
+function statusTier(status) {
+  if (status === '已结案') return 2;
+  if (status === '待启动') return 1;
+  return 0;
+}
+
+function sortItems(a, b) {
+  const tierDiff = statusTier(a.status) - statusTier(b.status);
+  if (tierDiff !== 0) return tierDiff;
+  const aDate = a.last_contact || '';
+  const bDate = b.last_contact || '';
+  if (aDate !== bDate) return bDate.localeCompare(aDate);
+  return (a.sort_order || 0) - (b.sort_order || 0);
+}
+
+function getWeekRange(ref) {
+  const now = ref || new Date();
+  const day = now.getDay();
+  const diffToMonday = day === 0 ? 6 : day - 1;
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diffToMonday, 0, 0, 0, 0);
+  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6, 23, 59, 59, 999);
+  return { start, end };
+}
+
+function fmtMD(d) {
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+
+function renderWeeklySummary() {
+  const rangeEl = document.getElementById('week-range');
+  const box = document.getElementById('weekly-summary');
+  const { start, end } = getWeekRange();
+  rangeEl.textContent = `${fmtMD(start)} - ${fmtMD(end)}`;
+
+  const allItems = projects.flatMap(p => p.items.map(it => ({ ...it, projectName: p.name })));
+  const inRange = (dateStr) => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    return d >= start && d <= end;
+  };
+
+  const newProjects = projects.filter(p => inRange(p.created_at));
+  const newItems = allItems.filter(it => inRange(it.created_at));
+  const followedUp = allItems.filter(it => it.last_contact && inRange(it.last_contact + 'T00:00:00'));
+  const overdue = allItems.filter(isOverdue);
+
+  const section = (title, emoji, list, renderLabel) => `
+    <div class="weekly-section">
+      <div class="weekly-section-title">${emoji} ${title} <span class="weekly-count">${list.length}</span></div>
+      ${list.length === 0
+        ? `<div class="weekly-empty">暂无</div>`
+        : `<ul class="weekly-list">${list.map(x => `<li>${renderLabel(x)}</li>`).join('')}</ul>`}
+    </div>
+  `;
+
+  box.innerHTML =
+    section('本周新增', '🆕', [...newProjects.map(p => ({ name: p.name })), ...newItems.map(it => ({ name: it.name }))], x => x.name) +
+    section('本周跟进', '✅', followedUp, it => it.name) +
+    section('超期未跟进', '⚠️', overdue, it => it.name);
+}
+
+function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
+  return `
+    <div class="project-card${isSub ? ' sub-project-card' : ''}" data-id="${p.id}">
+      <div class="project-header" onclick="toggleProj('${p.id}')">
+        ${isSub
+          ? `<span class="icon-chevron sub-marker">↳</span>`
+          : `<span class="drag-handle" onpointerdown="${searching ? '' : `onHandlePointerDown(event, '${p.id}')`}" onclick="event.stopPropagation()">⠿</span>`
+        }
+        <span class="icon-chevron">${chevronOpen ? '▾' : '▸'}</span>
+        <span class="project-name" title="${p.name}">${p.name}</span>
+        ${statusSelect(p.status, `updateProjectStatus('${p.id}', this.value)`)}
+        <button aria-label="改名" onclick="event.stopPropagation(); editProjectNameByButton('${p.id}', '${p.name.replace(/'/g, "\\'")}')"><span class="icon-edit">✎</span></button>
+        <button aria-label="删除项目" onclick="event.stopPropagation(); removeProject('${p.id}', '${p.name.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
+      </div>
+      ${panelOpen ? `
+        <div class="branch-panel">
+          ${p.note ? `<p class="project-note">${p.note}</p>` : ''}
+          <div class="items-tree">
+          ${p.items.map((it) => `
+            <div class="item-row ${isOverdue(it) ? 'overdue' : ''}">
+              <div style="flex:1;">
+                <div class="item-name editable" ondblclick="editItemName(event, '${it.id}', '${it.name.replace(/'/g, "\\'")}')">${it.name}</div>
+                <div class="item-note editable ${it.note ? '' : 'placeholder'}" ondblclick="editItemNote(event, '${it.id}', '${(it.note || '').replace(/'/g, "\\'")}')">${it.note || '点击添加备注'}</div>
+                <div class="item-date-row">
+                  <span class="item-date-label">最后跟进：</span>
+                  <input type="date" class="date-input" value="${it.last_contact || ''}" onchange="updateDate('${it.id}', this.value)" />
+                  ${isOverdue(it) ? `<span class="overdue-tag">⚠ 超期未跟进</span>` : ''}
+                </div>
+              </div>
+              ${statusSelect(it.status, `updateItemStatus('${it.id}', this.value)`)}
+              <button aria-label="删除" onclick="removeItem('${it.id}', '${it.name.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
+            </div>
+          `).join('')}
+          </div>
+          <div class="add-row">
+            <input type="text" id="in-${p.id}" placeholder="新增客户/事项名称" onkeydown="if(event.key==='Enter') addItem('${p.id}')" />
+            <button onclick="addItem('${p.id}')"><span class="icon-plus">+</span></button>
+          </div>
+          ${!isSub ? `
+            <div class="add-row add-subproject-row">
+              <input type="text" id="sub-in-${p.id}" placeholder="新增子项目名称" onkeydown="if(event.key==='Enter') addSubProject('${p.id}')" />
+              <button onclick="addSubProject('${p.id}')"><span class="icon-plus">+</span></button>
+            </div>
+          ` : ''}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const term = searchTerm;
+  const searching = !!term;
+  const list = !searching ? projects : projects.map(p => {
+    const projectMatches = p.name.toLowerCase().includes(term);
+    const matchedItems = p.items.filter(it =>
+      it.name.toLowerCase().includes(term) || (it.note || '').toLowerCase().includes(term)
+    );
+    if (!projectMatches && matchedItems.length === 0) return null;
+    return { ...p, items: projectMatches ? p.items : matchedItems };
+  }).filter(Boolean);
+
+  app.innerHTML = list.map(p => {
+    const subIds = (p.subProjects || []).map(sp => sp.id);
+    const topExpanded = searching || activeId === p.id || subIds.includes(activeId);
+    const topPanelOpen = searching || activeId === p.id;
+    let html = projectCardHTML(p, { searching, isSub: false, chevronOpen: topExpanded, panelOpen: topPanelOpen });
+    if (topExpanded && p.subProjects && p.subProjects.length) {
+      html += p.subProjects.map(sp => {
+        const subPanelOpen = searching || activeId === sp.id;
+        return projectCardHTML(sp, { searching, isSub: true, chevronOpen: subPanelOpen, panelOpen: subPanelOpen });
+      }).join('');
+    }
+    return html;
+  }).join('') + `
+    <div class="add-row">
+      <input type="text" id="new-project-input" placeholder="新增项目名称" onkeydown="if(event.key==='Enter') addProject()" />
+      <button onclick="addProject()"><span class="icon-plus">+</span></button>
+    </div>
+  `;
+}
+
+async function updateProjectStatus(id, status) {
+  await sb.from('projects').update({ status }).eq('id', id);
+  load();
+}
+
+async function updateItemStatus(id, status) {
+  await sb.from('items').update({ status }).eq('id', id);
+  load();
+}
+
+function startInlineEdit(el, currentValue, { placeholder = '', multiline = false, onSave }) {
+  const input = document.createElement(multiline ? 'textarea' : 'input');
+  if (!multiline) input.type = 'text';
+  input.value = currentValue;
+  input.placeholder = placeholder;
+  input.className = 'inline-edit-input';
+  let done = false;
+  const finish = async (save) => {
+    if (done) return;
+    done = true;
+    if (save) {
+      const val = input.value.trim();
+      if (val !== currentValue) { await onSave(val); return; }
+    }
+    load();
+  };
+  input.onclick = (e) => e.stopPropagation();
+  input.onkeydown = (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter' && !multiline) { e.preventDefault(); finish(true); }
+    if (e.key === 'Escape') finish(false);
+  };
+  input.onblur = () => finish(true);
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
+function editProjectName(event, id, currentName) {
+  startInlineEdit(event.target, currentName, {
+    onSave: async (val) => {
+      if (val) await sb.from('projects').update({ name: val }).eq('id', id);
+      load();
+    },
+  });
+}
+
+function editProjectNameByButton(id, currentName) {
+  const card = document.querySelector(`.project-card[data-id="${id}"]`);
+  const nameEl = card && card.querySelector('.project-name');
+  if (!nameEl) return;
+  startInlineEdit(nameEl, currentName, {
+    onSave: async (val) => {
+      if (val) await sb.from('projects').update({ name: val }).eq('id', id);
+      load();
+    },
+  });
+}
+
+function editItemName(event, id, currentName) {
+  startInlineEdit(event.target, currentName, {
+    onSave: async (val) => {
+      if (val) await sb.from('items').update({ name: val }).eq('id', id);
+      load();
+    },
+  });
+}
+
+function editItemNote(event, id, currentNote) {
+  startInlineEdit(event.target, currentNote, {
+    placeholder: '备注内容',
+    onSave: async (val) => {
+      await sb.from('items').update({ note: val }).eq('id', id);
+      load();
+    },
+  });
+}
+
+function toggleProj(id) {
+  activeId = (activeId === id) ? null : id;
+  render();
+}
+
+let dragState = null;
+
+function onHandlePointerDown(e, id) {
+  e.preventDefault();
+  dragState = { id };
+  document.addEventListener('pointermove', onDragMove);
+  document.addEventListener('pointerup', onDragEnd);
+}
+
+function onDragMove(e) {
+  if (!dragState) return;
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const card = el && el.closest('.project-card');
+  if (!card) return;
+  const overId = card.dataset.id;
+  if (!overId || overId === dragState.id) return;
+  const fromIndex = projects.findIndex(p => p.id === dragState.id);
+  const toIndex = projects.findIndex(p => p.id === overId);
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+  const [moved] = projects.splice(fromIndex, 1);
+  projects.splice(toIndex, 0, moved);
+  render();
+}
+
+async function onDragEnd() {
+  document.removeEventListener('pointermove', onDragMove);
+  document.removeEventListener('pointerup', onDragEnd);
+  if (!dragState) return;
+  dragState = null;
+  await Promise.all(projects.map((p, idx) => sb.from('projects').update({ sort_order: idx + 1 }).eq('id', p.id)));
+}
+
+async function updateDate(itemId, value) {
+  const { error } = await sb.from('items').update({ last_contact: value || null }).eq('id', itemId);
+  if (error) { alert('保存失败：' + error.message); return; }
+  load();
+}
+
+async function addItem(id) {
+  const input = document.getElementById('in-' + id);
+  const val = input.value.trim();
+  if (!val) return;
+  input.value = '';
+  const { error } = await sb.from('items').insert({ project_id: id, name: val, status: '进行中', note: '' });
+  if (error) { alert('保存失败：' + error.message); return; }
+  load();
+}
+
+async function removeItem(itemId, itemName) {
+  if (!confirm(`确定要删除"${itemName}"吗？删除后无法恢复。`)) return;
+  const { error } = await sb.from('items').delete().eq('id', itemId);
+  if (error) { alert('删除失败：' + error.message); return; }
+  load();
+}
+
+function findProjectNode(id) {
+  for (const p of projects) {
+    if (p.id === id) return p;
+    const sub = (p.subProjects || []).find(sp => sp.id === id);
+    if (sub) return sub;
+  }
+  return null;
+}
+
+async function removeProject(projectId, projectName) {
+  const p = findProjectNode(projectId);
+  const itemCount = p ? p.items.length : 0;
+  const subCount = p && p.subProjects ? p.subProjects.length : 0;
+  const parts = [];
+  if (itemCount > 0) parts.push(`${itemCount} 条客户/事项记录`);
+  if (subCount > 0) parts.push(`${subCount} 个子项目（及其下属客户）`);
+  const warning = parts.length > 0
+    ? `确定要删除项目"${projectName}"吗？里面的 ${parts.join('、')} 也会一起被永久删除，无法恢复。`
+    : `确定要删除项目"${projectName}"吗？删除后无法恢复。`;
+  if (!confirm(warning)) return;
+  const { error } = await sb.from('projects').delete().eq('id', projectId);
+  if (error) { alert('删除失败：' + error.message); return; }
+  load();
+}
+
+async function addProject() {
+  const input = document.getElementById('new-project-input');
+  const val = input.value.trim();
+  if (!val) return;
+  input.value = '';
+  const maxOrder = projects.reduce((m, p) => Math.max(m, p.sort_order || 0), 0);
+  const { error } = await sb.from('projects').insert({
+    id: crypto.randomUUID(),
+    name: val,
+    status: '待启动',
+    note: '',
+    sort_order: maxOrder + 1,
+  });
+  if (error) { alert('保存失败：' + error.message); return; }
+  load();
+}
+
+async function addSubProject(parentId) {
+  const input = document.getElementById('sub-in-' + parentId);
+  const val = input.value.trim();
+  if (!val) return;
+  input.value = '';
+  const parent = projects.find(p => p.id === parentId);
+  const maxOrder = (parent.subProjects || []).reduce((m, p) => Math.max(m, p.sort_order || 0), 0);
+  const { error } = await sb.from('projects').insert({
+    id: crypto.randomUUID(),
+    name: val,
+    status: '待启动',
+    note: '',
+    sort_order: maxOrder + 1,
+    parent_project_id: parentId,
+  });
+  if (error) { alert('保存失败：' + error.message); return; }
+  load();
+}
+
+// 页面打开时先检查是否已经登录过（同一浏览器下次打开不用再输密码）
+sb.auth.getSession().then(({ data }) => {
+  if (data.session) showApp();
+});
+</script>
+</body>
+</html>

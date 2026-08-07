@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKY 市场调研报告</title>
+<style>
+  :root {
+    --surface-0: #f5f4f0;
+    --surface-1: #eeece5;
+    --surface-2: #ffffff;
+    --text-primary: #1c1c1a;
+    --text-secondary: #5f5e5a;
+    --text-muted: #888780;
+    --border: #dedcd3;
+    --border-strong: #c7c4b8;
+    --radius: 8px;
+    --accent-bg: #e6f1fb;
+    --accent-text: #0c447c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  h1 { font-size: 20px; font-weight: 500; margin: 0 0 1.5rem; display: flex; align-items: center; gap: 10px; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-text); flex-shrink: 0; }
+  .sync-dot.offline { background: #854f0b; }
+  .back-link { font-size: 13px; color: var(--text-muted); text-decoration: none; margin-bottom: 10px; display: inline-block; }
+  .back-link:hover { color: var(--text-primary); }
+
+  input, button {
+    font-family: inherit;
+    font-size: 14px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  input[type="text"], input[type="password"], input[type="date"], input[type="url"] { height: 36px; padding: 0 10px; }
+  button {
+    height: 36px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  button:hover { background: var(--surface-1); }
+  .icon-x { font-size: 16px; line-height: 1; color: var(--text-muted); }
+
+  .add-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+  .add-card .add-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1.4fr auto;
+    gap: 8px;
+  }
+  .add-card input { width: 100%; }
+  @media (max-width: 640px) {
+    .add-card .add-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .report-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 10px;
+  }
+  .report-top { display: flex; align-items: flex-start; gap: 10px; }
+  .report-title { font-size: 15px; font-weight: 500; flex: 1; }
+  .report-date { font-size: 12.5px; color: var(--text-muted); white-space: nowrap; }
+  .report-note { font-size: 13px; color: var(--text-secondary); margin: 6px 0 0; }
+  .report-actions { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .report-link {
+    font-size: 13px;
+    color: var(--accent-text);
+    background: var(--accent-bg);
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    text-decoration: none;
+  }
+  .report-link:hover { opacity: 0.85; }
+  .loading { color: var(--text-muted); font-size: 14px; }
+
+  #lock-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .lock-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+  .lock-card h2 { font-size: 16px; font-weight: 500; margin: 0 0 1.2rem; }
+  .lock-card input { width: 100%; text-align: center; margin-bottom: 10px; }
+  .lock-card button.unlock-btn {
+    width: 100%;
+    background: var(--text-primary);
+    color: #fff;
+    height: 36px;
+    border: none;
+  }
+  .lock-card button.unlock-btn:hover { opacity: 0.9; background: var(--text-primary); }
+  .lock-error { color: #b3261e; font-size: 13px; margin: 8px 0 0; min-height: 16px; }
+  #main-app { display: none; }
+</style>
+</head>
+<body>
+
+<div id="lock-screen">
+  <div class="lock-card">
+    <h2>请输入团队密码</h2>
+    <input type="password" id="pwd-input" placeholder="密码" onkeydown="if(event.key==='Enter') unlock()" />
+    <button class="unlock-btn" onclick="unlock()">进入看板</button>
+    <p class="lock-error" id="lock-error"></p>
+  </div>
+</div>
+
+<div id="main-app">
+  <div class="wrap">
+    <a class="back-link" href="../">← 返回工作台首页</a>
+    <h1><span class="sync-dot offline" id="sync-dot"></span>SKY 市场调研报告</h1>
+
+    <div class="add-card">
+      <div class="add-grid">
+        <input type="text" id="new-title" placeholder="报告标题" />
+        <input type="date" id="new-date" />
+        <input type="url" id="new-url" placeholder="报告链接（如扣子分享链接）" onkeydown="if(event.key==='Enter') addReport()" />
+        <button onclick="addReport()">新增</button>
+      </div>
+    </div>
+
+    <div id="app"><p class="loading">加载中…</p></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://lnfnstmhxuaxeubjxjiu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_yLkQNC-S0Y03ebDV5UNOPA_WpYzVkp9';
+const TEAM_EMAIL = 'team@customer-dev-tracker.app';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let reports = [];
+let realtimeSubscribed = false;
+
+async function unlock() {
+  const pwd = document.getElementById('pwd-input').value;
+  const errEl = document.getElementById('lock-error');
+  errEl.textContent = '';
+  if (!pwd) return;
+  const { error } = await sb.auth.signInWithPassword({ email: TEAM_EMAIL, password: pwd });
+  if (error) {
+    errEl.textContent = '密码错误，请重试';
+    return;
+  }
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  load();
+  if (!realtimeSubscribed) {
+    realtimeSubscribed = true;
+    sb.channel('public:research_reports')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'research_reports' }, load)
+      .subscribe();
+  }
+}
+
+async function load() {
+  const { data, error } = await sb.from('research_reports').select('*').order('report_date', { ascending: false, nullsFirst: false });
+  const dot = document.getElementById('sync-dot');
+  if (error) {
+    dot.classList.add('offline');
+    document.getElementById('app').innerHTML = `<p class="loading">连接数据库失败，请检查网络或联系管理员。</p>`;
+    return;
+  }
+  dot.classList.remove('offline');
+  reports = data || [];
+  render();
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (reports.length === 0) {
+    app.innerHTML = `<p class="loading">还没有调研报告，先在上面新增一条吧。</p>`;
+    return;
+  }
+  app.innerHTML = reports.map(r => `
+    <div class="report-card">
+      <div class="report-top">
+        <div class="report-title">${r.title}</div>
+        <div class="report-date">${r.report_date || ''}</div>
+      </div>
+      ${r.note ? `<p class="report-note">${r.note}</p>` : ''}
+      <div class="report-actions">
+        <a class="report-link" href="${r.url}" target="_blank" rel="noopener">查看完整报告 →</a>
+        <button aria-label="删除" onclick="removeReport('${r.id}', '${r.title.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function addReport() {
+  const title = document.getElementById('new-title').value.trim();
+  const date = document.getElementById('new-date').value;
+  const url = document.getElementById('new-url').value.trim();
+  if (!title || !url) { alert('标题和链接不能为空'); return; }
+  const { error } = await sb.from('research_reports').insert({
+    title, url, report_date: date || null,
+  });
+  if (error) { alert('保存失败：' + error.message); return; }
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-date').value = '';
+  document.getElementById('new-url').value = '';
+  load();
+}
+
+async function removeReport(id, title) {
+  if (!confirm(`确定要删除"${title}"吗？删除后无法恢复。`)) return;
+  const { error } = await sb.from('research_reports').delete().eq('id', id);
+  if (error) { alert('删除失败：' + error.message); return; }
+  load();
+}
+
+sb.auth.getSession().then(({ data }) => {
+  if (data.session) showApp();
+});
+</script>
+</body>
+</html>
