@@ -268,6 +268,18 @@
   .modal-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1.6rem; }
   .modal-header-main { flex: 1; min-width: 0; }
   .modal-title { font-size: 21px; font-weight: 600; word-break: break-word; }
+  .modal-title-edit-input {
+    font-size: 21px;
+    font-weight: 600;
+    width: 100%;
+    padding: 2px 6px;
+    margin: -2px 0 0 -6px;
+    border-radius: 6px;
+    border: 0.5px solid var(--border-strong);
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--surface-2);
+  }
   .modal-subtitle input {
     width: 100%;
     font-size: 13px;
@@ -354,12 +366,11 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 12.5px; font-weight: 600; flex-shrink: 0;
   }
-  .contact-body { flex: 1; min-width: 0; }
-  .contact-name-row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
-  .contact-name-text { font-size: 14.5px; font-weight: 600; }
-  .contact-title-text { font-size: 12.5px; color: var(--text-muted); }
-  .contact-detail-text { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
-  .contact-detail-text.empty { color: var(--text-muted); font-style: italic; }
+  .contact-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .contact-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  @media (max-width: 480px) { .contact-input-row { grid-template-columns: 1fr; } }
+  .contact-input-row input { width: 100%; font-size: 13px; height: 32px; background: var(--surface-2); }
+  .contact-name-input { font-weight: 600; }
   .contact-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
   .primary-badge {
     font-size: 11px; padding: 2px 8px; border-radius: var(--radius);
@@ -960,7 +971,7 @@ function renderModal() {
       <div class="modal-card">
         <div class="modal-header">
           <div class="modal-header-main">
-            <div class="modal-title">${escHtml(it.name)}</div>
+            <div class="modal-title editable" title="双击修改名称" ondblclick="editModalTitle(event, '${it.id}', '${escJs(it.name)}')">${escHtml(it.name)}</div>
             <div class="modal-subtitle">
               <input type="text" value="${escAttr(it.industry_tag)}" placeholder="地区·行业标签，如：美国·幕墙/建筑板开发" onchange="saveItemField('${it.id}', 'industry_tag', this.value)" />
             </div>
@@ -1017,12 +1028,14 @@ function renderModal() {
                 <div class="contact-card">
                   <div class="contact-avatar">${initials(c.name)}</div>
                   <div class="contact-body">
-                    <div class="contact-name-row">
-                      <span class="contact-name-text editable" title="双击修改" ondblclick="editContactField(event, '${c.id}', 'name', '${escJs(c.name)}')">${escHtml(c.name)}</span>
-                      <span class="contact-title-text editable" title="双击修改" ondblclick="editContactField(event, '${c.id}', 'title', '${escJs(c.title)}')">${c.title ? escHtml(c.title) : '点击填写职位'}</span>
+                    <div class="contact-input-row">
+                      <input type="text" class="contact-name-input" value="${escAttr(c.name)}" placeholder="姓名" onchange="saveContactField('${c.id}', 'name', this.value)" />
+                      <input type="text" value="${escAttr(c.title)}" placeholder="职位" onchange="saveContactField('${c.id}', 'title', this.value)" />
                     </div>
-                    <div class="contact-detail-text editable ${c.email ? '' : 'empty'}" title="双击修改" ondblclick="editContactField(event, '${c.id}', 'email', '${escJs(c.email)}')">${c.email ? escHtml(c.email) : '点击填写邮箱'}</div>
-                    <div class="contact-detail-text editable ${c.phone ? '' : 'empty'}" title="双击修改" ondblclick="editContactField(event, '${c.id}', 'phone', '${escJs(c.phone)}')">${c.phone ? escHtml(c.phone) : '点击填写电话/WhatsApp'}</div>
+                    <div class="contact-input-row">
+                      <input type="text" value="${escAttr(c.email)}" placeholder="邮箱" onchange="saveContactField('${c.id}', 'email', this.value)" />
+                      <input type="text" value="${escAttr(c.phone)}" placeholder="电话/WhatsApp" onchange="saveContactField('${c.id}', 'phone', this.value)" />
+                    </div>
                   </div>
                   <div class="contact-actions">
                     <button class="primary-badge ${c.is_primary ? 'active' : ''}" onclick="setPrimaryContact('${c.id}', '${it.id}')">${c.is_primary ? '★ 主对接人' : '设为主对接人'}</button>
@@ -1075,6 +1088,39 @@ async function changeModalStatus(id, status) {
   renderModal();
 }
 
+function editModalTitle(event, id, currentName) {
+  event.stopPropagation();
+  const el = event.target;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'modal-title-edit-input';
+  input.value = currentName;
+  let done = false;
+  const finish = async (save) => {
+    if (done) return;
+    done = true;
+    if (save) {
+      const val = input.value.trim();
+      if (val && val !== currentName) {
+        const { error } = await sb.from('items').update({ name: val }).eq('id', id);
+        if (error) alert('保存失败：' + error.message);
+      }
+    }
+    await load();
+    renderModal();
+  };
+  input.onclick = (e) => e.stopPropagation();
+  input.onkeydown = (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+    if (e.key === 'Escape') finish(false);
+  };
+  input.onblur = () => finish(true);
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
 async function addContact(itemId) {
   const input = document.getElementById('new-contact-name');
   const val = input.value.trim();
@@ -1102,38 +1148,11 @@ async function setPrimaryContact(contactId, itemId) {
   await loadContacts(itemId);
 }
 
-function editContactField(event, contactId, field, currentValue) {
-  event.stopPropagation();
-  const el = event.target;
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.className = 'inline-edit-input';
-  input.value = currentValue || '';
-  let done = false;
-  const finish = async (save) => {
-    if (done) return;
-    done = true;
-    if (save) {
-      const val = input.value.trim();
-      const changed = val !== (currentValue || '');
-      const validName = !(field === 'name' && !val);
-      if (changed && validName) {
-        const { error } = await sb.from('contacts').update({ [field]: val }).eq('id', contactId);
-        if (error) alert('保存失败：' + error.message);
-      }
-    }
-    await loadContacts(modalItemId);
-  };
-  input.onclick = (e) => e.stopPropagation();
-  input.onkeydown = (e) => {
-    e.stopPropagation();
-    if (e.key === 'Enter') { e.preventDefault(); finish(true); }
-    if (e.key === 'Escape') finish(false);
-  };
-  input.onblur = () => finish(true);
-  el.replaceWith(input);
-  input.focus();
-  input.select();
+async function saveContactField(contactId, field, value) {
+  if (field === 'name' && !value.trim()) { alert('姓名不能为空'); await loadContacts(modalItemId); return; }
+  const { error } = await sb.from('contacts').update({ [field]: value }).eq('id', contactId);
+  if (error) { alert('保存失败：' + error.message); return; }
+  await loadContacts(modalItemId);
 }
 
 async function saveItemField(itemId, field, value) {
