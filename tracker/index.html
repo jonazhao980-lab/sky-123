@@ -243,8 +243,8 @@
   .lock-error { color: #b3261e; font-size: 13px; margin: 8px 0 0; min-height: 16px; }
   #main-app { display: none; }
 
-  .item-name.clickable { cursor: pointer; }
-  .item-name.clickable:hover { text-decoration: underline; }
+  .clickable { cursor: pointer; }
+  .clickable:hover { text-decoration: underline; }
 
   .modal-overlay {
     position: fixed;
@@ -310,17 +310,28 @@
     position: relative;
   }
   .followup-time { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-  .followup-content { font-size: 14.5px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; padding-right: 24px; }
-  .followup-del {
-    position: absolute;
-    top: 4px;
-    right: 4px;
+  .followup-content { font-size: 14.5px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; padding-right: 52px; }
+  .followup-edit-input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 14.5px;
+    line-height: 1.6;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 44px;
+  }
+  .followup-actions { position: absolute; top: 4px; right: 4px; display: flex; gap: 2px; }
+  .followup-edit-btn, .followup-del {
     width: 22px;
     height: 22px;
     background: transparent;
     border: none;
   }
-  .followup-del:hover { background: var(--surface-2); }
+  .followup-edit-btn:hover, .followup-del:hover { background: var(--surface-2); }
   .followup-empty { font-size: 13px; color: var(--text-muted); }
 </style>
 </head>
@@ -563,7 +574,7 @@ function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
             <div class="item-row ${isOverdue(it) ? 'overdue' : ''}">
               <div style="flex:1;">
                 <div class="item-name editable clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')" ondblclick="event.stopPropagation(); editItemName(event, '${it.id}', '${it.name.replace(/'/g, "\\'")}')">${it.name}</div>
-                <div class="item-note editable ${(it.latestFollowup || it.note) ? '' : 'placeholder'}" title="${it.latestFollowup ? escAttr(it.latestFollowup.content) : ''}" onclick="${it.latestFollowup ? `event.stopPropagation(); openCustomerModal('${it.id}')` : ''}" ondblclick="event.stopPropagation(); editItemNote(event, '${it.id}', '${(it.note || '').replace(/'/g, "\\'")}')">${it.latestFollowup ? escHtml(it.latestFollowup.content) : (it.note ? escHtml(it.note) : '点击添加备注')}</div>
+                <div class="item-note clickable ${(it.latestFollowup || it.note) ? '' : 'placeholder'}" title="${it.latestFollowup ? escAttr(it.latestFollowup.content) : ''}" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">${it.latestFollowup ? escHtml(it.latestFollowup.content) : (it.note ? escHtml(it.note) : '点击查看详情')}</div>
                 <div class="item-date-row">
                   <span class="item-date-label">最后跟进：</span>
                   <input type="date" class="date-input" value="${it.last_contact || ''}" onchange="updateDate('${it.id}', this.value)" />
@@ -687,16 +698,6 @@ function editItemName(event, id, currentName) {
   startInlineEdit(event.target, currentName, {
     onSave: async (val) => {
       if (val) await sb.from('items').update({ name: val }).eq('id', id);
-      load();
-    },
-  });
-}
-
-function editItemNote(event, id, currentNote) {
-  startInlineEdit(event.target, currentNote, {
-    placeholder: '备注内容',
-    onSave: async (val) => {
-      await sb.from('items').update({ note: val }).eq('id', id);
       load();
     },
   });
@@ -922,13 +923,16 @@ function renderModal() {
           <div class="followup-list">
             ${modalFollowUps.length === 0
               ? `<div class="followup-empty">还没有跟进记录</div>`
-              : modalFollowUps.map(f => `
+              : modalFollowUps.map(f => { const escContent = (f.content || '').replace(/'/g, "\\'").replace(/\n/g, '\\n'); return `
                 <div class="followup-entry">
                   <div class="followup-time">${fmtDateTime(f.created_at)}</div>
-                  <div class="followup-content">${escHtml(f.content)}</div>
-                  <button class="followup-del" aria-label="删除" onclick="deleteFollowUp('${f.id}')"><span class="icon-x">×</span></button>
+                  <div class="followup-content" id="followup-content-${f.id}" title="双击也可修改" ondblclick="editFollowUpEntry(event, '${f.id}', '${escContent}')">${escHtml(f.content)}</div>
+                  <div class="followup-actions">
+                    <button aria-label="编辑" onclick="editFollowUpEntry(event, '${f.id}', '${escContent}', true)"><span class="icon-edit">✎</span></button>
+                    <button class="followup-del" aria-label="删除" onclick="deleteFollowUp('${f.id}')"><span class="icon-x">×</span></button>
+                  </div>
                 </div>
-              `).join('')}
+              `; }).join('')}
           </div>
         </div>
       </div>
@@ -959,6 +963,41 @@ async function deleteFollowUp(id) {
   const { error } = await sb.from('follow_ups').delete().eq('id', id);
   if (error) { alert('删除失败：' + error.message); return; }
   await loadFollowUps(modalItemId);
+  load();
+}
+
+function editFollowUpEntry(event, id, currentContent, fromButton) {
+  // 不复用 startInlineEdit：它结束时只刷新看板列表（load），不会重绘弹窗，
+  // 跟进记录的编辑框在弹窗里，需要单独处理，确保取消/保存后弹窗都能正确刷新。
+  event.stopPropagation();
+  const el = fromButton ? document.getElementById('followup-content-' + id) : event.target;
+  if (!el) return;
+  const textarea = document.createElement('textarea');
+  textarea.className = 'followup-edit-input';
+  textarea.value = currentContent;
+  let done = false;
+  const finish = async (save) => {
+    if (done) return;
+    done = true;
+    if (save) {
+      const val = textarea.value.trim();
+      if (val && val !== currentContent) {
+        const { error } = await sb.from('follow_ups').update({ content: val }).eq('id', id);
+        if (error) alert('保存失败：' + error.message);
+      }
+    }
+    await loadFollowUps(modalItemId);
+    load();
+  };
+  textarea.onclick = (e) => e.stopPropagation();
+  textarea.onkeydown = (e) => {
+    e.stopPropagation();
+    if (e.key === 'Escape') finish(false);
+  };
+  textarea.onblur = () => finish(true);
+  el.replaceWith(textarea);
+  textarea.focus();
+  textarea.select();
 }
 
 // 页面打开时先检查是否已经登录过（同一浏览器下次打开不用再输密码）
