@@ -242,6 +242,97 @@
   .lock-card button.unlock-btn:hover { opacity: 0.9; background: var(--text-primary); }
   .lock-error { color: #b3261e; font-size: 13px; margin: 8px 0 0; min-height: 16px; }
   #main-app { display: none; }
+
+  .item-name.clickable { cursor: pointer; }
+  .item-name.clickable:hover { text-decoration: underline; }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 28, 26, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 50;
+  }
+  .modal-card {
+    background: var(--surface-2);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 86vh;
+    overflow-y: auto;
+    padding: 1.5rem 1.75rem 1.75rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  }
+  .modal-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1.2rem; }
+  .modal-title { font-size: 17px; font-weight: 600; flex: 1; min-width: 0; word-break: break-word; }
+  .modal-close { flex-shrink: 0; }
+  .modal-section { margin-bottom: 1.5rem; }
+  .modal-section-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin-bottom: 8px; }
+  @media (max-width: 480px) { .contact-grid { grid-template-columns: 1fr; } }
+  .contact-field label { display: block; font-size: 11.5px; color: var(--text-muted); margin-bottom: 3px; }
+  .contact-field input { width: 100%; font-size: 13px; height: 32px; }
+  .bg-field label { display: block; font-size: 11.5px; color: var(--text-muted); margin-bottom: 3px; }
+  .bg-field textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 56px;
+  }
+  .followup-add { display: flex; gap: 6px; margin-bottom: 12px; }
+  .followup-add textarea {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 36px;
+  }
+  .followup-add button { align-self: flex-end; width: auto; padding: 0 14px; }
+  .followup-list { display: flex; flex-direction: column; gap: 8px; }
+  .followup-entry {
+    background: var(--surface-1);
+    border-radius: 8px;
+    padding: 8px 10px;
+    position: relative;
+  }
+  .followup-time { font-size: 11.5px; color: var(--text-muted); margin-bottom: 3px; }
+  .followup-content { font-size: 13px; white-space: pre-wrap; word-break: break-word; padding-right: 24px; }
+  .followup-del {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    background: transparent;
+    border: none;
+  }
+  .followup-del:hover { background: var(--surface-2); }
+  .followup-empty { font-size: 12.5px; color: var(--text-muted); }
+
+  .followup-preview {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .followup-preview:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -274,6 +365,8 @@
     </div>
   </div>
 </div>
+
+<div id="customer-modal" style="display:none;"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -356,9 +449,10 @@ function showApp() {
 }
 
 async function load() {
-  const [{ data: projs, error: e1 }, { data: items, error: e2 }] = await Promise.all([
+  const [{ data: projs, error: e1 }, { data: items, error: e2 }, { data: allFollowUps }] = await Promise.all([
     sb.from('projects').select('*').order('sort_order'),
     sb.from('items').select('*').order('sort_order'),
+    sb.from('follow_ups').select('item_id, content, created_at').order('created_at', { ascending: false }),
   ]);
   const dot = document.getElementById('sync-dot');
   if (e1 || e2) {
@@ -367,11 +461,18 @@ async function load() {
     return;
   }
   dot.classList.remove('offline');
+  const latestFollowupByItem = {};
+  (allFollowUps || []).forEach(f => {
+    if (!latestFollowupByItem[f.item_id]) latestFollowupByItem[f.item_id] = f;
+  });
   const byId = {};
   (projs || []).forEach(p => {
     byId[p.id] = {
       ...p,
-      items: (items || []).filter(it => it.project_id === p.id).sort(sortItems),
+      items: (items || [])
+        .filter(it => it.project_id === p.id)
+        .map(it => ({ ...it, latestFollowup: latestFollowupByItem[it.id] || null }))
+        .sort(sortItems),
       subProjects: [],
     };
   });
@@ -472,13 +573,14 @@ function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
           ${p.items.map((it) => `
             <div class="item-row ${isOverdue(it) ? 'overdue' : ''}">
               <div style="flex:1;">
-                <div class="item-name editable" ondblclick="editItemName(event, '${it.id}', '${it.name.replace(/'/g, "\\'")}')">${it.name}</div>
+                <div class="item-name editable clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')" ondblclick="event.stopPropagation(); editItemName(event, '${it.id}', '${it.name.replace(/'/g, "\\'")}')">${it.name}</div>
                 <div class="item-note editable ${it.note ? '' : 'placeholder'}" ondblclick="editItemNote(event, '${it.id}', '${(it.note || '').replace(/'/g, "\\'")}')">${it.note || '点击添加备注'}</div>
                 <div class="item-date-row">
                   <span class="item-date-label">最后跟进：</span>
                   <input type="date" class="date-input" value="${it.last_contact || ''}" onchange="updateDate('${it.id}', this.value)" />
                   ${isOverdue(it) ? `<span class="overdue-tag">⚠ 超期未跟进</span>` : ''}
                 </div>
+                ${it.latestFollowup ? `<div class="followup-preview" title="${escAttr(it.latestFollowup.content)}" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">${escHtml(truncate(it.latestFollowup.content, 34))}</div>` : ''}
               </div>
               ${statusSelect(it.status, `updateItemStatus('${it.id}', this.value)`)}
               <button aria-label="删除" onclick="removeItem('${it.id}', '${it.name.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
@@ -731,6 +833,144 @@ async function addSubProject(parentId) {
   });
   if (error) { alert('保存失败：' + error.message); return; }
   load();
+}
+
+// ---- 客户详情弹窗（客户背景 + 跟进记录历史）----
+let modalItemId = null;
+let modalFollowUps = [];
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function escAttr(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+}
+
+function truncate(s, n) {
+  s = String(s || '');
+  return s.length > n ? s.slice(0, n) + '…' : s;
+}
+
+function findItemNode(id) {
+  for (const p of projects) {
+    const it = p.items.find(i => i.id === id);
+    if (it) return it;
+    for (const sp of (p.subProjects || [])) {
+      const subIt = sp.items.find(i => i.id === id);
+      if (subIt) return subIt;
+    }
+  }
+  return null;
+}
+
+function fmtDateTime(iso) {
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+async function openCustomerModal(itemId) {
+  modalItemId = itemId;
+  renderModal();
+  document.getElementById('customer-modal').style.display = 'block';
+  await loadFollowUps(itemId);
+}
+
+function closeCustomerModal() {
+  modalItemId = null;
+  modalFollowUps = [];
+  const box = document.getElementById('customer-modal');
+  box.style.display = 'none';
+  box.innerHTML = '';
+}
+
+async function loadFollowUps(itemId) {
+  const { data, error } = await sb.from('follow_ups').select('*').eq('item_id', itemId).order('created_at', { ascending: false });
+  if (!error) modalFollowUps = data || [];
+  renderModal();
+}
+
+function renderModal() {
+  const box = document.getElementById('customer-modal');
+  if (!modalItemId) { box.innerHTML = ''; return; }
+  const it = findItemNode(modalItemId);
+  if (!it) { closeCustomerModal(); return; }
+  box.innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeCustomerModal()">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title">${escHtml(it.name)}</div>
+          <button class="modal-close" aria-label="关闭" onclick="closeCustomerModal()"><span class="icon-x">×</span></button>
+        </div>
+
+        <div class="modal-section">
+          <div class="modal-section-title">📇 客户背景</div>
+          <div class="contact-grid">
+            <div class="contact-field">
+              <label>联系人</label>
+              <input type="text" value="${escAttr(it.contact_name)}" placeholder="姓名/职位" onchange="saveItemField('${it.id}', 'contact_name', this.value)" />
+            </div>
+            <div class="contact-field">
+              <label>邮箱</label>
+              <input type="text" value="${escAttr(it.contact_email)}" placeholder="邮箱地址" onchange="saveItemField('${it.id}', 'contact_email', this.value)" />
+            </div>
+            <div class="contact-field">
+              <label>电话/WhatsApp</label>
+              <input type="text" value="${escAttr(it.contact_phone)}" placeholder="电话或WhatsApp" onchange="saveItemField('${it.id}', 'contact_phone', this.value)" />
+            </div>
+          </div>
+          <div class="bg-field">
+            <label>背景备注</label>
+            <textarea placeholder="公司背景、需求、来源等" onchange="saveItemField('${it.id}', 'background', this.value)">${escHtml(it.background)}</textarea>
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <div class="modal-section-title">🗒 跟进记录</div>
+          <div class="followup-add">
+            <textarea id="followup-input" placeholder="记录本次跟进内容，如：发了邮件，介绍了产品报价，等待回复"></textarea>
+            <button onclick="addFollowUp()"><span class="icon-plus">+</span></button>
+          </div>
+          <div class="followup-list">
+            ${modalFollowUps.length === 0
+              ? `<div class="followup-empty">还没有跟进记录</div>`
+              : modalFollowUps.map(f => `
+                <div class="followup-entry">
+                  <div class="followup-time">${fmtDateTime(f.created_at)}</div>
+                  <div class="followup-content">${escHtml(f.content)}</div>
+                  <button class="followup-del" aria-label="删除" onclick="deleteFollowUp('${f.id}')"><span class="icon-x">×</span></button>
+                </div>
+              `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function saveItemField(itemId, field, value) {
+  const { error } = await sb.from('items').update({ [field]: value }).eq('id', itemId);
+  if (error) { alert('保存失败：' + error.message); return; }
+  load();
+}
+
+async function addFollowUp() {
+  const input = document.getElementById('followup-input');
+  const val = input.value.trim();
+  if (!val) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const { error } = await sb.from('follow_ups').insert({ item_id: modalItemId, content: val });
+  if (error) { alert('保存失败：' + error.message); return; }
+  await sb.from('items').update({ last_contact: today }).eq('id', modalItemId);
+  await loadFollowUps(modalItemId);
+  load();
+}
+
+async function deleteFollowUp(id) {
+  if (!confirm('确定要删除这条跟进记录吗？删除后无法恢复。')) return;
+  const { error } = await sb.from('follow_ups').delete().eq('id', id);
+  if (error) { alert('删除失败：' + error.message); return; }
+  await loadFollowUps(modalItemId);
 }
 
 // 页面打开时先检查是否已经登录过（同一浏览器下次打开不用再输密码）
