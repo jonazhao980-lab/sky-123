@@ -266,14 +266,26 @@
     box-shadow: 0 20px 50px rgba(0,0,0,0.25);
   }
   .modal-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1.6rem; }
-  .modal-title { font-size: 21px; font-weight: 600; flex: 1; min-width: 0; word-break: break-word; }
+  .modal-header-main { flex: 1; min-width: 0; }
+  .modal-title { font-size: 21px; font-weight: 600; word-break: break-word; }
+  .modal-subtitle input {
+    width: 100%;
+    font-size: 13px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    padding: 0 4px;
+    margin: 2px 0 0 -4px;
+    color: var(--text-secondary);
+  }
+  .modal-subtitle input:hover, .modal-subtitle input:focus { background: var(--surface-1); border-radius: 6px; }
   .modal-close { flex-shrink: 0; }
   .modal-section { margin-bottom: 2rem; }
   .modal-section-title { font-size: 14.5px; font-weight: 600; color: var(--text-secondary); margin: 0 0 12px; display: flex; align-items: center; gap: 6px; }
-  .contact-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px 14px; margin-bottom: 10px; }
-  @media (max-width: 640px) { .contact-grid { grid-template-columns: 1fr; } }
-  .contact-field label { display: block; font-size: 12.5px; color: var(--text-muted); margin-bottom: 4px; }
-  .contact-field input { width: 100%; font-size: 14px; height: 36px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin-top: 12px; }
+  @media (max-width: 640px) { .info-grid { grid-template-columns: 1fr; } }
+  .info-field label { display: block; font-size: 12.5px; color: var(--text-muted); margin-bottom: 4px; }
+  .info-field input { width: 100%; font-size: 14px; height: 36px; }
   .bg-field label { display: block; font-size: 11.5px; color: var(--text-muted); margin-bottom: 3px; }
   .bg-field textarea {
     width: 100%;
@@ -333,6 +345,44 @@
   }
   .followup-edit-btn:hover, .followup-del:hover { background: var(--surface-2); }
   .followup-empty { font-size: 13px; color: var(--text-muted); }
+
+  .contact-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .contact-card { display: flex; align-items: flex-start; gap: 10px; background: var(--surface-1); border-radius: 10px; padding: 10px 12px; }
+  .contact-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--accent-bg); color: var(--accent-text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.5px; font-weight: 600; flex-shrink: 0;
+  }
+  .contact-body { flex: 1; min-width: 0; }
+  .contact-name-row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .contact-name-text { font-size: 14.5px; font-weight: 600; }
+  .contact-title-text { font-size: 12.5px; color: var(--text-muted); }
+  .contact-detail-text { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+  .contact-detail-text.empty { color: var(--text-muted); font-style: italic; }
+  .contact-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .primary-badge {
+    font-size: 11px; padding: 2px 8px; border-radius: var(--radius);
+    background: var(--gray-bg); color: var(--gray-text); white-space: nowrap;
+    border: none; height: auto; cursor: pointer;
+  }
+  .primary-badge.active { background: var(--amber-bg); color: var(--amber-text); }
+  .contact-add-row { display: flex; gap: 6px; }
+  .contact-add-row input { flex: 1; }
+
+  .next-action-banner {
+    background: var(--amber-bg);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .next-action-banner label { font-size: 12.5px; color: var(--amber-text); font-weight: 600; white-space: nowrap; }
+  .next-action-banner input[type="date"] { height: 30px; font-size: 12.5px; background: #fff; }
+  .next-action-banner input[type="text"] { flex: 1; min-width: 140px; height: 30px; font-size: 13px; background: #fff; }
 </style>
 </head>
 <body>
@@ -824,9 +874,10 @@ async function addSubProject(parentId) {
   load();
 }
 
-// ---- 客户详情弹窗（客户背景 + 跟进记录历史）----
+// ---- 客户详情弹窗（公司背景 + 评分来源 + 对接人 + 跟进记录历史）----
 let modalItemId = null;
 let modalFollowUps = [];
+let modalContacts = [];
 
 function escHtml(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -834,10 +885,22 @@ function escHtml(s) {
 function escAttr(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 }
+// 用于拼进单引号 JS 字符串字面量（如 onclick="fn('...')"）里的转义
+function escJs(s) {
+  return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+}
 
 function truncate(s, n) {
   s = String(s || '');
   return s.length > n ? s.slice(0, n) + '…' : s;
+}
+
+function initials(name) {
+  const s = String(name || '').trim();
+  if (!s) return '?';
+  const parts = s.split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return s.slice(0, 2).toUpperCase();
 }
 
 function findItemNode(id) {
@@ -862,12 +925,13 @@ async function openCustomerModal(itemId) {
   modalItemId = itemId;
   renderModal();
   document.getElementById('customer-modal').style.display = 'block';
-  await loadFollowUps(itemId);
+  await Promise.all([loadFollowUps(itemId), loadContacts(itemId)]);
 }
 
 function closeCustomerModal() {
   modalItemId = null;
   modalFollowUps = [];
+  modalContacts = [];
   const box = document.getElementById('customer-modal');
   box.style.display = 'none';
   box.innerHTML = '';
@@ -876,6 +940,13 @@ function closeCustomerModal() {
 async function loadFollowUps(itemId) {
   const { data, error } = await sb.from('follow_ups').select('*').eq('item_id', itemId).order('created_at', { ascending: false });
   if (!error) modalFollowUps = data || [];
+  renderModal();
+}
+
+async function loadContacts(itemId) {
+  const { data, error } = await sb.from('contacts').select('*').eq('item_id', itemId)
+    .order('is_primary', { ascending: false }).order('sort_order', { ascending: true });
+  if (!error) modalContacts = data || [];
   renderModal();
 }
 
@@ -888,29 +959,81 @@ function renderModal() {
     <div class="modal-overlay" onclick="if(event.target===this) closeCustomerModal()">
       <div class="modal-card">
         <div class="modal-header">
-          <div class="modal-title">${escHtml(it.name)}</div>
+          <div class="modal-header-main">
+            <div class="modal-title">${escHtml(it.name)}</div>
+            <div class="modal-subtitle">
+              <input type="text" value="${escAttr(it.industry_tag)}" placeholder="地区·行业标签，如：美国·幕墙/建筑板开发" onchange="saveItemField('${it.id}', 'industry_tag', this.value)" />
+            </div>
+          </div>
+          ${statusSelect(it.status, `changeModalStatus('${it.id}', this.value)`)}
           <button class="modal-close" aria-label="关闭" onclick="closeCustomerModal()"><span class="icon-x">×</span></button>
         </div>
 
         <div class="modal-section">
-          <div class="modal-section-title">📇 客户背景</div>
-          <div class="contact-grid">
-            <div class="contact-field">
-              <label>联系人</label>
-              <input type="text" value="${escAttr(it.contact_name)}" placeholder="姓名/职位" onchange="saveItemField('${it.id}', 'contact_name', this.value)" />
+          <div class="modal-section-title">🏢 公司背景</div>
+          <div class="bg-field">
+            <textarea placeholder="公司背景、产品线、需求等" onchange="saveItemField('${it.id}', 'background', this.value)">${escHtml(it.background)}</textarea>
+          </div>
+          <div class="info-grid">
+            <div class="info-field">
+              <label>总部地址</label>
+              <input type="text" value="${escAttr(it.hq_address)}" placeholder="总部地址" onchange="saveItemField('${it.id}', 'hq_address', this.value)" />
             </div>
-            <div class="contact-field">
-              <label>邮箱</label>
-              <input type="text" value="${escAttr(it.contact_email)}" placeholder="邮箱地址" onchange="saveItemField('${it.id}', 'contact_email', this.value)" />
+            <div class="info-field">
+              <label>分仓</label>
+              <input type="text" value="${escAttr(it.warehouses)}" placeholder="分仓/仓库分布" onchange="saveItemField('${it.id}', 'warehouses', this.value)" />
             </div>
-            <div class="contact-field">
-              <label>电话/WhatsApp</label>
-              <input type="text" value="${escAttr(it.contact_phone)}" placeholder="电话或WhatsApp" onchange="saveItemField('${it.id}', 'contact_phone', this.value)" />
+            <div class="info-field">
+              <label>合作伙伴</label>
+              <input type="text" value="${escAttr(it.partners)}" placeholder="合作伙伴/供应商" onchange="saveItemField('${it.id}', 'partners', this.value)" />
+            </div>
+            <div class="info-field">
+              <label>近期动态</label>
+              <input type="text" value="${escAttr(it.recent_activity)}" placeholder="近期动态" onchange="saveItemField('${it.id}', 'recent_activity', this.value)" />
             </div>
           </div>
-          <div class="bg-field">
-            <label>背景备注</label>
-            <textarea placeholder="公司背景、需求、来源等" onchange="saveItemField('${it.id}', 'background', this.value)">${escHtml(it.background)}</textarea>
+        </div>
+
+        <div class="modal-section">
+          <div class="modal-section-title">🎯 评分与来源</div>
+          <div class="info-grid">
+            <div class="info-field">
+              <label>评分</label>
+              <input type="number" min="0" max="10" value="${it.score != null ? it.score : ''}" placeholder="0-10 分" onchange="saveItemField('${it.id}', 'score', this.value ? Number(this.value) : null)" />
+            </div>
+            <div class="info-field">
+              <label>来源渠道</label>
+              <input type="text" value="${escAttr(it.source_channel)}" placeholder="来源渠道" onchange="saveItemField('${it.id}', 'source_channel', this.value)" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <div class="modal-section-title">👥 对接人</div>
+          <div class="contact-list">
+            ${modalContacts.length === 0
+              ? `<div class="followup-empty">还没有添加对接人</div>`
+              : modalContacts.map(c => `
+                <div class="contact-card">
+                  <div class="contact-avatar">${initials(c.name)}</div>
+                  <div class="contact-body">
+                    <div class="contact-name-row">
+                      <span class="contact-name-text editable" title="双击修改" ondblclick="editContactField(event, '${c.id}', 'name', '${escJs(c.name)}')">${escHtml(c.name)}</span>
+                      <span class="contact-title-text editable" title="双击修改" ondblclick="editContactField(event, '${c.id}', 'title', '${escJs(c.title)}')">${c.title ? escHtml(c.title) : '点击填写职位'}</span>
+                    </div>
+                    <div class="contact-detail-text editable ${c.email ? '' : 'empty'}" title="双击修改" ondblclick="editContactField(event, '${c.id}', 'email', '${escJs(c.email)}')">${c.email ? escHtml(c.email) : '点击填写邮箱'}</div>
+                    <div class="contact-detail-text editable ${c.phone ? '' : 'empty'}" title="双击修改" ondblclick="editContactField(event, '${c.id}', 'phone', '${escJs(c.phone)}')">${c.phone ? escHtml(c.phone) : '点击填写电话/WhatsApp'}</div>
+                  </div>
+                  <div class="contact-actions">
+                    <button class="primary-badge ${c.is_primary ? 'active' : ''}" onclick="setPrimaryContact('${c.id}', '${it.id}')">${c.is_primary ? '★ 主对接人' : '设为主对接人'}</button>
+                    <button aria-label="删除" onclick="deleteContact('${c.id}')"><span class="icon-x">×</span></button>
+                  </div>
+                </div>
+              `).join('')}
+          </div>
+          <div class="contact-add-row">
+            <input type="text" id="new-contact-name" placeholder="新增对接人姓名" onkeydown="if(event.key==='Enter') addContact('${it.id}')" />
+            <button onclick="addContact('${it.id}')"><span class="icon-plus">+</span></button>
           </div>
         </div>
 
@@ -923,7 +1046,7 @@ function renderModal() {
           <div class="followup-list">
             ${modalFollowUps.length === 0
               ? `<div class="followup-empty">还没有跟进记录</div>`
-              : modalFollowUps.map(f => { const escContent = (f.content || '').replace(/'/g, "\\'").replace(/\n/g, '\\n'); return `
+              : modalFollowUps.map(f => { const escContent = escJs(f.content); return `
                 <div class="followup-entry">
                   <div class="followup-time">${fmtDateTime(f.created_at)}</div>
                   <div class="followup-content" id="followup-content-${f.id}" title="双击也可修改" ondblclick="editFollowUpEntry(event, '${f.id}', '${escContent}')">${escHtml(f.content)}</div>
@@ -934,16 +1057,89 @@ function renderModal() {
                 </div>
               `; }).join('')}
           </div>
+          <div class="next-action-banner">
+            <label>⏰ 下次行动</label>
+            <input type="date" value="${it.next_action_date || ''}" onchange="saveItemField('${it.id}', 'next_action_date', this.value || null)" />
+            <input type="text" value="${escAttr(it.next_action_note)}" placeholder="下次要做什么" onchange="saveItemField('${it.id}', 'next_action_note', this.value)" />
+          </div>
         </div>
       </div>
     </div>
   `;
 }
 
+async function changeModalStatus(id, status) {
+  const { error } = await sb.from('items').update({ status }).eq('id', id);
+  if (error) { alert('保存失败：' + error.message); return; }
+  await load();
+  renderModal();
+}
+
+async function addContact(itemId) {
+  const input = document.getElementById('new-contact-name');
+  const val = input.value.trim();
+  if (!val) return;
+  input.value = '';
+  const maxOrder = modalContacts.reduce((m, c) => Math.max(m, c.sort_order || 0), 0);
+  const { error } = await sb.from('contacts').insert({
+    item_id: itemId, name: val, sort_order: maxOrder + 1, is_primary: modalContacts.length === 0,
+  });
+  if (error) { alert('保存失败：' + error.message); return; }
+  await loadContacts(itemId);
+}
+
+async function deleteContact(id) {
+  if (!confirm('确定要删除这位对接人吗？删除后无法恢复。')) return;
+  const { error } = await sb.from('contacts').delete().eq('id', id);
+  if (error) { alert('删除失败：' + error.message); return; }
+  await loadContacts(modalItemId);
+}
+
+async function setPrimaryContact(contactId, itemId) {
+  await sb.from('contacts').update({ is_primary: false }).eq('item_id', itemId);
+  const { error } = await sb.from('contacts').update({ is_primary: true }).eq('id', contactId);
+  if (error) alert('保存失败：' + error.message);
+  await loadContacts(itemId);
+}
+
+function editContactField(event, contactId, field, currentValue) {
+  event.stopPropagation();
+  const el = event.target;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'inline-edit-input';
+  input.value = currentValue || '';
+  let done = false;
+  const finish = async (save) => {
+    if (done) return;
+    done = true;
+    if (save) {
+      const val = input.value.trim();
+      const changed = val !== (currentValue || '');
+      const validName = !(field === 'name' && !val);
+      if (changed && validName) {
+        const { error } = await sb.from('contacts').update({ [field]: val }).eq('id', contactId);
+        if (error) alert('保存失败：' + error.message);
+      }
+    }
+    await loadContacts(modalItemId);
+  };
+  input.onclick = (e) => e.stopPropagation();
+  input.onkeydown = (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+    if (e.key === 'Escape') finish(false);
+  };
+  input.onblur = () => finish(true);
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
 async function saveItemField(itemId, field, value) {
   const { error } = await sb.from('items').update({ [field]: value }).eq('id', itemId);
   if (error) { alert('保存失败：' + error.message); return; }
-  load();
+  await load();
 }
 
 async function addFollowUp() {
