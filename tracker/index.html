@@ -167,7 +167,7 @@
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    padding: 10px 0;
+    padding: 7px 0;
   }
   .item-row::before {
     content: '';
@@ -181,16 +181,24 @@
   .item-row:first-child { padding-top: 0; }
   .item-row:first-child::before { top: 12px; }
   .item-name { font-size: 14px; font-weight: 500; }
-  .item-note { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .item-note {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
   .editable { cursor: text; border-radius: 4px; padding: 1px 4px; margin: -1px -4px; }
   .editable:hover { background: var(--surface-1); }
   .item-note.placeholder { color: var(--text-muted); font-style: italic; }
   .inline-edit-input { font-size: inherit; font-weight: inherit; font-style: normal; padding: 1px 4px; height: auto; width: 100%; }
-  .item-date-row { display: flex; align-items: center; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+  .item-date-row { display: flex; align-items: center; gap: 4px; margin-top: 3px; flex-wrap: wrap; }
   .item-date-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .item-date-value { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
   .overdue-tag { color: #b3261e; font-size: 12px; margin-left: 4px; font-weight: 500; white-space: nowrap; }
   .item-row.overdue { background: #fdf0ef; margin-right: -1.1rem; padding-right: 1.1rem; border-radius: 0 8px 8px 0; }
-  .date-input { height: 24px; padding: 0 4px; font-size: 12px; border-color: var(--border); }
   .badge {
     display: inline-block;
     font-size: 12px;
@@ -634,11 +642,11 @@ function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
           ${p.items.map((it) => `
             <div class="item-row ${isOverdue(it) ? 'overdue' : ''}">
               <div style="flex:1;">
-                <div class="item-name editable clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')" ondblclick="event.stopPropagation(); editItemName(event, '${it.id}', '${it.name.replace(/'/g, "\\'")}')">${it.name}</div>
+                <div class="item-name clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">${escHtml(it.name)}</div>
                 <div class="item-note clickable ${(it.latestFollowup || it.note) ? '' : 'placeholder'}" title="${it.latestFollowup ? escAttr(it.latestFollowup.content) : ''}" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">${it.latestFollowup ? escHtml(it.latestFollowup.content) : (it.note ? escHtml(it.note) : '点击查看详情')}</div>
-                <div class="item-date-row">
+                <div class="item-date-row clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">
                   <span class="item-date-label">最后跟进：</span>
-                  <input type="date" class="date-input" value="${it.last_contact || ''}" onchange="updateDate('${it.id}', this.value)" />
+                  <span class="item-date-value">${it.last_contact || '—'}</span>
                   ${isOverdue(it) ? `<span class="overdue-tag">⚠ 超期未跟进</span>` : ''}
                 </div>
               </div>
@@ -755,15 +763,6 @@ function editProjectNameByButton(id, currentName) {
   });
 }
 
-function editItemName(event, id, currentName) {
-  startInlineEdit(event.target, currentName, {
-    onSave: async (val) => {
-      if (val) await sb.from('items').update({ name: val }).eq('id', id);
-      load();
-    },
-  });
-}
-
 function toggleProj(id) {
   activeId = (activeId === id) ? null : id;
   render();
@@ -799,12 +798,6 @@ async function onDragEnd() {
   if (!dragState) return;
   dragState = null;
   await Promise.all(projects.map((p, idx) => sb.from('projects').update({ sort_order: idx + 1 }).eq('id', p.id)));
-}
-
-async function updateDate(itemId, value) {
-  const { error } = await sb.from('items').update({ last_contact: value || null }).eq('id', itemId);
-  if (error) { alert('保存失败：' + error.message); return; }
-  load();
 }
 
 async function addItem(id) {
@@ -1006,15 +999,15 @@ function renderModal() {
         </div>
 
         <div class="modal-section">
-          <div class="modal-section-title">🎯 评分与来源</div>
+          <div class="modal-section-title">🎯 评分与标签</div>
           <div class="info-grid">
             <div class="info-field">
               <label>评分</label>
               <input type="number" min="0" max="10" value="${it.score != null ? it.score : ''}" placeholder="0-10 分" onchange="saveItemField('${it.id}', 'score', this.value ? Number(this.value) : null)" />
             </div>
             <div class="info-field">
-              <label>来源渠道</label>
-              <input type="text" value="${escAttr(it.source_channel)}" placeholder="来源渠道" onchange="saveItemField('${it.id}', 'source_channel', this.value)" />
+              <label>标签</label>
+              <input type="text" value="${escAttr(it.source_channel)}" placeholder="标签" onchange="saveItemField('${it.id}', 'source_channel', this.value)" />
             </div>
           </div>
         </div>
