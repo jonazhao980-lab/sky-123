@@ -199,6 +199,8 @@
   .item-date-value { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
   .overdue-tag { color: #b3261e; font-size: 12px; margin-left: 4px; font-weight: 500; white-space: nowrap; }
   .item-row.overdue { background: #fdf0ef; margin-right: -1.1rem; padding-right: 1.1rem; border-radius: 0 8px 8px 0; }
+  .outreach-row { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 6px; }
+  .outreach-row select, .outreach-row input { font-size: 11.5px; height: 26px; padding: 0 6px; }
   .badge {
     display: inline-block;
     font-size: 12px;
@@ -221,6 +223,48 @@
   .back-link:hover { color: var(--text-primary); }
   .search-row { margin-bottom: 1rem; }
   .search-row input { width: 100%; }
+
+  .view-tabs { display: flex; gap: 8px; margin-bottom: 1.2rem; }
+  .view-tab-btn {
+    height: 34px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    width: auto;
+  }
+  .view-tab-btn.active { background: var(--text-primary); color: #fff; border-color: var(--text-primary); }
+  .view-tab-btn:hover:not(.active) { background: var(--surface-1); }
+
+  .overview-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .overview-toolbar select { height: 34px; width: auto; }
+  .overview-toolbar button { width: auto; padding: 0 14px; font-size: 13px; }
+  .overview-table-wrap { overflow-x: auto; border-radius: 12px; border: 0.5px solid var(--border); }
+  .overview-table { width: 100%; min-width: 720px; border-collapse: collapse; background: var(--surface-2); }
+  .overview-table th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-1);
+    white-space: nowrap;
+  }
+  .overview-table th.sortable { cursor: pointer; user-select: none; }
+  .overview-table th.sortable:hover { color: var(--text-primary); }
+  .overview-table td { padding: 8px 10px; border-bottom: 1px solid var(--surface-1); font-size: 13px; vertical-align: middle; }
+  .overview-table tr:last-child td { border-bottom: none; }
+  .overview-table input, .overview-table select { font-size: 13px; height: 32px; width: 100%; }
+  .ov-name { font-weight: 500; cursor: pointer; min-width: 160px; white-space: nowrap; }
+  .ov-name:hover { text-decoration: underline; }
+  .overview-table tr.overdue-row { background: #fdf0ef; }
+  .overview-table tr.overdue-row td { border-bottom-color: #f6dedc; }
+  .overview-empty { text-align: center; color: var(--text-muted); padding: 2.5rem 0; font-size: 13px; }
 
   #lock-screen {
     min-height: 100vh;
@@ -449,18 +493,25 @@
   <div class="wrap">
     <a class="back-link" href="../">← 返回工作台首页</a>
     <h1><span class="sync-dot offline" id="sync-dot"></span>SKY 市场部开发项目进度看板</h1>
-    <div class="weekly-card">
+    <div class="weekly-card" id="weekly-card">
       <img class="weekly-avatar" src="./avatar.png" alt="头像" />
       <span class="weekly-pin">📌</span>
       <h3>📅 本周工作重心</h3>
       <div class="weekly-range" id="week-range"></div>
       <div class="weekly-sections" id="weekly-summary"></div>
     </div>
-    <div class="main-content">
+    <div class="view-tabs">
+      <button class="view-tab-btn active" id="tab-board" onclick="switchView('board')">看板</button>
+      <button class="view-tab-btn" id="tab-overview" onclick="switchView('overview')">🚚 拖车总览</button>
+    </div>
+    <div class="main-content" id="board-view">
       <div class="search-row">
         <input type="text" id="search-input" placeholder="搜索客户/项目名称…" oninput="onSearch(this.value)" />
       </div>
       <div id="app" class="project-list"><p class="loading">加载中…</p></div>
+    </div>
+    <div id="overview-view" style="display:none;">
+      <div id="overview"></div>
     </div>
   </div>
 </div>
@@ -515,6 +566,84 @@ let projects = [];
 let activeId = null; // 当前展开的项目/子项目 id（本地浏览器临时状态，同一时间只有一个的客户面板打开）
 let realtimeSubscribed = false;
 let searchTerm = '';
+
+// ---- 拖车项目（p1）专属：跟进状态 + 总览页 ----
+const TRAILER_PROJECT_ID = 'p1';
+const OUTREACH_STATUSES = ['待发', '已发-等待中', '已退信-换人中', '一周无回应-升级中', '已转同事跟进', '客户已回应', '冷却暂缓', '已成交'];
+let currentView = 'board'; // 'board' | 'overview'
+let overviewClusterFilter = '';
+let overviewSortDir = 'asc';
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function switchView(view) {
+  currentView = view;
+  document.getElementById('tab-board').classList.toggle('active', view === 'board');
+  document.getElementById('tab-overview').classList.toggle('active', view === 'overview');
+  document.getElementById('board-view').style.display = view === 'board' ? 'block' : 'none';
+  document.getElementById('overview-view').style.display = view === 'overview' ? 'block' : 'none';
+  document.getElementById('weekly-card').style.display = view === 'board' ? 'flex' : 'none';
+  if (view === 'overview') renderOverview();
+}
+
+function outreachStatusSelect(itemId, current) {
+  const options = OUTREACH_STATUSES.map(s => `<option value="${s}" ${s === current ? 'selected' : ''}>${s}</option>`).join('');
+  return `<select onchange="saveItemField('${itemId}', 'outreach_status', this.value)"><option value="" ${!current ? 'selected' : ''}>—</option>${options}</select>`;
+}
+
+function renderOverview() {
+  const box = document.getElementById('overview');
+  if (!box) return;
+  const trailerProject = projects.find(p => p.id === TRAILER_PROJECT_ID);
+  const items = trailerProject ? trailerProject.items : [];
+  const today = todayStr();
+
+  const clusters = Array.from(new Set(items.map(it => it.cluster).filter(Boolean))).sort();
+
+  let list = overviewClusterFilter ? items.filter(it => it.cluster === overviewClusterFilter) : items.slice();
+  list.sort((a, b) => {
+    const ad = a.next_action_date || '9999-99-99';
+    const bd = b.next_action_date || '9999-99-99';
+    const cmp = ad.localeCompare(bd);
+    return overviewSortDir === 'asc' ? cmp : -cmp;
+  });
+
+  box.innerHTML = `
+    <div class="overview-toolbar">
+      <select onchange="overviewClusterFilter = this.value; renderOverview();">
+        <option value="">全部集群</option>
+        ${clusters.map(c => `<option value="${escAttr(c)}" ${overviewClusterFilter === c ? 'selected' : ''}>${escHtml(c)}</option>`).join('')}
+      </select>
+      <button onclick="overviewSortDir = overviewSortDir === 'asc' ? 'desc' : 'asc'; renderOverview();">按下次跟进日期排序 ${overviewSortDir === 'asc' ? '▲' : '▼'}</button>
+    </div>
+    <div class="overview-table-wrap">
+      <table class="overview-table">
+        <thead>
+          <tr><th>公司名</th><th>集群</th><th>当前状态</th><th class="sortable" onclick="overviewSortDir = overviewSortDir === 'asc' ? 'desc' : 'asc'; renderOverview();">下次跟进日期</th><th>负责人</th></tr>
+        </thead>
+        <tbody>
+          ${list.length === 0
+            ? `<tr><td colspan="5" class="overview-empty">还没有客户，去"看板"里新增拖车客户</td></tr>`
+            : list.map(it => {
+              const overdue = it.next_action_date && it.next_action_date <= today;
+              return `
+                <tr class="${overdue ? 'overdue-row' : ''}">
+                  <td class="ov-name" onclick="openCustomerModal('${it.id}')">${escHtml(it.name)}</td>
+                  <td><input type="text" value="${escAttr(it.cluster)}" placeholder="—" onchange="saveItemField('${it.id}', 'cluster', this.value)" /></td>
+                  <td>${outreachStatusSelect(it.id, it.outreach_status)}</td>
+                  <td><input type="date" value="${it.next_action_date || ''}" onchange="saveItemField('${it.id}', 'next_action_date', this.value || null)" /></td>
+                  <td><input type="text" value="${escAttr(it.assignee)}" placeholder="—" onchange="saveItemField('${it.id}', 'assignee', this.value)" /></td>
+                </tr>
+              `;
+            }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
 
 function onSearch(value) {
   searchTerm = value.trim().toLowerCase();
@@ -588,6 +717,7 @@ async function load() {
   projects = roots;
   render();
   renderWeeklySummary();
+  if (currentView === 'overview') renderOverview();
 }
 
 function statusTier(status) {
@@ -679,6 +809,14 @@ function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
                   <span class="item-date-value">${it.last_contact || '—'}</span>
                   ${isOverdue(it) ? `<span class="overdue-tag">⚠ 超期未跟进</span>` : ''}
                 </div>
+                ${p.id === TRAILER_PROJECT_ID ? `
+                <div class="outreach-row" onclick="event.stopPropagation()">
+                  ${outreachStatusSelect(it.id, it.outreach_status)}
+                  <input type="text" value="${escAttr(it.cluster)}" placeholder="集群" onchange="saveItemField('${it.id}', 'cluster', this.value)" />
+                  <input type="text" value="${escAttr(it.assignee)}" placeholder="负责人" onchange="saveItemField('${it.id}', 'assignee', this.value)" />
+                  <input type="date" value="${it.next_action_date || ''}" onchange="saveItemField('${it.id}', 'next_action_date', this.value || null)" />
+                </div>
+                ` : ''}
               </div>
               ${statusSelect(it.status, `updateItemStatus('${it.id}', this.value)`)}
               <button aria-label="删除" onclick="removeItem('${it.id}', '${it.name.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
