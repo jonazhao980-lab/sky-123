@@ -264,6 +264,9 @@
   .ov-name:hover { text-decoration: underline; }
   .overview-table tr.overdue-row { background: #fdf0ef; }
   .overview-table tr.overdue-row td { border-bottom-color: #f6dedc; }
+  .overview-table tr.overdue-row td:first-child { border-left: 3px solid #b3261e; }
+  .overview-table tr:not(.overdue-row) td:first-child { border-left: 3px solid transparent; }
+  .ov-overdue-tag { color: #b3261e; font-size: 11px; font-weight: 600; margin-left: 6px; white-space: nowrap; }
   .overview-empty { text-align: center; color: var(--text-muted); padding: 2.5rem 0; font-size: 13px; }
 
   #lock-screen {
@@ -634,7 +637,10 @@ function renderOverview() {
                   <td class="ov-name" onclick="openCustomerModal('${it.id}')">${escHtml(it.name)}</td>
                   <td><input type="text" value="${escAttr(it.cluster)}" placeholder="—" onchange="saveItemField('${it.id}', 'cluster', this.value)" /></td>
                   <td>${outreachStatusSelect(it.id, it.outreach_status)}</td>
-                  <td><input type="date" value="${it.next_action_date || ''}" onchange="saveItemField('${it.id}', 'next_action_date', this.value || null)" /></td>
+                  <td style="display:flex; align-items:center; gap:4px;">
+                    <input type="date" style="flex:1;" value="${it.next_action_date || ''}" onchange="saveItemField('${it.id}', 'next_action_date', this.value || null)" />
+                    ${overdue ? `<span class="ov-overdue-tag">⚠ 逾期</span>` : ''}
+                  </td>
                   <td><input type="text" value="${escAttr(it.assignee)}" placeholder="—" onchange="saveItemField('${it.id}', 'assignee', this.value)" /></td>
                 </tr>
               `;
