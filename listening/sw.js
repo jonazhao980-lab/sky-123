@@ -1,6 +1,6 @@
 /* 离线支持：页面文件联网优先（保证更新马上生效），课程音频缓存优先；
    Safari 播放音频会发 Range 请求，缓存命中时要自己切片返回 206，否则离线播不了。 */
-const SHELL = "shell-v2";
+const SHELL = "shell-v3";
 const FILES = ["./", "index.html", "style.css", "app.js", "config.js", "manifest.webmanifest",
   "icon-180.png", "icon-192.png", "icon-512.png"];
 
@@ -28,7 +28,7 @@ async function ranged(req, res) {
 async function networkFirst(req, cacheName, opts) {
   try {
     const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 4000);
-    const res = await fetch(req, { signal: ctl.signal }); clearTimeout(t);
+    const res = await fetch(req, { signal: ctl.signal, cache: "no-cache" }); clearTimeout(t);  // 绕过 GitHub 的 10 分钟缓存，更新马上生效
     if (res.ok) (await caches.open(cacheName)).put(req, res.clone());
     return res;
   } catch (e) {
