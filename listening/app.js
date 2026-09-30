@@ -8,7 +8,7 @@ const norm=x=>x.trim().toLowerCase().replace(/[’']/g,"'").replace(/[-\s]+/g," 
 const GOAL=300, LS="listen-v3", CFG=window.LISTEN_CONFIG||{};
 
 /* ---------- state ---------- */
-let st={lesson:null,mode:"blind",days:{},listen:{},wrong:{},lessons:{},updatedAt:0,syncKey:null};
+let st={lesson:null,mode:"blind",days:{},listen:{},wrong:{},lessons:{},updatedAt:0,resetAt:0,syncKey:null};
 try{Object.assign(st,JSON.parse(localStorage.getItem(LS)||"{}"))}catch(e){}
 let INDEX=[],L=null,base="",ver="";
 const ls=()=>st.lessons[L.id]||(st.lessons[L.id]={sec:0,done:{},last:-1});
@@ -200,12 +200,16 @@ $("showZh").onchange=()=>{if(["blind","intensive"].includes(st.mode))render()};
 
 /* ---------- sync（不用账号：同步码 + Supabase） ---------- */
 let pushT=null,syncing=false;
-const shared=()=>({days:st.days,listen:st.listen,wrong:st.wrong,lessons:st.lessons,lesson:st.lesson,updatedAt:st.updatedAt});
+const shared=()=>({days:st.days,listen:st.listen,wrong:st.wrong,lessons:st.lessons,lesson:st.lesson,updatedAt:st.updatedAt,resetAt:st.resetAt||0});
 async function rpc(fn,args,keepalive=false){
   const r=await fetch(`${CFG.supabaseUrl}/rest/v1/rpc/${fn}`,{method:"POST",keepalive,
     headers:{apikey:CFG.supabaseKey,"Content-Type":"application/json"},body:JSON.stringify(args)});
   if(!r.ok)throw new Error(await r.text());const t=await r.text();return t?JSON.parse(t):null}
+function clearProgress(at){Object.assign(st,{days:{},listen:{},wrong:{},lessons:{},updatedAt:at,resetAt:at})}
 function merge(r){if(!r)return;
+  // 任何一台设备清空过进度：比清空时间更早的记录一律作废，不再合并回来
+  if((r.resetAt||0)>(st.resetAt||0))clearProgress(r.resetAt);
+  else if((st.resetAt||0)>(r.resetAt||0))return;
   const newer=(r.updatedAt||0)>(st.updatedAt||0);
   const days={...(r.days||{}),...st.days},listen={...(r.listen||{})};
   for(const[k,v]of Object.entries(st.listen))listen[k]=Math.max(v,listen[k]||0);
@@ -232,6 +236,10 @@ $("syncNew").onclick=()=>{st.syncKey=newKey();persist();syncView();pull()};
 $("syncJoin").onclick=()=>{const k=fmtKey($("syncIn").value);if(!k){alert("同步码应该是 20 位字母数字");return}st.syncKey=k;persist();syncView();pull()};
 $("syncCopy").onclick=()=>navigator.clipboard.writeText(st.syncKey).then(()=>syncMsg("已复制")).catch(()=>{});
 $("syncNow").onclick=pull;
+$("resetBtn").onclick=()=>{if(!confirm("清空所有打卡、听力时长、填空进度和错词本？开了同步的其他设备也会一起清空，无法恢复。"))return;
+  stop();clearProgress(Date.now());persist();render();
+  if(st.syncKey)rpc("listening_put",{k:st.syncKey,d:shared()}).then(()=>syncMsg("已清空，其他设备下次打开时同步清空")).catch(()=>syncMsg("本机已清空，联网后会同步到其他设备"));
+  else syncMsg("已清空")};
 $("syncOffBtn").onclick=()=>{if(confirm("在本设备关闭同步？进度仍保留在本设备。")){st.syncKey=null;persist();syncView()}};
 
 /* ---------- start ---------- */
