@@ -1,0 +1,733 @@
+{
+ "id": "2026-09-24-mexico",
+ "title": "Mexico market meeting",
+ "zhtitle": "墨西哥经销商合作会谈",
+ "date": "2026-09-24",
+ "intro": "2026 年 9 月 24 日与墨西哥合作方的首次会谈。",
+ "note": "开头几分钟基于英文逐字稿，其余根据会议纪要重建，措辞并非原话；公司名已隐去。音频为 AI 合成语音。",
+ "speakers": [
+  {
+   "name": "Richard",
+   "role": "中方",
+   "color": "#2E5E8C"
+  },
+  {
+   "name": "Susan",
+   "role": "翻译",
+   "color": "#6B7C8C"
+  },
+  {
+   "name": "Flora",
+   "role": "中方",
+   "color": "#2C7F71"
+  },
+  {
+   "name": "Alfred",
+   "role": "墨方",
+   "color": "#A87A22"
+  }
+ ],
+ "full": "full.mp3",
+ "sections": [
+  {
+   "ts": "00:00",
+   "name": "Opening and introductions",
+   "zhname": "开场与自我介绍",
+   "audio": "s1.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "Hello everybody, this is Richard. With me is Flora, and Susan is our translator today. I'm very glad to have this chance to have our first meeting and get to know each other.",
+     "zh": "大家好，我是 Richard。和我一起的是 Flora，Susan 今天担任翻译。很高兴有机会进行第一次会谈，互相认识一下。",
+     "t": [
+      2.93,
+      14.13
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Mexico is also one of our main markets. We now have a factory in Vietnam, which gives us many [[tariff]] advantages for Mexico. At the same time, our main market is the United States.",
+     "zh": "墨西哥也是我们的主要市场之一。我们现在在越南有工厂，出口墨西哥有很多关税优势。同时，我们的主要市场是美国。",
+     "t": [
+      14.83,
+      26.74
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "I will try to speak English. If not, my colleague will support me. I worked at a local Mexican [[manufacturer]] for ten, eleven years. I was the sales and marketing director.",
+     "zh": "我尽量讲英语，不行的话同事会帮我。我在墨西哥本地一家制造商工作了十到十一年，担任销售和市场总监。",
+     "t": [
+      27.44,
+      36.41
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "Fifteen years ago, it was the only manufacturer in Mexico. Now there are three. I left the company in early 2022 and started my own business in ACP, with product [[commercialization]] and distributing a brand.",
+     "zh": "十五年前它是墨西哥唯一的制造商，现在有三家。我在 2022 年初离开，开始自己做铝塑板生意，做产品商业化和品牌分销。",
+     "t": [
+      37.11,
+      49.09
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Alfred already sent us an email. He previously worked at that manufacturer, and now he has partners doing ACP in Mexico, with [[dealers]] in different cities.",
+     "zh": "Alfred 之前已经发过邮件。他以前就在那家厂商工作，现在和合伙人在墨西哥做铝塑板，在不同城市有经销商。",
+     "t": [
+      49.79,
+      59.61
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "That manufacturer now has problems with quality, production, capital and its sales [[channels]]. Together with four local partners, we want to bring in a new imported brand, or develop our own [[private label]].",
+     "zh": "那家厂商现在在质量、生产、资金和销售渠道上都有问题。我们和四位本地合伙人想引进新的进口品牌，或者做自有品牌。",
+     "t": [
+      60.31,
+      71.06
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "We have sourced from China before, so we know the full import process, including [[customs clearance]].",
+     "zh": "我们以前从中国采购过，所以熟悉整个进口流程，包括清关。",
+     "t": [
+      71.76,
+      76.64
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Standard ACP from China pays about thirty percent [[import tariff]] in Mexico, while the same product from our Vietnam factory pays zero to five percent.",
+     "zh": "从中国进口墨西哥的标准铝塑板关税约 30%，而我们越南工厂的同样产品只要 0% 到 5%。",
+     "t": [
+      77.34,
+      87.27
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "That's a big difference. We're very interested in exploring a deeper [[cooperation]].",
+     "zh": "差别很大。我们很有兴趣探讨更深入的合作。",
+     "t": [
+      87.97,
+      91.93
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "10:04",
+   "name": "Strategic partner, not just a supplier",
+   "zhname": "战略伙伴而非单纯供应商",
+   "audio": "s2.mp3",
+   "lines": [
+    {
+     "who": "Alfred",
+     "en": "We don't want only a supplier. We're looking for a [[strategic partner]] to develop the Mexican market together over the long term.",
+     "zh": "我们不只要一个供应商，而是在找一个长期共同开发墨西哥市场的战略伙伴。",
+     "t": [
+      3.68,
+      10.25
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "We already have fifteen [[warehouses]] in the major cities of Mexico, with large stocking capacity.",
+     "zh": "我们在墨西哥主要城市已经有 15 个仓库，库存能力很大。",
+     "t": [
+      10.95,
+      16.41
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Honestly, we don't have experience operating overseas. Setting up our own warehouse in Mexico involves legal [[compliance]], capital and security issues.",
+     "zh": "坦白说，我们没有海外运营经验。在墨西哥自建仓库涉及法律合规、资金和安全问题。",
+     "t": [
+      17.11,
+      26.5
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Instead, we can propose credit support: a reasonable [[interest-free]] payment period, to reduce the capital pressure at the beginning.",
+     "zh": "作为替代，我们可以提供信用支持：一段合理的免息账期，减轻初期资金压力。",
+     "t": [
+      27.2,
+      34.87
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "We're open to that. Our goal is to build a new [[brand]] in Mexico together.",
+     "zh": "我们对此持开放态度。我们的目标是一起在墨西哥打造一个新品牌。",
+     "t": [
+      35.57,
+      39.31
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "22:06",
+   "name": "Problems with current suppliers",
+   "zhname": "现有供应商的问题",
+   "audio": "s3.mp3",
+   "lines": [
+    {
+     "who": "Flora",
+     "en": "Could you explain in more detail what problems you have with your current suppliers?",
+     "zh": "能详细说说你们现有供应商有什么问题吗？",
+     "t": [
+      3.21,
+      7.36
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "First, capital. They can't afford to restock, so in some months the [[lead time]] for basic colors becomes extremely long, and we can't meet project schedules.",
+     "zh": "第一是资金。他们没钱补货，所以有些月份基础色的交期特别长，赶不上项目进度。",
+     "t": [
+      8.06,
+      16.04
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "Second, manufacturing [[defects]]: problems in the bond between the plastic core and the aluminum skin, and paint problems. The bad sheets are scattered across different orders.",
+     "zh": "第二是生产缺陷：塑料芯材和铝皮之间的粘接问题，还有涂层问题。问题板零散分布在不同订单里。",
+     "t": [
+      16.74,
+      25.71
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "Third, when we started working together, the manufacturer didn't sell directly to [[end users]]. Now they have changed their relationship with our clients.",
+     "zh": "第三，我们开始合作时，厂家不直接卖给终端客户。现在他们改变了和我们客户的关系。",
+     "t": [
+      26.41,
+      34.07
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "They go directly to our clients with much lower prices, which breaks the [[distribution agreement]]. Our target is around ten thousand square meters per month.",
+     "zh": "他们直接以更低的价格找我们的客户，违反了分销协议。我们的目标是每月大约一万平方米。",
+     "t": [
+      34.77,
+      42.53
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "28:59",
+   "name": "Product specifications",
+   "zhname": "产品规格",
+   "audio": "s4.mp3",
+   "lines": [
+    {
+     "who": "Flora",
+     "en": "What are the popular specifications in Mexico? Aluminum skin [[thickness]], panel width, and colors?",
+     "zh": "墨西哥流行的规格是什么？铝皮厚度、板宽和颜色？",
+     "t": [
+      2.95,
+      8.62
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "You sent me some specifications before, but the aluminum skin thickness wasn't included.",
+     "zh": "你之前发过一些规格，但没写铝皮厚度。",
+     "t": [
+      9.32,
+      14.2
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "The aluminum skin is zero point two five or zero point three millimeters. Width is the standard width, and we have requirements on [[paint thickness]] and colors. I'll send the details in the chat.",
+     "zh": "铝皮是 0.25 或 0.3 毫米。宽度是标准宽度，对涂层厚度和颜色有要求。我会把细节发在聊天里。",
+     "t": [
+      14.9,
+      25.02
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "34:52",
+   "name": "Brand positioning and target market",
+   "zhname": "品牌定位与目标市场",
+   "audio": "s5.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "What grade and [[positioning]] do you have in mind for the new brand? European premium brands are also entering the Mexican market.",
+     "zh": "新品牌你们设想什么档次和定位？欧洲高端品牌也在进入墨西哥市场。",
+     "t": [
+      3.61,
+      11.54
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "We have twenty percent of the market, but our objective is the general contractors, the architects, and the [[specification]].",
+     "zh": "我们有 20% 的市场份额，但我们的目标是总包商、建筑师，以及设计选型。",
+     "t": [
+      12.24,
+      18.1
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "We plan to keep about twenty thousand square meters of [[inventory]] across our fifteen warehouses, for retail like gas stations and shopping malls. We'll also develop new [[government projects]].",
+     "zh": "我们计划在 15 个仓库备约 2 万平方米库存，服务加油站、商场等零售场景，还会开发新的政府项目。",
+     "t": [
+      18.8,
+      28.74
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "38:58",
+   "name": "Current company and website",
+   "zhname": "现有公司与官网",
+   "audio": "s6.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "Which company are you operating through today? Do you have a website?",
+     "zh": "你们现在通过哪家公司运营？有官网吗？",
+     "t": [
+      2.96,
+      6.72
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "Right now we're the [[exclusive representative]] of a foreign ACP brand in Mexico. Our warehouse locations are listed on that brand's website.",
+     "zh": "我们现在是一个国外铝塑板品牌在墨西哥的独家代表。我们的仓库位置都列在该品牌的官网上。",
+     "t": [
+      7.42,
+      15.08
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "But we're preparing to build our own [[independent business]].",
+     "zh": "但我们正在准备建立自己的独立业务。",
+     "t": [
+      15.78,
+      18.5
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "42:39",
+   "name": "Cooperation options",
+   "zhname": "合作模式",
+   "audio": "s7.mp3",
+   "lines": [
+    {
+     "who": "Flora",
+     "en": "If you plan to start an independent business, have you [[registered]] your own company?",
+     "zh": "如果打算独立经营，你们注册自己的公司了吗？",
+     "t": [
+      2.95,
+      7.32
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "We're open to several options. We could [[replicate]] our current model with that brand, or launch our own brand using products manufactured by your company.",
+     "zh": "我们对多种方案都开放。可以复制我们和该品牌现在的模式，也可以用你们生产的产品推出自有品牌。",
+     "t": [
+      8.02,
+      15.94
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Today is mainly for both sides to understand each other's [[background]].",
+     "zh": "今天主要是双方互相了解背景。",
+     "t": [
+      16.64,
+      21.14
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "44:42",
+   "name": "Credit support and next steps",
+   "zhname": "信用支持与后续安排",
+   "audio": "s8.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "For us to give credit terms, the bank and our [[credit insurance]] company need to investigate the Mexican company.",
+     "zh": "要给账期，银行和我们的信用保险公司需要对墨西哥公司做调查。",
+     "t": [
+      3.08,
+      10.2
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "We have several mature companies in different states, with eleven years of complete financial and [[tax records]]. We don't need to register anything new.",
+     "zh": "我们在不同州有好几家成熟的公司，有 11 年完整的财务和税务记录，不需要新注册公司。",
+     "t": [
+      10.9,
+      18.81
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "We are at the beginning of the cooperation. We have already established contact between our two companies, but we're in the basic stage, so we start from the basics.",
+     "zh": "我们处在合作的起步阶段。两家公司已经建立了联系，但还在基础阶段，所以从基础做起。",
+     "t": [
+      19.51,
+      29.94
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Let's use your existing trading company for the insurance [[investigation]]. While we wait, we can keep discussing the other details.",
+     "zh": "我们先用你们现有的贸易公司做保险调查。等待期间继续讨论其他细节。",
+     "t": [
+      30.64,
+      38.12
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "Please send us an email listing the documents you need for the [[due diligence]]. After the result, let's schedule a second meeting.",
+     "zh": "请发邮件列出尽调所需的文件。结果出来后，我们安排第二次会议。",
+     "t": [
+      38.82,
+      45.47
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Agreed. Meanwhile, we'll prepare competitive [[pricing]] for the Mexican market.",
+     "zh": "同意。同时我们会准备针对墨西哥市场的有竞争力的报价。",
+     "t": [
+      46.17,
+      50.97
+     ]
+    }
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "q": "What tariff does ACP from the Vietnam factory pay when imported into Mexico?",
+   "options": [
+    "About 30%",
+    "0% to 5%",
+    "10% to 15%",
+    "No information given"
+   ],
+   "answer": 1,
+   "explain": "越南工厂出口墨西哥为 0–5%，中国直出约 30%。"
+  },
+  {
+   "q": "How many warehouses does Alfred's team have in Mexico?",
+   "options": [
+    "5",
+    "10",
+    "15",
+    "20"
+   ],
+   "answer": 2,
+   "explain": "15 个仓库，计划总库存约 2 万平方米。"
+  },
+  {
+   "q": "What is the Mexican side's monthly sales target?",
+   "options": [
+    "1,000 m²",
+    "5,000 m²",
+    "10,000 m²",
+    "20,000 m²"
+   ],
+   "answer": 2,
+   "explain": "每月约一万平方米；2 万平方米是库存目标。"
+  },
+  {
+   "q": "Which is NOT one of the problems Alfred describes with current suppliers?",
+   "options": [
+    "Long lead times for basic colors",
+    "Lamination and paint defects",
+    "Selling directly to end users",
+    "Shipping damage at the port"
+   ],
+   "answer": 3,
+   "explain": "港口运输损坏没有被提到。"
+  },
+  {
+   "q": "What aluminum skin thickness does Alfred ask for?",
+   "options": [
+    "0.21 or 0.25 mm",
+    "0.25 or 0.3 mm",
+    "0.3 or 0.5 mm",
+    "0.5 mm only"
+   ],
+   "answer": 1,
+   "explain": "0.25 或 0.3 毫米。"
+  },
+  {
+   "q": "Why doesn't the Chinese side want to set up its own warehouse in Mexico now?",
+   "options": [
+    "Mexico bans foreign warehouses",
+    "Legal compliance, capital and security issues",
+    "Alfred refused",
+    "Shipping is too slow"
+   ],
+   "answer": 1,
+   "explain": "没有海外运营经验，涉及合规、资金和安全问题，因此改提信用账期。"
+  },
+  {
+   "q": "What must happen before credit terms can be offered?",
+   "options": [
+    "A factory visit",
+    "A credit insurance investigation of the Mexican company",
+    "A signed exclusive contract",
+    "A trial order paid in advance"
+   ],
+   "answer": 1,
+   "explain": "需先通过银行和信用保险公司的调查。"
+  },
+  {
+   "q": "What is Alfred's team's current role in Mexico?",
+   "options": [
+    "A local ACP manufacturer",
+    "Exclusive representative of a foreign ACP brand",
+    "A general contractor",
+    "A freight forwarder"
+   ],
+   "answer": 1,
+   "explain": "他们目前是一个国外铝塑板品牌在墨西哥的独家代表，正准备做独立业务。"
+  }
+ ],
+ "vocab": {
+  "audio": "vocab.mp3",
+  "items": [
+   {
+    "en": "ACP (aluminum composite panel)",
+    "zh": "铝塑板 / 铝复合板",
+    "t": [
+     0.0,
+     0.44
+    ]
+   },
+   {
+    "en": "aluminum skin",
+    "zh": "铝皮",
+    "t": [
+     1.04,
+     2.07
+    ]
+   },
+   {
+    "en": "plastic core",
+    "zh": "塑料芯材",
+    "t": [
+     2.67,
+     3.59
+    ]
+   },
+   {
+    "en": "lamination / bond",
+    "zh": "复合 / 粘接",
+    "t": [
+     4.19,
+     5.49
+    ]
+   },
+   {
+    "en": "paint adhesion",
+    "zh": "涂层附着力",
+    "t": [
+     6.09,
+     7.09
+    ]
+   },
+   {
+    "en": "paint thickness",
+    "zh": "涂层厚度",
+    "t": [
+     7.69,
+     8.64
+    ]
+   },
+   {
+    "en": "lead time",
+    "zh": "交期",
+    "t": [
+     9.24,
+     10.06
+    ]
+   },
+   {
+    "en": "restock",
+    "zh": "补货",
+    "t": [
+     10.66,
+     11.38
+    ]
+   },
+   {
+    "en": "inventory",
+    "zh": "库存",
+    "t": [
+     11.98,
+     12.83
+    ]
+   },
+   {
+    "en": "import tariff",
+    "zh": "进口关税",
+    "t": [
+     13.43,
+     14.41
+    ]
+   },
+   {
+    "en": "customs clearance",
+    "zh": "清关",
+    "t": [
+     15.01,
+     16.11
+    ]
+   },
+   {
+    "en": "private label",
+    "zh": "自有品牌 / 贴牌",
+    "t": [
+     16.71,
+     17.66
+    ]
+   },
+   {
+    "en": "dealer / distributor",
+    "zh": "经销商 / 分销商",
+    "t": [
+     18.26,
+     19.54
+    ]
+   },
+   {
+    "en": "end user / end client",
+    "zh": "终端客户",
+    "t": [
+     20.14,
+     21.63
+    ]
+   },
+   {
+    "en": "distribution agreement",
+    "zh": "分销协议",
+    "t": [
+     22.23,
+     23.63
+    ]
+   },
+   {
+    "en": "exclusive representative",
+    "zh": "独家代表",
+    "t": [
+     24.23,
+     25.8
+    ]
+   },
+   {
+    "en": "general contractor",
+    "zh": "总包商",
+    "t": [
+     26.4,
+     27.64
+    ]
+   },
+   {
+    "en": "specification",
+    "zh": "设计选型 / 规格指定",
+    "t": [
+     28.24,
+     29.34
+    ]
+   },
+   {
+    "en": "market share",
+    "zh": "市场份额",
+    "t": [
+     29.94,
+     30.85
+    ]
+   },
+   {
+    "en": "strategic partner",
+    "zh": "战略合作伙伴",
+    "t": [
+     31.45,
+     32.7
+    ]
+   },
+   {
+    "en": "credit terms",
+    "zh": "账期",
+    "t": [
+     33.3,
+     34.23
+    ]
+   },
+   {
+    "en": "interest-free payment period",
+    "zh": "免息账期",
+    "t": [
+     34.83,
+     36.38
+    ]
+   },
+   {
+    "en": "credit insurance",
+    "zh": "信用保险",
+    "t": [
+     36.98,
+     38.11
+    ]
+   },
+   {
+    "en": "due diligence",
+    "zh": "尽职调查",
+    "t": [
+     38.71,
+     39.63
+    ]
+   },
+   {
+    "en": "tax records",
+    "zh": "税务记录",
+    "t": [
+     40.23,
+     41.21
+    ]
+   },
+   {
+    "en": "joint venture",
+    "zh": "合资公司",
+    "t": [
+     41.81,
+     42.82
+    ]
+   }
+  ]
+ }
+}
