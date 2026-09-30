@@ -70,8 +70,10 @@ function meta(title){
 function load(src,title){if(curSrc!==src){au.src=src;curSrc=src}au.playbackRate=+$("rate").value;meta(title)}
 function setSrc(sec=ls().sec){const s=L.sections[sec];load(secSrc(sec),s.ts+" "+s.name)}
 function seekPlay(src,title,t,end){load(src,title);stopAt=end;
-  const go=()=>{au.currentTime=Math.max(0,t);au.play().catch(()=>{})};
-  if(au.readyState>=1)go();else au.addEventListener("loadedmetadata",go,{once:true})}
+  // 手机浏览器常常不预加载，必须在点击里直接 play() 才会开始加载，拿到时长后再跳到句子位置
+  if(au.readyState>=1)au.currentTime=Math.max(0,t);
+  else{if(au.networkState===0||au.networkState===3)au.load();au.addEventListener("loadedmetadata",()=>{au.currentTime=Math.max(0,t)},{once:true})}
+  au.play().catch(()=>{})}
 function playSec(sec,t=0,end=null){const s=L.sections[sec];seekPlay(secSrc(sec),s.ts+" "+s.name,t,end)}
 function stop(){au.pause();va.pause();stopAt=null;flow=null;hl(-1)}
 const playFrom=k=>playSec(ls().sec,k<0?0:L.sections[ls().sec].lines[k].t[0]-.05);
