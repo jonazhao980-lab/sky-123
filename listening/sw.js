@@ -1,6 +1,6 @@
 /* 离线支持：页面文件联网优先（保证更新马上生效），课程音频缓存优先；
    Safari 播放音频会发 Range 请求，缓存命中时要自己切片返回 206，否则离线播不了。 */
-const SHELL = "shell-v1";
+const SHELL = "shell-v2";
 const FILES = ["./", "index.html", "style.css", "app.js", "config.js", "manifest.webmanifest",
   "icon-180.png", "icon-192.png", "icon-512.png"];
 
@@ -48,10 +48,5 @@ self.addEventListener("fetch", e => {
     }
     if (req.mode === "navigate") return e.respondWith(networkFirst(req, SHELL, { ignoreSearch: true }).catch(() => caches.match("index.html")));
     return e.respondWith(networkFirst(req, SHELL, { ignoreSearch: true }));
-  }
-  if (u.hostname.endsWith("fonts.googleapis.com") || u.hostname.endsWith("fonts.gstatic.com")) {
-    e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => {
-      const c = res.clone(); caches.open("fonts").then(x => x.put(req, c)); return res;
-    })));
   }
 });
