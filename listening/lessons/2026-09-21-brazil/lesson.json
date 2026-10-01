@@ -1,0 +1,707 @@
+{
+ "id": "2026-09-21-brazil",
+ "title": "Brazil installer meeting",
+ "zhtitle": "巴西幕墙安装商采购洽谈",
+ "date": "2026-09-21",
+ "intro": "与巴西幕墙安装公司的首次采购洽谈：海边涂层、防火芯材、报价、起订量和后续安排。",
+ "note": "根据会议转写整理，措辞有润色；报价、起订量和公司名已隐去。音频为 AI 合成语音。",
+ "speakers": [
+  {
+   "name": "Susan",
+   "role": "中方",
+   "color": "#2E5E8C"
+  },
+  {
+   "name": "Richard",
+   "role": "巴方",
+   "color": "#6B7C8C"
+  }
+ ],
+ "full": "full.mp3",
+ "sections": [
+  {
+   "ts": "01",
+   "name": "Coating for coastal projects",
+   "zhname": "海边项目的涂层",
+   "audio": "s1.mp3",
+   "lines": [
+    {
+     "who": "Susan",
+     "en": "For projects close to the [[coastline]], we need to apply a special PVDF [[coating]] made for coastal areas.",
+     "zh": "靠近海岸线的项目，我们需要用海边专用的 PVDF 涂层。",
+     "t": [
+      3.15,
+      8.84
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "The normal coating should be used in places at least two to five kilometers away from the coast.",
+     "zh": "普通涂层应该用在离海岸至少两到五公里的地方。",
+     "t": [
+      9.54,
+      14.28
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "We use PVDF coating from a global US supplier, which is designed for environments with a high [[salt]] content.",
+     "zh": "我们用的是一家美国全球涂料供应商的 PVDF 涂层，专为高盐环境设计。",
+     "t": [
+      14.98,
+      21.48
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "02",
+   "name": "Fire-resistant material",
+   "zhname": "防火材料",
+   "audio": "s2.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "Actually, fire resistance is not a [[regulation]] here yet. But we have some customers that ask for [[fire-resistant]] material.",
+     "zh": "其实这里防火还不是强制规定，但有些客户会要求防火材料。",
+     "t": [
+      2.78,
+      9.3
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "So we have both situations. Do you have this material available in your factory, or is it just more expensive?",
+     "zh": "所以两种情况都有。你们工厂有这种材料吗，还是只是更贵？",
+     "t": [
+      10.0,
+      15.77
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Okay, just to make sure I understood correctly: you're asking if we have FR material available, right?",
+     "zh": "好的，确认一下我理解得对：您是问我们有没有 FR 防火材料，对吗？",
+     "t": [
+      16.47,
+      22.02
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Yes, right. I just want to confirm: is there a [[fire-retardant]] option?",
+     "zh": "对。我只是想确认：有没有阻燃的选项？",
+     "t": [
+      22.72,
+      26.13
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Yes, we have a fire-retardant option available when needed.",
+     "zh": "有的，需要的时候我们可以提供阻燃选项。",
+     "t": [
+      26.83,
+      30.0
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "03",
+   "name": "Reference price",
+   "zhname": "参考报价",
+   "audio": "s3.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "We understand that the final price will be affected by the [[shipping]] and also the [[customs]] taxes.",
+     "zh": "我们理解最终价格会受到运费和关税的影响。",
+     "t": [
+      2.47,
+      7.44
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "But I would like to have some [[reference prices]] for the material with this exact [[specification]].",
+     "zh": "但我想先要一些这个具体规格的参考价格。",
+     "t": [
+      8.14,
+      12.65
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "One second, please. Four millimeter, zero point five, PVDF, LDPE [[core]].",
+     "zh": "请稍等。四毫米，零点五，PVDF，LDPE 芯材。",
+     "t": [
+      13.35,
+      17.84
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "So the reference price is for four millimeter, with an [[aluminum skin]] thickness of zero point five millimeter?",
+     "zh": "所以参考价是四毫米、铝皮厚度零点五毫米的？",
+     "t": [
+      18.54,
+      24.32
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Yes. I'll send you the price range in writing after the meeting. This is an [[FOB]] price.",
+     "zh": "是的。会后我把价格区间书面发给您。这是 FOB 价。",
+     "t": [
+      25.02,
+      29.75
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "04",
+   "name": "Minimum order quantity",
+   "zhname": "起订量",
+   "audio": "s4.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "Okay, just one more thing. Regarding the minimum volume, do you have a minimum [[quantity]] per shipment?",
+     "zh": "好的，还有一件事。关于最小量，每次发货有最低数量吗？",
+     "t": [
+      2.83,
+      7.95
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Yes, we have a standard [[MOQ]] per color. But for some projects, customers only need a smaller quantity.",
+     "zh": "有，我们每个颜色有标准起订量。但有些项目客户只需要更少的量。",
+     "t": [
+      8.65,
+      14.35
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Sometimes another customer orders the same color, so we can [[combine]] your order with theirs, and you don't need to pay extra.",
+     "zh": "有时别的客户订了同一个颜色，我们可以把您的订单和他们的拼在一起，您就不用额外付费。",
+     "t": [
+      15.05,
+      21.13
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Otherwise, if the order is below the minimum per color, you need to pay a little [[extra]].",
+     "zh": "否则，如果每个颜色的量低于起订量，就需要多付一点。",
+     "t": [
+      21.83,
+      25.99
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Okay, so the price for the coastal option is a little higher. That's clear.",
+     "zh": "好的，所以海边那个选项的价格高一点。明白了。",
+     "t": [
+      26.69,
+      30.33
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "05",
+   "name": "Relationship and customer groups",
+   "zhname": "合作关系与客户类型",
+   "audio": "s5.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "My colleague is asking: does anyone on your team plan to send a [[representative]] to Brazil to visit customers this year?",
+     "zh": "我同事想问：你们团队今年有没有计划派代表来巴西拜访客户？",
+     "t": [
+      3.42,
+      9.82
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "This will be our first contact with a Chinese supplier. We want to build a good [[relationship]] and show you how we operate here in Brazil.",
+     "zh": "这是我们第一次接触中国供应商。我们想建立良好的关系，让你们了解我们在巴西怎么运作。",
+     "t": [
+      10.52,
+      17.25
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Our business is not selling ACP panels. Our business is [[installing]] ACP on buildings.",
+     "zh": "我们的业务不是卖铝塑板，而是在建筑上安装铝塑板。",
+     "t": [
+      17.95,
+      23.14
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Actually, we don't have this plan right now. But if necessary, we can [[arrange]] it.",
+     "zh": "其实我们现在没有这个计划，但如果需要，可以安排。",
+     "t": [
+      23.84,
+      27.64
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "We have two groups of customers. One is [[importers]], who buy from us and sell to local companies.",
+     "zh": "我们有两类客户。一类是进口商，从我们这里买货再卖给当地公司。",
+     "t": [
+      28.34,
+      33.52
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "The second group is [[installers]], like your company. Half of our customers are installers.",
+     "zh": "第二类是像贵公司这样的安装商。我们一半的客户是安装商。",
+     "t": [
+      34.22,
+      38.7
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "06",
+   "name": "Next steps and project size",
+   "zhname": "后续安排与项目规模",
+   "audio": "s6.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "That's great. I think we'll need some time to [[evaluate]] the numbers and the conditions, and then we can set up a second meeting.",
+     "zh": "很好。我想我们需要些时间评估数字和条件，然后再约第二次会议。",
+     "t": [
+      3.37,
+      9.28
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "No problem. Tomorrow I will check the [[freight forwarder]] cost and the [[customs broker]] for you.",
+     "zh": "没问题。明天我帮您查货代费用和清关代理。",
+     "t": [
+      9.98,
+      14.52
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "We'll put it all together and give you a [[delivered price]] to your factory. Then you can compare it with your local purchase price.",
+     "zh": "我们会汇总起来，给您一个到厂价，您可以和本地采购价比较。",
+     "t": [
+      15.22,
+      21.24
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Since you're an installer, do you work on small projects or medium to large projects?",
+     "zh": "既然您是安装商，你们做的是小项目还是中大型项目？",
+     "t": [
+      21.94,
+      26.27
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Actually, we have a [[mix]] of large and small projects. The minimum area we work with is three hundred square meters.",
+     "zh": "其实大小项目都有。我们做的最小面积是三百平方米。",
+     "t": [
+      26.97,
+      32.86
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "At the beginning of October, we're going to start a building with six thousand square meters of ACP and two thousand square meters of [[WPC]].",
+     "zh": "十月初我们要开工一栋楼，有六千平方米铝塑板和两千平方米木塑板。",
+     "t": [
+      33.56,
+      41.32
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "That's eight thousand square meters for just one building. Our [[objective]] is to have international suppliers for the larger projects.",
+     "zh": "单这一栋就八千平方米。我们的目标是大项目用国际供应商。",
+     "t": [
+      42.02,
+      48.92
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "07",
+   "name": "Stock suggestion and closing",
+   "zhname": "备库建议与结束",
+   "audio": "s7.mp3",
+   "lines": [
+    {
+     "who": "Susan",
+     "en": "From your screen sharing, I think buying from an international supplier makes sense for you, because it will be [[cost-effective]] for your projects.",
+     "zh": "从您的屏幕共享看，我觉得从国际供应商采购适合你们，因为对你们的项目更划算。",
+     "t": [
+      3.32,
+      10.22
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "For small projects with regular colors, you could keep [[stock]] of five or six regular colors, one or two [[containers]], for long-term use.",
+     "zh": "对常规颜色的小项目，你们可以备五六个常规色的库存，一两个柜，长期使用。",
+     "t": [
+      10.92,
+      17.92
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Okay, that's something we need to plan, but I think it will be interesting for us.",
+     "zh": "好的，这需要我们规划一下，但我觉得对我们挺有意思的。",
+     "t": [
+      18.62,
+      22.29
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Okay, very well. Thank you so much. Do you have any other questions?",
+     "zh": "好的，非常好。非常感谢。您还有别的问题吗？",
+     "t": [
+      22.99,
+      26.3
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "No, that's all for now. I hope to talk to you again soon.",
+     "zh": "没有了，暂时就这些。希望很快再聊。",
+     "t": [
+      27.0,
+      29.68
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Me too. Okay, bye bye!",
+     "zh": "我也是。好的，再见！",
+     "t": [
+      30.38,
+      31.96
+     ]
+    }
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "q": "How far from the coast should the normal coating be used?",
+   "options": [
+    "At least 50 meters",
+    "At least 500 meters",
+    "At least two to five kilometers",
+    "At least twenty kilometers"
+   ],
+   "answer": 2,
+   "explain": "普通涂层要离海岸至少两到五公里，更近的要用海边专用 PVDF。"
+  },
+  {
+   "q": "Is fire resistance required by regulation in Brazil?",
+   "options": [
+    "Yes, for all buildings",
+    "Not yet, but some customers ask for it",
+    "Only for coastal projects",
+    "Only for government projects"
+   ],
+   "answer": 1,
+   "explain": "目前还不是强制规定，但部分客户会要求。"
+  },
+  {
+   "q": "What specification does Susan quote for?",
+   "options": [
+    "3 mm, 0.3 mm skin, PE coating",
+    "4 mm, 0.5 mm skin, PVDF, LDPE core",
+    "4 mm, 0.21 mm skin, FR core",
+    "6 mm, 0.5 mm skin, PVDF"
+   ],
+   "answer": 1,
+   "explain": "四毫米，铝皮 0.5 毫米，PVDF 涂层，LDPE 芯材。"
+  },
+  {
+   "q": "What price term is the reference price?",
+   "options": [
+    "CIF",
+    "EXW",
+    "FOB",
+    "DDP"
+   ],
+   "answer": 2,
+   "explain": "参考价是 FOB，不含海运、清关和关税。"
+  },
+  {
+   "q": "How can a small order avoid the extra charge?",
+   "options": [
+    "By paying in advance",
+    "By combining it with another customer's order in the same color",
+    "By choosing a thinner panel",
+    "By picking it up from the factory"
+   ],
+   "answer": 1,
+   "explain": "可以和同色的其他客户订单拼在一起生产。"
+  },
+  {
+   "q": "What is the Brazilian company's main business?",
+   "options": [
+    "Importing ACP",
+    "Manufacturing ACP",
+    "Installing ACP on buildings",
+    "Selling coatings"
+   ],
+   "answer": 2,
+   "explain": "他们的业务是在建筑上安装铝塑板，而不是卖板。"
+  },
+  {
+   "q": "How large is the building project starting in early October?",
+   "options": [
+    "300 m² in total",
+    "2,000 m² in total",
+    "6,000 m² in total",
+    "8,000 m² in total"
+   ],
+   "answer": 3,
+   "explain": "六千平方米铝塑板加两千平方米木塑板，共八千平方米。"
+  },
+  {
+   "q": "What will Susan do tomorrow?",
+   "options": [
+    "Visit Brazil",
+    "Check freight and customs broker costs to give a delivered price",
+    "Send free samples",
+    "Sign the contract"
+   ],
+   "answer": 1,
+   "explain": "查货代和清关代理费用，给出到厂价，方便客户和本地采购价比较。"
+  }
+ ],
+ "vocab": {
+  "audio": "vocab.mp3",
+  "items": [
+   {
+    "en": "coastline",
+    "zh": "海岸线",
+    "t": [
+     0.0,
+     0.79
+    ]
+   },
+   {
+    "en": "PVDF coating",
+    "zh": "PVDF 氟碳涂层",
+    "t": [
+     1.39,
+     2.6
+    ]
+   },
+   {
+    "en": "salt content",
+    "zh": "含盐量",
+    "t": [
+     3.2,
+     4.23
+    ]
+   },
+   {
+    "en": "regulation",
+    "zh": "法规 / 强制规定",
+    "t": [
+     4.83,
+     5.76
+    ]
+   },
+   {
+    "en": "fire-resistant / fire-retardant (FR)",
+    "zh": "防火 / 阻燃",
+    "t": [
+     6.36,
+     8.19
+    ]
+   },
+   {
+    "en": "LDPE core",
+    "zh": "低密度聚乙烯芯材",
+    "t": [
+     8.79,
+     9.88
+    ]
+   },
+   {
+    "en": "aluminum skin thickness",
+    "zh": "铝皮厚度",
+    "t": [
+     10.48,
+     11.89
+    ]
+   },
+   {
+    "en": "specification",
+    "zh": "规格",
+    "t": [
+     12.49,
+     13.59
+    ]
+   },
+   {
+    "en": "reference price",
+    "zh": "参考价",
+    "t": [
+     14.19,
+     15.25
+    ]
+   },
+   {
+    "en": "FOB (free on board)",
+    "zh": "离岸价",
+    "t": [
+     15.85,
+     16.25
+    ]
+   },
+   {
+    "en": "customs taxes",
+    "zh": "关税",
+    "t": [
+     16.85,
+     17.98
+    ]
+   },
+   {
+    "en": "minimum order quantity (MOQ)",
+    "zh": "起订量",
+    "t": [
+     18.58,
+     19.9
+    ]
+   },
+   {
+    "en": "combine orders",
+    "zh": "拼单",
+    "t": [
+     20.5,
+     21.56
+    ]
+   },
+   {
+    "en": "extra charge",
+    "zh": "额外费用",
+    "t": [
+     22.16,
+     23.16
+    ]
+   },
+   {
+    "en": "representative",
+    "zh": "代表",
+    "t": [
+     23.76,
+     24.73
+    ]
+   },
+   {
+    "en": "importer",
+    "zh": "进口商",
+    "t": [
+     25.33,
+     26.09
+    ]
+   },
+   {
+    "en": "installer",
+    "zh": "安装商",
+    "t": [
+     26.69,
+     27.45
+    ]
+   },
+   {
+    "en": "freight forwarder",
+    "zh": "货代",
+    "t": [
+     28.05,
+     29.05
+    ]
+   },
+   {
+    "en": "customs broker",
+    "zh": "清关代理",
+    "t": [
+     29.65,
+     30.77
+    ]
+   },
+   {
+    "en": "delivered price",
+    "zh": "到厂价 / 到门价",
+    "t": [
+     31.37,
+     32.41
+    ]
+   },
+   {
+    "en": "local purchase price",
+    "zh": "本地采购价",
+    "t": [
+     33.01,
+     34.36
+    ]
+   },
+   {
+    "en": "WPC (wood plastic composite)",
+    "zh": "木塑复合材料",
+    "t": [
+     34.96,
+     35.99
+    ]
+   },
+   {
+    "en": "cost-effective",
+    "zh": "划算的",
+    "t": [
+     36.59,
+     37.62
+    ]
+   },
+   {
+    "en": "container",
+    "zh": "集装箱 / 柜",
+    "t": [
+     38.22,
+     38.97
+    ]
+   },
+   {
+    "en": "regular colors",
+    "zh": "常规颜色",
+    "t": [
+     39.57,
+     40.6
+    ]
+   }
+  ]
+ }
+}
