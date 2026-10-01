@@ -90,7 +90,8 @@ au.addEventListener("ended",()=>{hl(-1);
   if(flow==="commute"){flow=null;return}
   if(flow==="today"){flow=null;st.mode="dictation";save();render();$("flowmsg").hidden=false;window.scrollTo({top:$("content").offsetTop-90,behavior:"smooth"});return}
   if(curSrc===secSrc(ls().sec)&&$("auto").checked&&ls().sec<L.sections.length-1){ls().sec++;save();render();playSec(ls().sec)}});
-$("rate").addEventListener("change",()=>{au.playbackRate=+$("rate").value;va.playbackRate=1});
+$("rate").addEventListener("change",()=>{au.playbackRate=+$("rate").value;va.playbackRate=1;try{localStorage.setItem("listen-rate",$("rate").value)}catch(e){}});
+try{const r=localStorage.getItem("listen-rate");if(r&&[...$("rate").options].some(o=>o.value===r))$("rate").value=r}catch(e){}  // 记住上次选的语速
 if("mediaSession" in navigator){const ms=navigator.mediaSession,h=(a,f)=>{try{ms.setActionHandler(a,f)}catch(e){}};
   h("play",()=>au.play());h("pause",()=>au.pause());
   h("seekbackward",()=>au.currentTime=Math.max(0,au.currentTime-10));h("seekforward",()=>au.currentTime+=10);
