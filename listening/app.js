@@ -34,9 +34,10 @@ function renderHeader(){
   $("intro").textContent=(L.intro||"")+"每天点一下\"开始今天的练习\"就行：先盲听一节，听完自动进入填空。";
   $("note").textContent=L.note?"说明："+L.note:"";
   $("swatches").innerHTML=(L.speakers||[]).map(s=>`<div class="sw" style="background:${s.color}">${esc(s.name)}<small>${esc(s.role||"")}</small></div>`).join("");
-  $("lessonSel").innerHTML=INDEX.map(x=>`<option value="${esc(x.id)}"${x.id===L.id?" selected":""}>${esc(x.date)}　${esc(x.zhtitle||x.title)}</option>`).join("");
+  const tabs=$("lessonTabs");
+  tabs.innerHTML=INDEX.map(x=>`<button data-l="${esc(x.id)}" aria-pressed="${x.id===L.id}">${esc(x.zhtitle||x.title)}<small>${esc(x.date)} · ${x.sections||""} 节</small></button>`).join("");
+  tabs.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.l!==L.id)openLesson(b.dataset.l)});
 }
-$("lessonSel").onchange=e=>openLesson(e.target.value);
 
 /* ---------- offline cache ---------- */
 async function cacheLesson(){
