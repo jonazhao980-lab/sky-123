@@ -41,13 +41,6 @@
     line-height: 1.6;
   }
   .wrap { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-  .main-content { position: relative; }
-  .project-list { width: 480px; max-width: 100%; position: relative; }
-  @media (max-width: 1080px) {
-    .project-list { width: 100%; }
-    .branch-panel { position: static !important; margin: 10px 0 0 !important; width: 100% !important; box-shadow: none !important; }
-    .branch-panel::before { display: none; }
-  }
   .weekly-card {
     position: relative;
     background: var(--surface-2);
@@ -115,92 +108,10 @@
   .icon-x { font-size: 16px; line-height: 1; color: var(--text-muted); }
   .icon-edit { font-size: 14px; line-height: 1; color: var(--text-muted); }
   .icon-plus { font-size: 18px; line-height: 1; color: var(--text-muted); }
-  .icon-chevron { display: inline-block; font-size: 11px; color: var(--text-muted); width: 16px; text-align: center; }
-  .drag-handle { cursor: grab; color: var(--text-muted); font-size: 14px; padding: 0 2px; touch-action: none; user-select: none; }
-  .project-card {
-    position: relative;
-    background: var(--surface-2);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 12px;
-  }
-  .project-card.dragging { opacity: 0.5; }
-  .sub-project-card { margin-left: 22px; width: calc(480px - 22px); background: var(--surface-1); }
-  @media (max-width: 1080px) { .sub-project-card { width: calc(100% - 22px); } }
-  .sub-marker { color: var(--text-muted); font-size: 13px; width: 16px; text-align: center; }
-  .add-subproject-row { margin-top: 6px; }
-  .add-subproject-row input { font-size: 13px; }
-  .branch-panel {
-    position: absolute;
-    top: 0;
-    left: 100%;
-    margin-left: 32px;
-    width: 480px;
-    background: var(--surface-2);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    box-shadow: 0 8px 24px rgba(28, 28, 26, 0.10);
-    z-index: 5;
-  }
-  .branch-panel::before {
-    content: '';
-    position: absolute;
-    left: -32px;
-    top: 20px;
-    width: 32px;
-    height: 1px;
-    background: var(--border-strong);
-  }
-  .project-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0.85rem 1.1rem;
-    cursor: pointer;
-  }
-  .project-name { font-weight: 500; font-size: 15px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .project-note { font-size: 13px; color: var(--text-secondary); margin: 0 0 10px; }
-  .items-tree { margin: 4px 0 0 6px; padding-left: 18px; border-left: 1px solid var(--border); }
-  .item-row {
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 7px 0;
-  }
-  .item-row::before {
-    content: '';
-    position: absolute;
-    left: -18px;
-    top: 22px;
-    width: 14px;
-    height: 1px;
-    background: var(--border);
-  }
-  .item-row:first-child { padding-top: 0; }
-  .item-row:first-child::before { top: 12px; }
-  .item-name { font-size: 14px; font-weight: 500; }
-  .item-note {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-  }
   .editable { cursor: text; border-radius: 4px; padding: 1px 4px; margin: -1px -4px; }
   .editable:hover { background: var(--surface-1); }
-  .item-note.placeholder { color: var(--text-muted); font-style: italic; }
   .inline-edit-input { font-size: inherit; font-weight: inherit; font-style: normal; padding: 1px 4px; height: auto; width: 100%; }
-  .item-date-row { display: flex; align-items: center; gap: 4px; margin-top: 3px; flex-wrap: wrap; }
-  .item-date-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
-  .item-date-value { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
-  .overdue-tag { color: #b3261e; font-size: 12px; margin-left: 4px; font-weight: 500; white-space: nowrap; }
-  .item-row.overdue { background: #fdf0ef; margin-right: -1.1rem; padding-right: 1.1rem; border-radius: 0 8px 8px 0; }
-  .outreach-row { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 6px; }
-  .outreach-row select, .outreach-row input { font-size: 11.5px; height: 26px; padding: 0 6px; }
   .badge {
     display: inline-block;
     font-size: 12px;
@@ -546,6 +457,61 @@
   .search-hit-ups { margin-top: 8px; border-top: 0.5px solid var(--border); padding-top: 6px; }
   .search-hit-up { font-size: 12.5px; color: var(--text-primary); padding: 2px 0; word-break: break-word; }
   .search-hit-date { color: var(--text-muted); margin-right: 4px; }
+
+  /* ===== 界面改版：项目横排卡片 + 展开面板 + 精简客户行 ===== */
+  .proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .proj-tile { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px 16px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; min-height: 96px; transition: border-color .15s; }
+  .proj-tile:hover { border-color: var(--border-strong); }
+  .proj-tile.active { border-color: var(--accent-text); box-shadow: 0 0 0 1px var(--accent-text) inset; }
+  .proj-tile-name { font-size: 14.5px; font-weight: 600; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .proj-tile-meta { font-size: 12.5px; color: var(--text-secondary); display: flex; gap: 8px; align-items: center; }
+  .proj-due { font-size: 11.5px; color: var(--amber-text); background: var(--amber-bg); border-radius: 999px; padding: 0 8px; }
+  .proj-tile-status { font-size: 11.5px; color: var(--text-muted); margin-top: auto; }
+  .proj-hint { font-size: 13px; color: var(--text-muted); margin: 6px 2px 16px; }
+  .proj-panel { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+  .proj-panel-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .proj-panel-title { font-size: 16px; font-weight: 600; flex: 1; min-width: 160px; }
+  .proj-panel-actions { display: flex; gap: 2px; }
+  .project-note { font-size: 13px; color: var(--text-secondary); margin: 0 0 8px; }
+  button.ghost { height: 28px; width: auto; padding: 0 10px; font-size: 12px; color: var(--text-muted); background: transparent; border: none; }
+  button.ghost:hover { background: var(--surface-1); color: var(--text-primary); }
+  button.ghost.danger:hover { color: #b3261e; }
+  button.ghost:disabled { opacity: .3; cursor: default; background: transparent; }
+  .cust-list { display: flex; flex-direction: column; margin-bottom: 4px; }
+  .cust-row { display: flex; justify-content: space-between; gap: 16px; padding: 10px 8px; border-top: 0.5px solid var(--surface-1); cursor: pointer; border-radius: 8px; }
+  .cust-row:first-child { border-top: none; }
+  .cust-row:hover { background: var(--surface-0); }
+  .cust-main { min-width: 0; flex: 1; }
+  .cust-name { font-size: 14px; font-weight: 500; }
+  .cust-latest { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cust-side { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; font-size: 12px; color: var(--text-muted); }
+  .cust-status { color: var(--text-secondary); }
+  .cust-due { color: var(--amber-text); font-weight: 500; }
+  .muted-line { font-size: 13px; color: var(--text-muted); padding: 8px; }
+  .muted-inline { font-size: 12px; color: var(--text-muted); }
+  .sub-section { margin-top: 14px; padding-top: 10px; border-top: 0.5px dashed var(--border-strong); }
+  .sub-title { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+  .sub-title .cnt { font-weight: 400; color: var(--text-muted); font-size: 12px; }
+  .proj-add, .add-sub { margin-top: 10px; }
+  @media (max-width: 640px) { .cust-row { flex-direction: column; gap: 6px; } .cust-side { align-items: flex-start; } }
+
+  .weekly-toggle { height: 26px; width: auto; padding: 0 10px; font-size: 12px; color: var(--text-muted); background: transparent; border: 0.5px solid var(--border); margin-left: auto; }
+  .weekly-card.collapsed { padding-top: 0.7rem; padding-bottom: 0.7rem; }
+  .weekly-card.collapsed .weekly-sections { display: none; }
+  .today-inbox-link { margin-left: auto; font-size: 12.5px; font-weight: 500; color: var(--accent-text); cursor: pointer; }
+  .today-proj { font-size: 12px; color: var(--text-muted); }
+
+  .inbox-badge { background: #b3261e; color: #fff; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 0 6px; margin-left: 6px; }
+  .view-tab-btn.active .inbox-badge { background: #e8685f; }
+  .inbox-intro { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+  .inbox-empty { text-align: center; padding: 3rem 0; font-size: 15px; color: var(--text-secondary); line-height: 2; }
+  .inbox-empty span { font-size: 12.5px; color: var(--text-muted); }
+  .inbox-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; padding: 12px 14px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; font-size: 13.5px; position: sticky; bottom: 12px; }
+  .inbox-bar select { height: 34px; width: auto; min-width: 200px; font-family: inherit; font-size: 13.5px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); background: var(--surface-2); padding: 0 8px; }
+  .primary-btn { height: 34px; width: auto; padding: 0 18px; background: var(--text-primary); color: #fff; border: none; font-size: 13.5px; }
+  .primary-btn:hover { opacity: .9; background: var(--text-primary); }
+  .chip { height: 26px; width: auto; padding: 0 10px; font-size: 12px; border-radius: 999px; background: var(--accent-bg); color: var(--accent-text); border: none; cursor: pointer; }
+  .modal-footer { display: flex; justify-content: flex-end; margin-top: 1rem; padding-top: 0.8rem; border-top: 0.5px solid var(--border); }
 </style>
 </head>
 <body>
@@ -564,7 +530,9 @@
     <a class="back-link" href="../">← 返回工作台首页</a>
     <h1><span class="sync-dot offline" id="sync-dot"></span>SKY 市场部开发项目进度看板</h1>
     <div class="today-card" id="today-card">
-      <div class="today-title">📌 今日待跟进 <span class="today-count" id="today-count">0</span></div>
+      <div class="today-title">📌 今日待跟进 <span class="today-count" id="today-count">0</span>
+        <a class="today-inbox-link" id="today-inbox-link" onclick="switchView('inbox')" hidden></a>
+      </div>
       <div id="today-list"></div>
     </div>
     <div class="weekly-card" id="weekly-card">
@@ -572,20 +540,25 @@
       <span class="weekly-pin">📌</span>
       <h3>📅 本周工作重心</h3>
       <div class="weekly-range" id="week-range"></div>
+      <button class="weekly-toggle" id="weekly-toggle" onclick="toggleWeekly()">展开</button>
       <div class="weekly-sections" id="weekly-summary"></div>
     </div>
     <div class="view-tabs">
       <button class="view-tab-btn active" id="tab-board" onclick="switchView('board')">看板</button>
       <button class="view-tab-btn" id="tab-overview" onclick="switchView('overview')">🚚 拖车总览</button>
+      <button class="view-tab-btn" id="tab-inbox" onclick="switchView('inbox')">📥 待归类<span class="inbox-badge" id="inbox-badge" hidden>0</span></button>
     </div>
     <div class="main-content" id="board-view">
       <div class="search-row">
         <input type="text" id="search-input" placeholder="搜索客户/项目名称…" oninput="onSearch(this.value)" />
       </div>
-      <div id="app" class="project-list"><p class="loading">加载中…</p></div>
+      <div id="app"><p class="loading">加载中…</p></div>
     </div>
     <div id="overview-view" style="display:none;">
       <div id="overview"></div>
+    </div>
+    <div id="inbox-view" style="display:none;">
+      <div id="inbox"></div>
     </div>
   </div>
 </div>
@@ -627,15 +600,6 @@ function statusSelect(current, onChangeCall) {
   return `<select class="status-select" style="background:${s.bg}; color:${s.text};" onclick="event.stopPropagation()" onchange="event.stopPropagation(); ${onChangeCall}">${options}</select>`;
 }
 
-const OVERDUE_DAYS = 14;
-
-function isOverdue(it) {
-  if (it.status === '已结案') return false;
-  if (!it.last_contact) return false;
-  const days = (Date.now() - new Date(it.last_contact + 'T00:00:00').getTime()) / 86400000;
-  return days > OVERDUE_DAYS;
-}
-
 let projects = [];
 let activeId = null; // 当前展开的项目/子项目 id（本地浏览器临时状态，同一时间只有一个的客户面板打开）
 let realtimeSubscribed = false;
@@ -655,13 +619,13 @@ function todayStr() {
 
 function switchView(view) {
   currentView = view;
-  document.getElementById('tab-board').classList.toggle('active', view === 'board');
-  document.getElementById('tab-overview').classList.toggle('active', view === 'overview');
-  document.getElementById('board-view').style.display = view === 'board' ? 'block' : 'none';
-  document.getElementById('overview-view').style.display = view === 'overview' ? 'block' : 'none';
+  ['board', 'overview', 'inbox'].forEach(v => {
+    document.getElementById('tab-' + v).classList.toggle('active', view === v);
+    document.getElementById(v + '-view').style.display = view === v ? 'block' : 'none';
+  });
   document.getElementById('weekly-card').style.display = view === 'board' ? 'flex' : 'none';
-  document.getElementById('today-card').style.display = view === 'board' ? 'block' : 'none';
   if (view === 'overview') renderOverview();
+  if (view === 'inbox') renderInbox();
 }
 
 function outreachStatusSelect(itemId, current) {
@@ -721,6 +685,92 @@ function renderOverview() {
       </table>
     </div>
   `;
+}
+
+// ---- 新客户待归类收件箱：拿不准归哪个项目的客户先放这里，你勾选后统一归类 ----
+let inboxSelected = new Set();
+let inboxTarget = '';
+
+function projectOptionsHTML(selectedId, withInbox) {
+  const opts = [];
+  if (withInbox) opts.push(`<option value="${INBOX_ID}" ${selectedId === INBOX_ID ? 'selected' : ''}>📥 待归类收件箱</option>`);
+  visibleProjects().forEach(p => {
+    opts.push(`<option value="${p.id}" ${selectedId === p.id ? 'selected' : ''}>${escHtml(p.name)}</option>`);
+    (p.subProjects || []).forEach(sp => opts.push(`<option value="${sp.id}" ${selectedId === sp.id ? 'selected' : ''}>${escHtml(p.name)} › ${escHtml(sp.name)}</option>`));
+  });
+  return opts.join('');
+}
+
+function renderInbox() {
+  const items = inboxItems();
+  const badge = document.getElementById('inbox-badge');
+  badge.textContent = items.length;
+  badge.hidden = items.length === 0;
+  const link = document.getElementById('today-inbox-link');
+  link.hidden = items.length === 0;
+  link.textContent = `📥 有 ${items.length} 位新客户待归类 →`;
+
+  const box = document.getElementById('inbox');
+  if (!box || currentView !== 'inbox') return;
+  inboxSelected = new Set([...inboxSelected].filter(id => items.some(i => i.id === id)));
+  if (items.length === 0) {
+    box.innerHTML = `<div class="inbox-empty">📭 没有待归类的客户。<br><span>新客户来源明确的会直接进对应项目；拿不准的会先放在这里等你确认。</span></div>`;
+    return;
+  }
+  const nameOf = id => { const n = findProjectNode(id); return n ? n.name : ''; };
+  box.innerHTML = `
+    <div class="inbox-intro">这些新客户还没归到项目里，但<b>已经正常参与"今日待跟进"</b>。勾选后统一归入某个项目；"推测归属"只是参考。</div>
+    <div class="overview-table-wrap">
+      <table class="overview-table">
+        <thead><tr>
+          <th style="width:36px;"><input type="checkbox" ${inboxSelected.size === items.length ? 'checked' : ''} onchange="toggleInboxAll(this.checked)" /></th>
+          <th>客户 / 公司</th><th>国家 · 来源线索</th><th>推测归属</th><th>类型</th>
+        </tr></thead>
+        <tbody>
+          ${items.map(it => `
+            <tr>
+              <td><input type="checkbox" ${inboxSelected.has(it.id) ? 'checked' : ''} onchange="toggleInboxSel('${it.id}', this.checked)" /></td>
+              <td class="ov-name" onclick="openCustomerModal('${it.id}')">${escHtml(it.name)}${it.company ? `<div class="muted-inline">${escHtml(it.company)}</div>` : ''}</td>
+              <td>${escHtml([it.country, it.source, it.industry_tag].filter(Boolean).join(' · ') || '—')}</td>
+              <td>${it.suggested_project && nameOf(it.suggested_project)
+                ? `<button class="chip" title="点一下：选中这位，并把目标项目设为它" onclick="pickSuggested('${it.id}', '${it.suggested_project}')">${escHtml(nameOf(it.suggested_project))}</button>`
+                : '<span class="muted-inline">无法判断</span>'}</td>
+              <td>${typePill(it)}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="inbox-bar">
+      已选 <b>${inboxSelected.size}</b> 位，归入
+      <select onchange="inboxTarget = this.value">
+        <option value="">选择项目…</option>${projectOptionsHTML(inboxTarget, false)}
+      </select>
+      <button class="primary-btn" onclick="moveInboxSelected()">确认归类</button>
+    </div>`;
+}
+
+function toggleInboxSel(id, on) { on ? inboxSelected.add(id) : inboxSelected.delete(id); renderInbox(); }
+function toggleInboxAll(on) { inboxSelected = new Set(on ? inboxItems().map(i => i.id) : []); renderInbox(); }
+function pickSuggested(id, projectId) { inboxSelected.add(id); inboxTarget = projectId; renderInbox(); }
+
+async function moveInboxSelected() {
+  const ids = [...inboxSelected];
+  if (!ids.length) { alert('请先勾选要归类的客户'); return; }
+  if (!inboxTarget) { alert('请选择要归入的项目'); return; }
+  const target = findProjectNode(inboxTarget);
+  const names = inboxItems().filter(i => inboxSelected.has(i.id)).map(i => '· ' + i.name).join('\n');
+  if (!confirm(`把选中的 ${ids.length} 位客户归入「${target ? target.name : ''}」？\n\n${names}`)) return;
+  const { error } = await sb.from('items').update({ project_id: inboxTarget }).in('id', ids);
+  if (error) { alert('归类失败：' + error.message); return; }
+  inboxSelected = new Set();
+  await load();
+}
+
+async function moveCustomer(id, projectId) {
+  const { error } = await sb.from('items').update({ project_id: projectId }).eq('id', id);
+  if (error) { alert('保存失败：' + error.message); return; }
+  await load();
+  renderModal();
 }
 
 function onSearch(value) {
@@ -810,6 +860,7 @@ async function load() {
   render();
   renderWeeklySummary();
   renderToday();
+  renderInbox();
   if (currentView === 'overview') renderOverview();
 }
 
@@ -845,19 +896,18 @@ function renderWeeklySummary() {
   const rangeEl = document.getElementById('week-range');
   const box = document.getElementById('weekly-summary');
   const { start, end } = getWeekRange();
-  rangeEl.textContent = `${fmtMD(start)} - ${fmtMD(end)}`;
-
-  const allItems = projects.flatMap(p => p.items.map(it => ({ ...it, projectName: p.name })));
+  const allItems = allItemsWithProject();
   const inRange = (dateStr) => {
     if (!dateStr) return false;
     const d = new Date(dateStr);
     return d >= start && d <= end;
   };
 
-  const newProjects = projects.filter(p => inRange(p.created_at));
+  const newProjects = visibleProjects().filter(p => inRange(p.created_at));
   const newItems = allItems.filter(it => inRange(it.created_at));
   const followedUp = allItems.filter(it => it.last_contact && inRange(it.last_contact + 'T00:00:00'));
-  const overdue = allItems.filter(isOverdue);
+  rangeEl.textContent = `${fmtMD(start)} - ${fmtMD(end)}　新增 ${newProjects.length + newItems.length} · 跟进 ${followedUp.length}`;
+  applyWeeklyState();
 
   const section = (title, emoji, list, renderLabel) => `
     <div class="weekly-section">
@@ -870,68 +920,105 @@ function renderWeeklySummary() {
 
   box.innerHTML =
     section('本周新增', '🆕', [...newProjects.map(p => ({ name: p.name })), ...newItems.map(it => ({ name: it.name }))], x => x.name) +
-    section('本周跟进', '✅', followedUp, it => it.name) +
-    section('超期未跟进', '⚠️', overdue, it => it.name);
+    section('本周跟进', '✅', followedUp, it => it.name);
 }
 
-function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
+// 每周卡片默认收起（今日待跟进才是每天的主角），展开状态记在浏览器里
+function weeklyCollapsed() {
+  try { return localStorage.getItem('weeklyCollapsed') !== '0'; } catch (e) { return true; }
+}
+function applyWeeklyState() {
+  const c = weeklyCollapsed();
+  document.getElementById('weekly-card').classList.toggle('collapsed', c);
+  document.getElementById('weekly-toggle').textContent = c ? '展开' : '收起';
+}
+function toggleWeekly() {
+  try { localStorage.setItem('weeklyCollapsed', weeklyCollapsed() ? '0' : '1'); } catch (e) {}
+  applyWeeklyState();
+}
+
+// ---- 项目：横排卡片 + 点开后在下方展开客户清单 ----
+const INBOX_ID = 'inbox';   // "待归类收件箱"：一个特殊项目，不显示成项目卡片
+
+function visibleProjects() { return projects.filter(p => p.id !== INBOX_ID); }
+function inboxItems() { const p = projects.find(x => x.id === INBOX_ID); return p ? p.items : []; }
+
+function projectCounts(p) {
+  const items = p.items.concat(...(p.subProjects || []).map(sp => sp.items));
+  const today = todayStr();
+  return { total: items.length, due: items.filter(it => it.next_action_date && it.next_action_date <= today && isTracked(it)).length };
+}
+
+function tileHTML(p) {
+  const c = projectCounts(p);
   return `
-    <div class="project-card${isSub ? ' sub-project-card' : ''}" data-id="${p.id}">
-      <div class="project-header" onclick="toggleProj('${p.id}')">
-        ${isSub
-          ? `<span class="icon-chevron sub-marker">↳</span>`
-          : `<span class="drag-handle" onpointerdown="${searching ? '' : `onHandlePointerDown(event, '${p.id}')`}" onclick="event.stopPropagation()">⠿</span>`
-        }
-        <span class="icon-chevron">${chevronOpen ? '▾' : '▸'}</span>
-        <span class="project-name" title="${p.name}">${p.name}</span>
-        ${statusSelect(p.status, `updateProjectStatus('${p.id}', this.value)`)}
-        <button aria-label="改名" onclick="event.stopPropagation(); editProjectNameByButton('${p.id}', '${p.name.replace(/'/g, "\\'")}')"><span class="icon-edit">✎</span></button>
-        <button aria-label="删除项目" onclick="event.stopPropagation(); removeProject('${p.id}', '${p.name.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
+    <div class="proj-tile ${activeId === p.id ? 'active' : ''}" onclick="toggleProj('${p.id}')">
+      <div class="proj-tile-name">${escHtml(p.name)}</div>
+      <div class="proj-tile-meta"><span>${c.total} 位客户</span>${c.due ? `<span class="proj-due">今日 ${c.due}</span>` : ''}</div>
+      <div class="proj-tile-status">${escHtml(p.status || '')}</div>
+    </div>`;
+}
+
+function customerRowHTML(it) {
+  const today = todayStr();
+  const due = it.next_action_date && it.next_action_date <= today && isTracked(it);
+  const diff = due ? Math.round((new Date(today + 'T00:00:00') - new Date(it.next_action_date + 'T00:00:00')) / 86400000) : 0;
+  const latest = it.latestFollowup ? truncate(it.latestFollowup.content, 100) : (it.note || '');
+  return `
+    <div class="cust-row" onclick="openCustomerModal('${it.id}')">
+      <div class="cust-main">
+        <div class="cust-name">${escHtml(it.name)}${typePill(it)}${it.stage ? `<span class="stage-pill">${escHtml(it.stage)}</span>` : ''}</div>
+        <div class="cust-latest">${latest ? escHtml(latest) : '<span class="muted-inline">暂无跟进记录</span>'}</div>
       </div>
-      ${panelOpen ? `
-        <div class="branch-panel">
-          ${p.note ? `<p class="project-note">${p.note}</p>` : ''}
-          <div class="items-tree">
-          ${p.items.map((it) => `
-            <div class="item-row ${isOverdue(it) ? 'overdue' : ''}">
-              <div style="flex:1;">
-                <div class="item-name clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">${escHtml(it.name)}</div>
-                <div class="item-note clickable ${(it.latestFollowup || it.note) ? '' : 'placeholder'}" title="${it.latestFollowup ? escAttr(it.latestFollowup.content) : ''}" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">${it.latestFollowup ? escHtml(it.latestFollowup.content) : (it.note ? escHtml(it.note) : '点击查看详情')}</div>
-                <div class="item-date-row clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">
-                  <span class="item-date-label">最后跟进：</span>
-                  <span class="item-date-value">${it.last_contact || '—'}</span>
-                  ${typePill(it)}
-                  ${it.stage ? `<span class="stage-pill">${escHtml(it.stage)}</span>` : ''}
-                  ${isOverdue(it) ? `<span class="overdue-tag">⚠ 超期未跟进</span>` : ''}
-                </div>
-                ${p.id === TRAILER_PROJECT_ID ? `
-                <div class="outreach-row" onclick="event.stopPropagation()">
-                  ${outreachStatusSelect(it.id, it.outreach_status)}
-                  <input type="text" value="${escAttr(it.cluster)}" placeholder="集群" onchange="saveItemField('${it.id}', 'cluster', this.value)" />
-                  <input type="text" value="${escAttr(it.assignee)}" placeholder="负责人" onchange="saveItemField('${it.id}', 'assignee', this.value)" />
-                  <input type="date" value="${it.next_action_date || ''}" onchange="saveItemField('${it.id}', 'next_action_date', this.value || null)" />
-                </div>
-                ` : ''}
-              </div>
-              ${statusSelect(it.status, `updateItemStatus('${it.id}', this.value)`)}
-              <button aria-label="删除" onclick="removeItem('${it.id}', '${it.name.replace(/'/g, "\\'")}')"><span class="icon-x">×</span></button>
-            </div>
-          `).join('')}
+      <div class="cust-side">
+        <span class="cust-status">${escHtml(it.status)}</span>
+        <span>最后联系 ${it.last_contact || '—'}${it.next_action_date && isTracked(it) ? ` · 下次 ${it.next_action_date}` : ''}</span>
+        ${due ? `<span class="cust-due">${diff === 0 ? '今日到期' : `逾期${diff}天`}</span>` : ''}
+      </div>
+    </div>`;
+}
+
+function itemSectionHTML(node) {
+  return `
+    <div class="cust-list">${node.items.length ? node.items.map(customerRowHTML).join('') : '<div class="muted-line">还没有客户</div>'}</div>
+    <div class="add-row">
+      <input type="text" id="in-${node.id}" placeholder="新增客户/事项名称" onkeydown="if(event.key==='Enter') addItem('${node.id}')" />
+      <button onclick="addItem('${node.id}')"><span class="icon-plus">+</span></button>
+    </div>`;
+}
+
+function projectPanelHTML(p) {
+  const idx = visibleProjects().findIndex(x => x.id === p.id);
+  const last = visibleProjects().length - 1;
+  const nm = escJs(p.name);
+  return `
+    <div class="proj-panel">
+      <div class="proj-panel-head">
+        <div class="proj-panel-title" id="proj-title-${p.id}">${escHtml(p.name)}</div>
+        ${statusSelect(p.status, `updateProjectStatus('${p.id}', this.value)`)}
+        <span class="proj-panel-actions">
+          <button class="ghost" onclick="editProjectNameByButton('${p.id}', '${nm}')">改名</button>
+          <button class="ghost" title="左移" onclick="moveProject('${p.id}', -1)" ${idx <= 0 ? 'disabled' : ''}>◀</button>
+          <button class="ghost" title="右移" onclick="moveProject('${p.id}', 1)" ${idx >= last ? 'disabled' : ''}>▶</button>
+          <button class="ghost danger" onclick="removeProject('${p.id}', '${nm}')">删除项目</button>
+        </span>
+      </div>
+      ${p.note ? `<p class="project-note">${escHtml(p.note)}</p>` : ''}
+      ${itemSectionHTML(p)}
+      ${(p.subProjects || []).map(sp => `
+        <div class="sub-section">
+          <div class="sub-title">
+            <span id="proj-title-${sp.id}">↳ ${escHtml(sp.name)}</span><span class="cnt">${sp.items.length} 位</span>
+            <button class="ghost" onclick="editProjectNameByButton('${sp.id}', '${escJs(sp.name)}')">改名</button>
+            <button class="ghost danger" onclick="removeProject('${sp.id}', '${escJs(sp.name)}')">删除</button>
           </div>
-          <div class="add-row">
-            <input type="text" id="in-${p.id}" placeholder="新增客户/事项名称" onkeydown="if(event.key==='Enter') addItem('${p.id}')" />
-            <button onclick="addItem('${p.id}')"><span class="icon-plus">+</span></button>
-          </div>
-          ${!isSub ? `
-            <div class="add-row add-subproject-row">
-              <input type="text" id="sub-in-${p.id}" placeholder="新增子项目名称" onkeydown="if(event.key==='Enter') addSubProject('${p.id}')" />
-              <button onclick="addSubProject('${p.id}')"><span class="icon-plus">+</span></button>
-            </div>
-          ` : ''}
-        </div>
-      ` : ''}
-    </div>
-  `;
+          ${itemSectionHTML(sp)}
+        </div>`).join('')}
+      <div class="add-row add-sub">
+        <input type="text" id="sub-in-${p.id}" placeholder="新增子项目名称" onkeydown="if(event.key==='Enter') addSubProject('${p.id}')" />
+        <button onclick="addSubProject('${p.id}')"><span class="icon-plus">+</span></button>
+      </div>
+    </div>`;
 }
 
 // ---- 客户资料常量、搜索（公司/邮箱/联系人/背景/跟进内容）、查重、今日待跟进 ----
@@ -1061,6 +1148,7 @@ function renderToday() {
       <div class="today-row ${diff > 0 ? 'late' : ''}" onclick="openCustomerModal('${it.id}')">
         <span class="today-when">${diff === 0 ? '今日' : `逾期${diff}天`}</span>
         <span class="today-name">${escHtml(it.name)}</span>
+        <span class="today-proj">${escHtml(projectPath(it.project_id))}</span>
         ${typePill(it)}
         <span class="today-action">→ ${escHtml(followAdvice(it, lastDays) + note)}</span>
       </div>`;
@@ -1070,23 +1158,13 @@ function renderToday() {
 function render() {
   const app = document.getElementById('app');
   if (searchTerm) { app.innerHTML = searchResultsHTML(searchTerm); return; }
-  const searching = false;
-  const list = projects;
-
-  app.innerHTML = list.map(p => {
-    const subIds = (p.subProjects || []).map(sp => sp.id);
-    const topExpanded = searching || activeId === p.id || subIds.includes(activeId);
-    const topPanelOpen = searching || activeId === p.id;
-    let html = projectCardHTML(p, { searching, isSub: false, chevronOpen: topExpanded, panelOpen: topPanelOpen });
-    if (topExpanded && p.subProjects && p.subProjects.length) {
-      html += p.subProjects.map(sp => {
-        const subPanelOpen = searching || activeId === sp.id;
-        return projectCardHTML(sp, { searching, isSub: true, chevronOpen: subPanelOpen, panelOpen: subPanelOpen });
-      }).join('');
-    }
-    return html;
-  }).join('') + `
-    <div class="add-row">
+  const list = visibleProjects();
+  if (activeId && !list.some(p => p.id === activeId)) activeId = null;
+  const active = list.find(p => p.id === activeId);
+  app.innerHTML = `
+    <div class="proj-grid">${list.map(tileHTML).join('')}</div>
+    ${active ? projectPanelHTML(active) : '<p class="proj-hint">点上面的项目卡片，查看里面的客户</p>'}
+    <div class="add-row proj-add">
       <input type="text" id="new-project-input" placeholder="新增项目名称" onkeydown="if(event.key==='Enter') addProject()" />
       <button onclick="addProject()"><span class="icon-plus">+</span></button>
     </div>
@@ -1095,11 +1173,6 @@ function render() {
 
 async function updateProjectStatus(id, status) {
   await sb.from('projects').update({ status }).eq('id', id);
-  load();
-}
-
-async function updateItemStatus(id, status) {
-  await sb.from('items').update({ status }).eq('id', id);
   load();
 }
 
@@ -1141,8 +1214,7 @@ function editProjectName(event, id, currentName) {
 }
 
 function editProjectNameByButton(id, currentName) {
-  const card = document.querySelector(`.project-card[data-id="${id}"]`);
-  const nameEl = card && card.querySelector('.project-name');
+  const nameEl = document.getElementById('proj-title-' + id);
   if (!nameEl) return;
   startInlineEdit(nameEl, currentName, {
     onSave: async (val) => {
@@ -1157,36 +1229,13 @@ function toggleProj(id) {
   render();
 }
 
-let dragState = null;
-
-function onHandlePointerDown(e, id) {
-  e.preventDefault();
-  dragState = { id };
-  document.addEventListener('pointermove', onDragMove);
-  document.addEventListener('pointerup', onDragEnd);
-}
-
-function onDragMove(e) {
-  if (!dragState) return;
-  const el = document.elementFromPoint(e.clientX, e.clientY);
-  const card = el && el.closest('.project-card');
-  if (!card) return;
-  const overId = card.dataset.id;
-  if (!overId || overId === dragState.id) return;
-  const fromIndex = projects.findIndex(p => p.id === dragState.id);
-  const toIndex = projects.findIndex(p => p.id === overId);
-  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
-  const [moved] = projects.splice(fromIndex, 1);
-  projects.splice(toIndex, 0, moved);
-  render();
-}
-
-async function onDragEnd() {
-  document.removeEventListener('pointermove', onDragMove);
-  document.removeEventListener('pointerup', onDragEnd);
-  if (!dragState) return;
-  dragState = null;
-  await Promise.all(projects.map((p, idx) => sb.from('projects').update({ sort_order: idx + 1 }).eq('id', p.id)));
+async function moveProject(id, dir) {
+  const list = visibleProjects();
+  const i = list.findIndex(p => p.id === id), j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  [list[i], list[j]] = [list[j], list[i]];
+  await Promise.all(list.map((p, idx) => sb.from('projects').update({ sort_order: idx + 1 }).eq('id', p.id)));
+  load();
 }
 
 async function addItem(id) {
@@ -1201,10 +1250,11 @@ async function addItem(id) {
   load();
 }
 
-async function removeItem(itemId, itemName) {
-  if (!confirm(`确定要删除"${itemName}"吗？删除后无法恢复。`)) return;
+async function deleteCustomerFromModal(itemId, itemName) {
+  if (!confirm(`确定要删除客户"${itemName}"吗？它的联系人和全部跟进记录也会一起删除，无法恢复。`)) return;
   const { error } = await sb.from('items').delete().eq('id', itemId);
   if (error) { alert('删除失败：' + error.message); return; }
+  closeCustomerModal();
   load();
 }
 
@@ -1238,7 +1288,7 @@ async function addProject() {
   const val = input.value.trim();
   if (!val) return;
   input.value = '';
-  const maxOrder = projects.reduce((m, p) => Math.max(m, p.sort_order || 0), 0);
+  const maxOrder = visibleProjects().reduce((m, p) => Math.max(m, p.sort_order || 0), 0);
   const { error } = await sb.from('projects').insert({
     id: crypto.randomUUID(),
     name: val,
@@ -1383,7 +1433,9 @@ function renderModal() {
         <div class="modal-section">
           <div class="modal-section-title">🧾 客户资料</div>
           <div class="follow-type-box">
-            <label>跟进类型</label>
+            <label>所属项目</label>
+            <select onchange="moveCustomer('${it.id}', this.value)">${projectOptionsHTML(it.project_id, true)}</select>
+            <label style="margin-left:10px;">跟进类型</label>
             <select onchange="changeFollowType('${it.id}', this.value)">
               ${FOLLOW_TYPES.map(o => `<option value="${o.v}" ${effType(it) === o.v ? 'selected' : ''}>${o.label}</option>`).join('')}
             </select>
@@ -1544,6 +1596,9 @@ function renderModal() {
             <input type="date" value="${it.next_action_date || ''}" onchange="saveItemField('${it.id}', 'next_action_date', this.value || null)" />
             <input type="text" value="${escAttr(it.next_action_note)}" placeholder="下次要做什么" onchange="saveItemField('${it.id}', 'next_action_note', this.value)" />
           </div>
+        </div>
+        <div class="modal-footer">
+          <button class="ghost danger" onclick="deleteCustomerFromModal('${it.id}', '${escJs(it.name)}')">删除此客户</button>
         </div>
       </div>
     </div>
