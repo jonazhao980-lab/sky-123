@@ -523,6 +523,18 @@
   }
   .followup-add select { height: 40px; align-self: flex-end; font-family: inherit; font-size: 13px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); background: var(--surface-2); padding: 0 6px; }
 
+  .type-pill { font-size: 11px; font-weight: 600; border-radius: 4px; padding: 0 6px; margin-left: 4px; white-space: nowrap; }
+  .type-pill.t-A { background: #fdf0ef; color: #b3261e; }
+  .type-pill.t-B { background: var(--amber-bg); color: var(--amber-text); }
+  .type-pill.t-C { background: var(--gray-bg); color: var(--gray-text); }
+  .type-pill.t-done { background: var(--green-bg); color: var(--green-text); }
+  .reply-tag { font-size: 11px; background: #fdf0ef; color: #b3261e; border-radius: 4px; padding: 0 6px; margin-left: 6px; }
+  .reply-check { display: flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--text-secondary); align-self: flex-end; height: 40px; white-space: nowrap; cursor: pointer; }
+  .reply-check input { width: auto; height: auto; }
+  .follow-type-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--surface-1); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  .follow-type-box label { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+  .follow-type-box select { height: 34px; font-family: inherit; font-size: 13.5px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); background: var(--surface-2); padding: 0 8px; }
+  .follow-type-hint { font-size: 12.5px; color: var(--text-secondary); }
   .search-count { font-size: 12.5px; color: var(--text-muted); margin-bottom: 8px; }
   .search-hit { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; }
   .search-hit:hover { border-color: var(--border-strong); }
@@ -888,6 +900,7 @@ function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
                 <div class="item-date-row clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">
                   <span class="item-date-label">最后跟进：</span>
                   <span class="item-date-value">${it.last_contact || '—'}</span>
+                  ${typePill(it)}
                   ${it.stage ? `<span class="stage-pill">${escHtml(it.stage)}</span>` : ''}
                   ${isOverdue(it) ? `<span class="overdue-tag">⚠ 超期未跟进</span>` : ''}
                 </div>
@@ -923,6 +936,30 @@ function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
 
 // ---- 客户资料常量、搜索（公司/邮箱/联系人/背景/跟进内容）、查重、今日待跟进 ----
 const STAGES = ['询盘', '报价中', '谈判', '已成交', '夭折', '沉睡'];
+// 跟进规则引擎：A 有意向(3天) / B 间歇回复(7天) / C 沉睡或没回(15天→30天) / 已成交、已转交（不跟踪）
+const FOLLOW_TYPES = [
+  { v: 'A', label: 'A 有意向/在谈（3天）' },
+  { v: 'B', label: 'B 间歇回复（7天）' },
+  { v: 'C', label: 'C 沉睡/没回（15→30天）' },
+  { v: '已成交', label: '已成交（不跟踪）' },
+  { v: '已转交', label: '已转交（不跟踪）' },
+];
+function effType(it) { return it.follow_type || 'C'; }   // 空 = 未分类，按 C 处理
+function isTracked(it) {
+  return !['已成交', '已转交'].includes(effType(it)) && it.status !== '已结案' &&
+    !['已成交', '夭折'].includes(it.stage) && it.outreach_status !== '已成交';
+}
+function typePill(it) {
+  const t = effType(it);
+  const label = t === 'A' || t === 'B' || t === 'C' ? t + '类' : t;
+  return `<span class="type-pill t-${t === '已成交' || t === '已转交' ? 'done' : t}">${label}</span>`;
+}
+function followAdvice(it, daysSince) {
+  const t = effType(it);
+  const quiet = daysSince == null ? '还没联系过' : `${daysSince}天没回`;
+  if (daysSince == null) return `${quiet}，首次触达`;
+  return t === 'A' ? `${quiet}，问进展` : t === 'B' ? `${quiet}，发跟进信` : `${quiet}，轻触达保持联系`;
+}
 const SOURCES = ['展会', '老客户', '询盘', '名片', '其他'];
 const CHANNELS = ['邮件', 'WhatsApp', '电话', '会议', '其他'];
 
@@ -996,7 +1033,7 @@ function searchResultsHTML(term) {
         ${oneLine ? `<div class="search-hit-line muted">${escHtml(oneLine)}</div>` : ''}
         <div class="search-hit-ups">
           ${ups.length === 0 ? `<div class="search-hit-line muted">还没有跟进记录</div>`
-            : ups.map(f => `<div class="search-hit-up"><span class="search-hit-date">${fmtDateTime(f.created_at).slice(0, 10)}</span>${f.channel ? `<span class="channel-tag">${escHtml(f.channel)}</span>` : ''}${escHtml(truncate(f.content, 140))}</div>`).join('')}
+            : ups.map(f => `<div class="search-hit-up"><span class="search-hit-date">${fmtDateTime(f.created_at).slice(0, 10)}</span>${f.channel ? `<span class="channel-tag">${escHtml(f.channel)}</span>` : ''}${f.from_customer ? `<span class="reply-tag">客户回复</span>` : ''}${escHtml(truncate(f.content, 140))}</div>`).join('')}
         </div>
       </div>`;
   }).join('');
@@ -1009,8 +1046,7 @@ function renderToday() {
   const today = todayStr();
   const todayMs = new Date(today + 'T00:00:00').getTime();
   const due = allItemsWithProject().filter(it =>
-    it.next_action_date && it.next_action_date <= today &&
-    it.status !== '已结案' && !['已成交', '夭折'].includes(it.stage) && it.outreach_status !== '已成交'
+    it.next_action_date && it.next_action_date <= today && isTracked(it)
   ).sort((a, b) => a.next_action_date.localeCompare(b.next_action_date));
   document.getElementById('today-count').textContent = due.length;
   if (due.length === 0) {
@@ -1020,13 +1056,13 @@ function renderToday() {
   box.innerHTML = due.map(it => {
     const diff = Math.round((todayMs - new Date(it.next_action_date + 'T00:00:00').getTime()) / 86400000);
     const lastDays = it.last_contact ? Math.floor((todayMs - new Date(it.last_contact + 'T00:00:00').getTime()) / 86400000) : null;
-    const tags = [it.stage || it.outreach_status || '', lastDays != null ? `${lastDays}天前联系` : ''].filter(Boolean).join(' · ');
+    const note = it.next_action_note ? `｜${it.next_action_note}` : '';
     return `
       <div class="today-row ${diff > 0 ? 'late' : ''}" onclick="openCustomerModal('${it.id}')">
         <span class="today-when">${diff === 0 ? '今日' : `逾期${diff}天`}</span>
         <span class="today-name">${escHtml(it.name)}</span>
-        ${tags ? `<span class="today-tags">${escHtml(tags)}</span>` : ''}
-        <span class="today-action">→ ${escHtml(it.next_action_note || '跟进')}</span>
+        ${typePill(it)}
+        <span class="today-action">→ ${escHtml(followAdvice(it, lastDays) + note)}</span>
       </div>`;
   }).join('');
 }
@@ -1346,6 +1382,15 @@ function renderModal() {
 
         <div class="modal-section">
           <div class="modal-section-title">🧾 客户资料</div>
+          <div class="follow-type-box">
+            <label>跟进类型</label>
+            <select onchange="changeFollowType('${it.id}', this.value)">
+              ${FOLLOW_TYPES.map(o => `<option value="${o.v}" ${effType(it) === o.v ? 'selected' : ''}>${o.label}</option>`).join('')}
+            </select>
+            <span class="follow-type-hint">${isTracked(it)
+              ? (it.next_action_date ? `下次跟进：<b>${it.next_action_date}</b>（系统按规则自动算）` : '下次跟进：第一次联系后自动开始计时')
+              : '已退出跟进，不会出现在今日待跟进'}${it.follow_type ? '' : '　· 未分类，按 C 处理'}</span>
+          </div>
           <div class="info-grid">
             <div class="info-field">
               <label>进展阶段</label>
@@ -1474,6 +1519,9 @@ function renderModal() {
             <select id="followup-channel" title="沟通方式">
               ${CHANNELS.map(c => `<option value="${c}">${c}</option>`).join('')}
             </select>
+            <label class="reply-check" title="客户回了信/有新进展就勾上：系统会把客户升回 A 类（3天后再跟）；不勾 = 我方跟进、客户还没回">
+              <input type="checkbox" id="followup-from-customer"> 客户回复
+            </label>
             <textarea id="followup-input" placeholder="记录本次跟进内容，如：发了邮件，介绍了产品报价，等待回复"></textarea>
             <button onclick="addFollowUp()"><span class="icon-plus">+</span></button>
           </div>
@@ -1482,7 +1530,7 @@ function renderModal() {
               ? `<div class="followup-empty">还没有跟进记录</div>`
               : modalFollowUps.map(f => { const escContent = escJs(f.content); return `
                 <div class="followup-entry">
-                  <div class="followup-time">${fmtDateTime(f.created_at)}${f.channel ? `<span class="channel-tag">${escHtml(f.channel)}</span>` : ''}</div>
+                  <div class="followup-time">${fmtDateTime(f.created_at)}${f.channel ? `<span class="channel-tag">${escHtml(f.channel)}</span>` : ''}${f.from_customer ? `<span class="reply-tag">客户回复</span>` : ''}</div>
                   <div class="followup-content" id="followup-content-${f.id}" title="双击也可修改" ondblclick="editFollowUpEntry(event, '${f.id}', '${escContent}')">${escHtml(f.content)}</div>
                   <div class="followup-actions">
                     <button aria-label="编辑" onclick="editFollowUpEntry(event, '${f.id}', '${escContent}', true)"><span class="icon-edit">✎</span></button>
@@ -1492,7 +1540,7 @@ function renderModal() {
               `; }).join('')}
           </div>
           <div class="next-action-banner">
-            <label>⏰ 下次行动</label>
+            <label title="日期由系统按规则自动算，也可以手动改成特定日期">⏰ 下次跟进</label>
             <input type="date" value="${it.next_action_date || ''}" onchange="saveItemField('${it.id}', 'next_action_date', this.value || null)" />
             <input type="text" value="${escAttr(it.next_action_note)}" placeholder="下次要做什么" onchange="saveItemField('${it.id}', 'next_action_note', this.value)" />
           </div>
@@ -1587,11 +1635,20 @@ async function addFollowUp() {
   const val = input.value.trim();
   if (!val) return;
   const channel = document.getElementById('followup-channel').value;
-  const { error } = await sb.from('follow_ups').insert({ item_id: modalItemId, content: val, channel });
+  const fromCustomer = document.getElementById('followup-from-customer').checked;
+  // 最近联系日期、跟进类型、下次跟进日期由数据库触发器按规则自动更新
+  const { error } = await sb.from('follow_ups').insert({ item_id: modalItemId, content: val, channel, from_customer: fromCustomer });
   if (error) { alert('保存失败：' + error.message); return; }
-  await sb.from('items').update({ last_contact: todayStr() }).eq('id', modalItemId);
+  await load();
   await loadFollowUps(modalItemId);
-  load();
+}
+
+async function changeFollowType(id, type) {
+  // 改类型后，数据库按新类型重新算下次跟进日期
+  const { error } = await sb.from('items').update({ follow_type: type }).eq('id', id);
+  if (error) { alert('保存失败：' + error.message); return; }
+  await load();
+  renderModal();
 }
 
 async function deleteFollowUp(id) {
