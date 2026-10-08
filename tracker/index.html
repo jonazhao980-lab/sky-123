@@ -499,6 +499,10 @@
   .weekly-card.collapsed { padding-top: 0.7rem; padding-bottom: 0.7rem; }
   .weekly-card.collapsed .weekly-sections { display: none; }
   .today-inbox-link { margin-left: auto; font-size: 12.5px; font-weight: 500; color: var(--accent-text); cursor: pointer; }
+  .today-row.hot { background: #fff6e8; border-left: 3px solid #e08a00; padding-left: 8px; }
+  .today-row.hot:hover { background: #ffefd2; }
+  .today-row.hot .today-name { color: #b3261e; font-weight: 700; }
+  .hot-badge { font-size: 11.5px; font-weight: 700; color: #fff; background: #e08a00; border-radius: 4px; padding: 0 7px; white-space: nowrap; }
   .today-proj { font-size: 12px; color: var(--text-muted); }
 
   .inbox-badge { background: #b3261e; color: #fff; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 0 6px; margin-left: 6px; }
@@ -1134,7 +1138,8 @@ function renderToday() {
   const todayMs = new Date(today + 'T00:00:00').getTime();
   const due = allItemsWithProject().filter(it =>
     it.next_action_date && it.next_action_date <= today && isTracked(it)
-  ).sort((a, b) => a.next_action_date.localeCompare(b.next_action_date));
+  ).sort((a, b) => ((effType(a) === 'A') === (effType(b) === 'A') ? 0 : effType(a) === 'A' ? -1 : 1)
+                || a.next_action_date.localeCompare(b.next_action_date));
   document.getElementById('today-count').textContent = due.length;
   if (due.length === 0) {
     box.innerHTML = `<div class="today-empty">今天没有到期的待跟进 🎉</div>`;
@@ -1144,9 +1149,11 @@ function renderToday() {
     const diff = Math.round((todayMs - new Date(it.next_action_date + 'T00:00:00').getTime()) / 86400000);
     const lastDays = it.last_contact ? Math.floor((todayMs - new Date(it.last_contact + 'T00:00:00').getTime()) / 86400000) : null;
     const note = it.next_action_note ? `｜${it.next_action_note}` : '';
+    const hot = effType(it) === 'A';
     return `
-      <div class="today-row ${diff > 0 ? 'late' : ''}" onclick="openCustomerModal('${it.id}')">
+      <div class="today-row ${diff > 0 ? 'late' : ''} ${hot ? 'hot' : ''}" onclick="openCustomerModal('${it.id}')">
         <span class="today-when">${diff === 0 ? '今日' : `逾期${diff}天`}</span>
+        ${hot ? '<span class="hot-badge">⭐ 重点跟</span>' : ''}
         <span class="today-name">${escHtml(it.name)}</span>
         <span class="today-proj">${escHtml(projectPath(it.project_id))}</span>
         ${typePill(it)}
