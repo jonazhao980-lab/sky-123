@@ -492,6 +492,48 @@
   .next-action-banner label { font-size: 12.5px; color: var(--amber-text); font-weight: 600; white-space: nowrap; }
   .next-action-banner input[type="date"] { height: 30px; font-size: 12.5px; background: #fff; }
   .next-action-banner input[type="text"] { flex: 1; min-width: 140px; height: 30px; font-size: 13px; background: #fff; }
+
+  .today-card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-left: 3px solid var(--amber-text);
+    border-radius: 12px;
+    padding: 0.9rem 1.1rem;
+    margin: 18px 0 1.2rem;
+  }
+  .today-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .today-count { font-size: 12px; font-weight: 600; background: var(--amber-bg); color: var(--amber-text); border-radius: 999px; padding: 1px 9px; }
+  #today-list { max-height: 230px; overflow-y: auto; }
+  .today-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 6px; border-radius: 6px; font-size: 13px; cursor: pointer; flex-wrap: wrap; }
+  .today-row:hover { background: var(--surface-1); }
+  .today-when { font-size: 11.5px; font-weight: 600; color: var(--amber-text); background: var(--amber-bg); border-radius: 4px; padding: 0 6px; white-space: nowrap; }
+  .today-row.late .today-when { color: #b3261e; background: #fdf0ef; }
+  .today-name { font-weight: 600; }
+  .today-tags { font-size: 12px; color: var(--text-muted); }
+  .today-action { color: var(--text-secondary); }
+  .today-empty { font-size: 13px; color: var(--text-muted); padding: 4px 6px; }
+
+  .stage-pill { font-size: 11px; background: var(--purple-bg); color: var(--purple-text); border-radius: 999px; padding: 0 8px; margin-left: 4px; white-space: nowrap; }
+  .channel-tag { font-size: 11px; background: var(--accent-bg); color: var(--accent-text); border-radius: 4px; padding: 0 6px; margin-left: 6px; }
+  .modal-latest { font-size: 13px; color: var(--text-secondary); background: var(--surface-1); border-radius: 8px; padding: 8px 12px; margin: -0.6rem 0 1.4rem; line-height: 1.6; }
+  .info-field select {
+    width: 100%; height: 36px; font-family: inherit; font-size: 14px; padding: 0 10px;
+    border-radius: var(--radius); border: 0.5px solid var(--border-strong);
+    background: var(--surface-2); color: var(--text-primary);
+  }
+  .followup-add select { height: 40px; align-self: flex-end; font-family: inherit; font-size: 13px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); background: var(--surface-2); padding: 0 6px; }
+
+  .search-count { font-size: 12.5px; color: var(--text-muted); margin-bottom: 8px; }
+  .search-hit { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; }
+  .search-hit:hover { border-color: var(--border-strong); }
+  .search-hit-top { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+  .search-hit-name { font-size: 15px; font-weight: 600; }
+  .search-hit-path { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+  .search-hit-line { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; word-break: break-word; }
+  .search-hit-line.muted { color: var(--text-muted); }
+  .search-hit-ups { margin-top: 8px; border-top: 0.5px solid var(--border); padding-top: 6px; }
+  .search-hit-up { font-size: 12.5px; color: var(--text-primary); padding: 2px 0; word-break: break-word; }
+  .search-hit-date { color: var(--text-muted); margin-right: 4px; }
 </style>
 </head>
 <body>
@@ -509,6 +551,10 @@
   <div class="wrap">
     <a class="back-link" href="../">← 返回工作台首页</a>
     <h1><span class="sync-dot offline" id="sync-dot"></span>SKY 市场部开发项目进度看板</h1>
+    <div class="today-card" id="today-card">
+      <div class="today-title">📌 今日待跟进 <span class="today-count" id="today-count">0</span></div>
+      <div id="today-list"></div>
+    </div>
     <div class="weekly-card" id="weekly-card">
       <img class="weekly-avatar" src="./avatar.png" alt="头像" />
       <span class="weekly-pin">📌</span>
@@ -602,6 +648,7 @@ function switchView(view) {
   document.getElementById('board-view').style.display = view === 'board' ? 'block' : 'none';
   document.getElementById('overview-view').style.display = view === 'overview' ? 'block' : 'none';
   document.getElementById('weekly-card').style.display = view === 'board' ? 'flex' : 'none';
+  document.getElementById('today-card').style.display = view === 'board' ? 'block' : 'none';
   if (view === 'overview') renderOverview();
 }
 
@@ -691,15 +738,18 @@ function showApp() {
     sb.channel('public:board')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'items' }, load)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, load)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'follow_ups' }, load)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'contacts' }, load)
       .subscribe();
   }
 }
 
 async function load() {
-  const [{ data: projs, error: e1 }, { data: items, error: e2 }, { data: allFollowUps }] = await Promise.all([
+  const [{ data: projs, error: e1 }, { data: items, error: e2 }, { data: allFollowUps }, { data: allContacts }] = await Promise.all([
     sb.from('projects').select('*').order('sort_order'),
     sb.from('items').select('*').order('sort_order'),
-    sb.from('follow_ups').select('item_id, content, created_at').order('created_at', { ascending: false }),
+    sb.from('follow_ups').select('*').order('created_at', { ascending: false }),
+    sb.from('contacts').select('*').order('sort_order'),
   ]);
   const dot = document.getElementById('sync-dot');
   if (e1 || e2) {
@@ -708,9 +758,15 @@ async function load() {
     return;
   }
   dot.classList.remove('offline');
-  const latestFollowupByItem = {};
+  const followUpsByItem = {};
   (allFollowUps || []).forEach(f => {
-    if (!latestFollowupByItem[f.item_id]) latestFollowupByItem[f.item_id] = f;
+    if (!followUpsByItem[f.item_id]) followUpsByItem[f.item_id] = [];
+    followUpsByItem[f.item_id].push(f); // 已按时间倒序，最新在前
+  });
+  const contactsByItem = {};
+  (allContacts || []).forEach(c => {
+    if (!contactsByItem[c.item_id]) contactsByItem[c.item_id] = [];
+    contactsByItem[c.item_id].push(c);
   });
   const byId = {};
   (projs || []).forEach(p => {
@@ -718,7 +774,12 @@ async function load() {
       ...p,
       items: (items || [])
         .filter(it => it.project_id === p.id)
-        .map(it => ({ ...it, latestFollowup: latestFollowupByItem[it.id] || null }))
+        .map(it => ({
+          ...it,
+          latestFollowup: (followUpsByItem[it.id] || [])[0] || null,
+          followUps: followUpsByItem[it.id] || [],
+          contacts: contactsByItem[it.id] || [],
+        }))
         .sort(sortItems),
       subProjects: [],
     };
@@ -736,6 +797,7 @@ async function load() {
   projects = roots;
   render();
   renderWeeklySummary();
+  renderToday();
   if (currentView === 'overview') renderOverview();
 }
 
@@ -826,6 +888,7 @@ function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
                 <div class="item-date-row clickable" onclick="event.stopPropagation(); openCustomerModal('${it.id}')">
                   <span class="item-date-label">最后跟进：</span>
                   <span class="item-date-value">${it.last_contact || '—'}</span>
+                  ${it.stage ? `<span class="stage-pill">${escHtml(it.stage)}</span>` : ''}
                   ${isOverdue(it) ? `<span class="overdue-tag">⚠ 超期未跟进</span>` : ''}
                 </div>
                 ${p.id === TRAILER_PROJECT_ID ? `
@@ -858,18 +921,121 @@ function projectCardHTML(p, { searching, isSub, chevronOpen, panelOpen }) {
   `;
 }
 
+// ---- 客户资料常量、搜索（公司/邮箱/联系人/背景/跟进内容）、查重、今日待跟进 ----
+const STAGES = ['询盘', '报价中', '谈判', '已成交', '夭折', '沉睡'];
+const SOURCES = ['展会', '老客户', '询盘', '名片', '其他'];
+const CHANNELS = ['邮件', 'WhatsApp', '电话', '会议', '其他'];
+
+function allItemsWithProject() {
+  const out = [];
+  projects.forEach(p => {
+    p.items.forEach(it => out.push(it));
+    (p.subProjects || []).forEach(sp => sp.items.forEach(it => out.push(it)));
+  });
+  return out;
+}
+
+function projectPath(projectId) {
+  for (const p of projects) {
+    if (p.id === projectId) return p.name;
+    const sp = (p.subProjects || []).find(s => s.id === projectId);
+    if (sp) return `${p.name} › ${sp.name}`;
+  }
+  return '';
+}
+
+function itemSearchText(it) {
+  return [
+    it.name, it.company, it.note, it.background, it.country, it.industry_tag, it.source_channel,
+    it.pain_points, it.key_note, it.website, it.hq_address, it.partners, it.recent_activity,
+    ...(it.contacts || []).flatMap(c => [c.name, c.title, c.email, c.phone]),
+    ...(it.followUps || []).map(f => f.content),
+    projectPath(it.project_id),
+  ].filter(Boolean).join('\n').toLowerCase();
+}
+
+const GENERIC_TOKENS = new Set(['group', 'panel', 'panels', 'metal', 'metals', 'steel', 'trade', 'trading', 'sign', 'signs', 'tech', 'alum', 'aluminium', 'aluminum', 'aluminio', 'global', 'world', 'international', 'intl', 'industries', 'industrial', 'solutions', 'systems', 'materials', 'building', 'plastics', 'facade', 'facades', 'europe', 'euro', 'china', 'mexico', 'brasil', 'brazil', 'usa', 'america', 'american', 'north', 'south']);
+const LEGAL_TOKENS = new Set(['llc', 'ltd', 'limited', 'inc', 'corp', 'co', 'gmbh', 'kg', 'sa', 'de', 'cv', 'sl', 'srl', 'spa', 'bv', 'ab', 'oy', 'ag', 'pty', 'pte', 'the']);
+function normName(s) {
+  const t = String(s || '').toLowerCase()
+    .replace(/（[^）]*）|\([^)]*\)/g, ' ')
+    .replace(/[^a-z0-9一-龥]+/g, ' ').trim();
+  return t.split(' ').filter(w => w && !LEGAL_TOKENS.has(w)).join(' ');
+}
+
+// 查重：新增客户前与已有客户的名称/公司比对（名称相同、互相包含、或首个单词相同）
+function findSimilarCustomers(name) {
+  const n = normName(name);
+  if (n.length < 3) return [];
+  const firstTok = n.split(' ')[0];
+  return allItemsWithProject().filter(it => [it.name, it.company].some(x => {
+    const m = normName(x);
+    if (!m) return false;
+    if (m === n || (n.length >= 4 && m.includes(n)) || (m.length >= 4 && n.includes(m))) return true;
+    return firstTok.length >= 4 && !GENERIC_TOKENS.has(firstTok) && m.split(' ')[0] === firstTok;
+  }));
+}
+
+function searchResultsHTML(term) {
+  const hits = allItemsWithProject().filter(it => itemSearchText(it).includes(term));
+  if (hits.length === 0) return `<p class="loading">没有找到包含"${escHtml(term)}"的客户</p>`;
+  return `<div class="search-count">找到 ${hits.length} 个客户（点击卡片查看完整档案）</div>` + hits.map(it => {
+    const contactLine = (it.contacts || []).map(c => [c.name, c.title].filter(Boolean).join('·')).join('；');
+    const emails = (it.contacts || []).map(c => c.email).filter(Boolean).join(' / ');
+    const oneLine = it.background ? truncate(it.background.replace(/\s+/g, ' '), 120) : (it.note || '');
+    const ups = it.followUps || [];
+    return `
+      <div class="search-hit" onclick="openCustomerModal('${it.id}')">
+        <div class="search-hit-top">
+          <span class="search-hit-name">${escHtml(it.name)}</span>
+          ${it.stage ? `<span class="stage-pill">${escHtml(it.stage)}</span>` : ''}
+          <span class="search-hit-path">${escHtml(projectPath(it.project_id))}</span>
+        </div>
+        ${it.company || it.country ? `<div class="search-hit-line">🏢 ${escHtml([it.company, it.country].filter(Boolean).join(' · '))}</div>` : ''}
+        ${contactLine || emails ? `<div class="search-hit-line">👤 ${escHtml(contactLine)}${emails ? `　✉ ${escHtml(emails)}` : ''}</div>` : ''}
+        ${oneLine ? `<div class="search-hit-line muted">${escHtml(oneLine)}</div>` : ''}
+        <div class="search-hit-ups">
+          ${ups.length === 0 ? `<div class="search-hit-line muted">还没有跟进记录</div>`
+            : ups.map(f => `<div class="search-hit-up"><span class="search-hit-date">${fmtDateTime(f.created_at).slice(0, 10)}</span>${f.channel ? `<span class="channel-tag">${escHtml(f.channel)}</span>` : ''}${escHtml(truncate(f.content, 140))}</div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// 今日待跟进：下次跟进日期 ≤ 今天，且客户还没成交/夭折/结案
+function renderToday() {
+  const box = document.getElementById('today-list');
+  if (!box) return;
+  const today = todayStr();
+  const todayMs = new Date(today + 'T00:00:00').getTime();
+  const due = allItemsWithProject().filter(it =>
+    it.next_action_date && it.next_action_date <= today &&
+    it.status !== '已结案' && !['已成交', '夭折'].includes(it.stage) && it.outreach_status !== '已成交'
+  ).sort((a, b) => a.next_action_date.localeCompare(b.next_action_date));
+  document.getElementById('today-count').textContent = due.length;
+  if (due.length === 0) {
+    box.innerHTML = `<div class="today-empty">今天没有到期的待跟进 🎉</div>`;
+    return;
+  }
+  box.innerHTML = due.map(it => {
+    const diff = Math.round((todayMs - new Date(it.next_action_date + 'T00:00:00').getTime()) / 86400000);
+    const lastDays = it.last_contact ? Math.floor((todayMs - new Date(it.last_contact + 'T00:00:00').getTime()) / 86400000) : null;
+    const tags = [it.stage || it.outreach_status || '', lastDays != null ? `${lastDays}天前联系` : ''].filter(Boolean).join(' · ');
+    return `
+      <div class="today-row ${diff > 0 ? 'late' : ''}" onclick="openCustomerModal('${it.id}')">
+        <span class="today-when">${diff === 0 ? '今日' : `逾期${diff}天`}</span>
+        <span class="today-name">${escHtml(it.name)}</span>
+        ${tags ? `<span class="today-tags">${escHtml(tags)}</span>` : ''}
+        <span class="today-action">→ ${escHtml(it.next_action_note || '跟进')}</span>
+      </div>`;
+  }).join('');
+}
+
 function render() {
   const app = document.getElementById('app');
-  const term = searchTerm;
-  const searching = !!term;
-  const list = !searching ? projects : projects.map(p => {
-    const projectMatches = p.name.toLowerCase().includes(term);
-    const matchedItems = p.items.filter(it =>
-      it.name.toLowerCase().includes(term) || (it.note || '').toLowerCase().includes(term)
-    );
-    if (!projectMatches && matchedItems.length === 0) return null;
-    return { ...p, items: projectMatches ? p.items : matchedItems };
-  }).filter(Boolean);
+  if (searchTerm) { app.innerHTML = searchResultsHTML(searchTerm); return; }
+  const searching = false;
+  const list = projects;
 
   app.innerHTML = list.map(p => {
     const subIds = (p.subProjects || []).map(sp => sp.id);
@@ -991,6 +1157,8 @@ async function addItem(id) {
   const input = document.getElementById('in-' + id);
   const val = input.value.trim();
   if (!val) return;
+  const dup = findSimilarCustomers(val);
+  if (dup.length && !confirm(`⚠️ 疑似与已有客户重叠：\n${dup.map(d => '· ' + d.name + '（' + projectPath(d.project_id) + '）').join('\n')}\n\n仍然要新增"${val}"吗？（取消=不新增，请先搜索确认）`)) return;
   input.value = '';
   const { error } = await sb.from('items').insert({ project_id: id, name: val, status: '进行中', note: '' });
   if (error) { alert('保存失败：' + error.message); return; }
@@ -1167,6 +1335,43 @@ function renderModal() {
           <button class="modal-close" aria-label="关闭" onclick="closeCustomerModal()"><span class="icon-x">×</span></button>
         </div>
 
+        <div class="modal-latest">
+          ${(() => {
+            const f = modalFollowUps[0];
+            const next = it.next_action_note ? `　⏰ 下一步：${escHtml(it.next_action_note)}${it.next_action_date ? `（${it.next_action_date}）` : ''}` : '';
+            if (!f) return `<b>最近动态：</b>暂无跟进记录${next}`;
+            return `<b>最近动态：</b>${fmtDateTime(f.created_at).slice(0, 10)}${f.channel ? ` [${escHtml(f.channel)}]` : ''} ${escHtml(truncate(f.content, 110))}${next}`;
+          })()}
+        </div>
+
+        <div class="modal-section">
+          <div class="modal-section-title">🧾 客户资料</div>
+          <div class="info-grid">
+            <div class="info-field">
+              <label>进展阶段</label>
+              <select onchange="saveItemField('${it.id}', 'stage', this.value || null)">
+                <option value="">—</option>
+                ${STAGES.map(s => `<option value="${s}" ${it.stage === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <div class="info-field">
+              <label>来源</label>
+              <select onchange="saveItemField('${it.id}', 'source', this.value || null)">
+                <option value="">—</option>
+                ${SOURCES.map(s => `<option value="${s}" ${it.source === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <div class="info-field">
+              <label>客户公司</label>
+              <input type="text" value="${escAttr(it.company)}" placeholder="公司全称（查重用）" onchange="saveItemField('${it.id}', 'company', this.value)" />
+            </div>
+            <div class="info-field">
+              <label>国家</label>
+              <input type="text" value="${escAttr(it.country)}" placeholder="如：墨西哥" onchange="saveItemField('${it.id}', 'country', this.value)" />
+            </div>
+          </div>
+        </div>
+
         <div class="modal-section">
           <div class="modal-section-title">📝 备注</div>
           <div class="note-field">
@@ -1200,6 +1405,20 @@ function renderModal() {
             <div class="info-field">
               <label>近期动态</label>
               <textarea placeholder="近期动态" onchange="saveItemField('${it.id}', 'recent_activity', this.value)">${escHtml(it.recent_activity)}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <div class="modal-section-title">💡 痛点与重点提示</div>
+          <div class="info-grid">
+            <div class="info-field">
+              <label>客户痛点 / 为什么可能选我们</label>
+              <textarea placeholder="一句话即可" onchange="saveItemField('${it.id}', 'pain_points', this.value)">${escHtml(it.pain_points)}</textarea>
+            </div>
+            <div class="info-field">
+              <label>重点提示</label>
+              <textarea placeholder="如：墨西哥NO.1拖车制造商 / 不要提已查到的LinkedIn背景" onchange="saveItemField('${it.id}', 'key_note', this.value)">${escHtml(it.key_note)}</textarea>
             </div>
           </div>
         </div>
@@ -1252,6 +1471,9 @@ function renderModal() {
         <div class="modal-section">
           <div class="modal-section-title">🗒 跟进记录</div>
           <div class="followup-add">
+            <select id="followup-channel" title="沟通方式">
+              ${CHANNELS.map(c => `<option value="${c}">${c}</option>`).join('')}
+            </select>
             <textarea id="followup-input" placeholder="记录本次跟进内容，如：发了邮件，介绍了产品报价，等待回复"></textarea>
             <button onclick="addFollowUp()"><span class="icon-plus">+</span></button>
           </div>
@@ -1260,7 +1482,7 @@ function renderModal() {
               ? `<div class="followup-empty">还没有跟进记录</div>`
               : modalFollowUps.map(f => { const escContent = escJs(f.content); return `
                 <div class="followup-entry">
-                  <div class="followup-time">${fmtDateTime(f.created_at)}</div>
+                  <div class="followup-time">${fmtDateTime(f.created_at)}${f.channel ? `<span class="channel-tag">${escHtml(f.channel)}</span>` : ''}</div>
                   <div class="followup-content" id="followup-content-${f.id}" title="双击也可修改" ondblclick="editFollowUpEntry(event, '${f.id}', '${escContent}')">${escHtml(f.content)}</div>
                   <div class="followup-actions">
                     <button aria-label="编辑" onclick="editFollowUpEntry(event, '${f.id}', '${escContent}', true)"><span class="icon-edit">✎</span></button>
@@ -1364,10 +1586,10 @@ async function addFollowUp() {
   const input = document.getElementById('followup-input');
   const val = input.value.trim();
   if (!val) return;
-  const today = new Date().toISOString().slice(0, 10);
-  const { error } = await sb.from('follow_ups').insert({ item_id: modalItemId, content: val });
+  const channel = document.getElementById('followup-channel').value;
+  const { error } = await sb.from('follow_ups').insert({ item_id: modalItemId, content: val, channel });
   if (error) { alert('保存失败：' + error.message); return; }
-  await sb.from('items').update({ last_contact: today }).eq('id', modalItemId);
+  await sb.from('items').update({ last_contact: todayStr() }).eq('id', modalItemId);
   await loadFollowUps(modalItemId);
   load();
 }
