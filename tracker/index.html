@@ -438,6 +438,7 @@
   .type-pill.t-A { background: #fdf0ef; color: #b3261e; }
   .type-pill.t-B { background: var(--amber-bg); color: var(--amber-text); }
   .type-pill.t-C { background: var(--gray-bg); color: var(--gray-text); }
+  .type-pill.t-auto { background: var(--accent-bg); color: var(--accent-text); }
   .type-pill.t-done { background: var(--green-bg); color: var(--green-text); }
   .reply-tag { font-size: 11px; background: #fdf0ef; color: #b3261e; border-radius: 4px; padding: 0 6px; margin-left: 6px; }
   .reply-check { display: flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--text-secondary); align-self: flex-end; height: 40px; white-space: nowrap; cursor: pointer; }
@@ -1036,11 +1037,17 @@ const FOLLOW_TYPES = [
   { v: '已转交', label: '已转交（不跟踪）' },
 ];
 function effType(it) { return it.follow_type || 'C'; }   // 空 = 未分类，按 C 处理
+// 「百型」软件代发阶段：跟进记录全是"百型代发"，客户还没回复、本人也没跟进过 → 只记录，不提醒、不算逾期
+function isBaixingAuto(it) {
+  const f = it.followUps || [];
+  return f.length > 0 && f.every(x => x.channel === '百型代发');
+}
 function isTracked(it) {
   return !['已成交', '已转交'].includes(effType(it)) && it.status !== '已结案' &&
-    !['已成交', '夭折'].includes(it.stage) && it.outreach_status !== '已成交';
+    !['已成交', '夭折'].includes(it.stage) && it.outreach_status !== '已成交' && !isBaixingAuto(it);
 }
 function typePill(it) {
+  if (isBaixingAuto(it)) return `<span class="type-pill t-auto" title="百型软件在自动触达，只记录、不提醒；客户一回复就自动升 A 类">百型触达</span>`;
   const t = effType(it);
   const label = t === 'A' || t === 'B' || t === 'C' ? t + '类' : t;
   return `<span class="type-pill t-${t === '已成交' || t === '已转交' ? 'done' : t}">${label}</span>`;
@@ -1446,9 +1453,9 @@ function renderModal() {
             <select onchange="changeFollowType('${it.id}', this.value)">
               ${FOLLOW_TYPES.map(o => `<option value="${o.v}" ${effType(it) === o.v ? 'selected' : ''}>${o.label}</option>`).join('')}
             </select>
-            <span class="follow-type-hint">${isTracked(it)
+            <span class="follow-type-hint">${isBaixingAuto(it) ? '百型软件自动触达中，系统只记录、不提醒；客户一回复就自动升 A 类，进入今日待跟进' : isTracked(it)
               ? (it.next_action_date ? `下次跟进：<b>${it.next_action_date}</b>（系统按规则自动算）` : '下次跟进：第一次联系后自动开始计时')
-              : '已退出跟进，不会出现在今日待跟进'}${it.follow_type ? '' : '　· 未分类，按 C 处理'}</span>
+              : '已退出跟进，不会出现在今日待跟进'}${it.follow_type || isBaixingAuto(it) ? '' : '　· 未分类，按 C 处理'}</span>
           </div>
           <div class="info-grid">
             <div class="info-field">
