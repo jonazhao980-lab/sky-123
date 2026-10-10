@@ -41,49 +41,6 @@
     line-height: 1.6;
   }
   .wrap { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-  .weekly-card {
-    position: relative;
-    background: var(--surface-2);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.25rem 1rem 3.75rem;
-    margin-bottom: 1.5rem;
-    margin-top: 18px;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-  .weekly-avatar {
-    position: absolute;
-    top: -16px;
-    left: 14px;
-    width: 52px;
-    height: 52px;
-    border-radius: 8px;
-    object-fit: cover;
-    border: 3px solid #fff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
-    transform: rotate(-7deg);
-  }
-  .weekly-pin {
-    position: absolute;
-    top: -24px;
-    left: 34px;
-    font-size: 20px;
-    transform: rotate(18deg);
-    z-index: 2;
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
-  }
-  .weekly-card h3 { font-size: 13px; font-weight: 600; margin: 0; flex-shrink: 0; }
-  .weekly-range { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
-  .weekly-sections { display: flex; gap: 2rem; flex-wrap: wrap; flex: 1; }
-  .weekly-section { min-width: 160px; }
-  .weekly-section-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
-  .weekly-count { font-size: 11px; color: var(--text-muted); font-weight: 400; }
-  .weekly-list { font-size: 12.5px; color: var(--text-secondary); margin: 0; padding-left: 16px; }
-  .weekly-list li { margin-bottom: 2px; }
-  .weekly-empty { font-size: 12px; color: var(--text-muted); }
   h1 { font-size: 20px; font-weight: 500; margin: 0 0 1.5rem; display: flex; align-items: center; gap: 10px; }
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-text); flex-shrink: 0; }
   .sync-dot.offline { background: var(--amber-text); }
@@ -414,7 +371,12 @@
   }
   .today-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
   .today-count { font-size: 12px; font-weight: 600; background: var(--amber-bg); color: var(--amber-text); border-radius: 999px; padding: 1px 9px; }
-  #today-list { max-height: 230px; overflow-y: auto; }
+  #today-list { max-height: 420px; overflow-y: auto; }
+  .today-group + .today-group { margin-top: 10px; padding-top: 8px; border-top: 0.5px dashed var(--border-strong); }
+  .today-group-title { font-size: 12.5px; font-weight: 700; color: var(--text-primary); display: flex; align-items: baseline; gap: 6px; padding: 0 6px 3px; }
+  .today-group-count { font-size: 11.5px; font-weight: 600; color: var(--text-muted); }
+  .today-group-desc { font-size: 11.5px; font-weight: 400; color: var(--text-muted); }
+  .today-group.g-A .today-group-title { color: #b3261e; }
   .today-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 6px; border-radius: 6px; font-size: 13px; cursor: pointer; flex-wrap: wrap; }
   .today-row:hover { background: var(--surface-1); }
   .today-when { font-size: 11.5px; font-weight: 600; color: var(--amber-text); background: var(--amber-bg); border-radius: 4px; padding: 0 6px; white-space: nowrap; }
@@ -496,9 +458,6 @@
   .proj-add, .add-sub { margin-top: 10px; }
   @media (max-width: 640px) { .cust-row { flex-direction: column; gap: 6px; } .cust-side { align-items: flex-start; } }
 
-  .weekly-toggle { height: 26px; width: auto; padding: 0 10px; font-size: 12px; color: var(--text-muted); background: transparent; border: 0.5px solid var(--border); margin-left: auto; }
-  .weekly-card.collapsed { padding-top: 0.7rem; padding-bottom: 0.7rem; }
-  .weekly-card.collapsed .weekly-sections { display: none; }
   .today-inbox-link { margin-left: auto; font-size: 12.5px; font-weight: 500; color: var(--accent-text); cursor: pointer; }
   .today-row.hot { background: #fff6e8; border-left: 3px solid #e08a00; padding-left: 8px; }
   .today-row.hot.waiting { background: #fffaf1; }
@@ -541,14 +500,6 @@
         <a class="today-inbox-link" id="today-inbox-link" onclick="switchView('inbox')" hidden></a>
       </div>
       <div id="today-list"></div>
-    </div>
-    <div class="weekly-card" id="weekly-card">
-      <img class="weekly-avatar" src="./avatar.png" alt="头像" />
-      <span class="weekly-pin">📌</span>
-      <h3>📅 本周工作重心</h3>
-      <div class="weekly-range" id="week-range"></div>
-      <button class="weekly-toggle" id="weekly-toggle" onclick="toggleWeekly()">展开</button>
-      <div class="weekly-sections" id="weekly-summary"></div>
     </div>
     <div class="view-tabs">
       <button class="view-tab-btn active" id="tab-board" onclick="switchView('board')">看板</button>
@@ -630,7 +581,6 @@ function switchView(view) {
     document.getElementById('tab-' + v).classList.toggle('active', view === v);
     document.getElementById(v + '-view').style.display = view === v ? 'block' : 'none';
   });
-  document.getElementById('weekly-card').style.display = view === 'board' ? 'flex' : 'none';
   if (view === 'overview') renderOverview();
   if (view === 'inbox') renderInbox();
 }
@@ -865,7 +815,6 @@ async function load() {
   Object.values(byId).forEach(p => p.subProjects.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)));
   projects = roots;
   render();
-  renderWeeklySummary();
   renderToday();
   renderInbox();
   if (currentView === 'overview') renderOverview();
@@ -897,51 +846,6 @@ function getWeekRange(ref) {
 
 function fmtMD(d) {
   return `${d.getMonth() + 1}/${d.getDate()}`;
-}
-
-function renderWeeklySummary() {
-  const rangeEl = document.getElementById('week-range');
-  const box = document.getElementById('weekly-summary');
-  const { start, end } = getWeekRange();
-  const allItems = allItemsWithProject();
-  const inRange = (dateStr) => {
-    if (!dateStr) return false;
-    const d = new Date(dateStr);
-    return d >= start && d <= end;
-  };
-
-  const newProjects = visibleProjects().filter(p => inRange(p.created_at));
-  const newItems = allItems.filter(it => inRange(it.created_at));
-  const followedUp = allItems.filter(it => it.last_contact && inRange(it.last_contact + 'T00:00:00'));
-  rangeEl.textContent = `${fmtMD(start)} - ${fmtMD(end)}　新增 ${newProjects.length + newItems.length} · 跟进 ${followedUp.length}`;
-  applyWeeklyState();
-
-  const section = (title, emoji, list, renderLabel) => `
-    <div class="weekly-section">
-      <div class="weekly-section-title">${emoji} ${title} <span class="weekly-count">${list.length}</span></div>
-      ${list.length === 0
-        ? `<div class="weekly-empty">暂无</div>`
-        : `<ul class="weekly-list">${list.map(x => `<li>${renderLabel(x)}</li>`).join('')}</ul>`}
-    </div>
-  `;
-
-  box.innerHTML =
-    section('本周新增', '🆕', [...newProjects.map(p => ({ name: p.name })), ...newItems.map(it => ({ name: it.name }))], x => x.name) +
-    section('本周跟进', '✅', followedUp, it => it.name);
-}
-
-// 每周卡片默认收起（今日待跟进才是每天的主角），展开状态记在浏览器里
-function weeklyCollapsed() {
-  try { return localStorage.getItem('weeklyCollapsed') !== '0'; } catch (e) { return true; }
-}
-function applyWeeklyState() {
-  const c = weeklyCollapsed();
-  document.getElementById('weekly-card').classList.toggle('collapsed', c);
-  document.getElementById('weekly-toggle').textContent = c ? '展开' : '收起';
-}
-function toggleWeekly() {
-  try { localStorage.setItem('weeklyCollapsed', weeklyCollapsed() ? '0' : '1'); } catch (e) {}
-  applyWeeklyState();
 }
 
 // ---- 项目：横排卡片 + 点开后在下方展开客户清单 ----
@@ -1184,10 +1088,18 @@ function renderToday() {
         <span class="today-action">→ ${escHtml(followAdvice(it, lastDays) + note)}</span>
       </div>`;
   });
-  // 排序：到期的 A → 没到期的 A → 其余（B/C）
-  const firstOther = due.findIndex(it => effType(it) !== 'A');
-  const aCount = firstOther === -1 ? due.length : firstOther;
-  box.innerHTML = dueHtml.slice(0, aCount).join('') + waitingA.map(waitingRow).join('') + dueHtml.slice(aCount).join('');
+  // 按 A / B / C 分三组：A 组 = 到期的 A + 没到期的 A（等待中）；B、C 组 = 各自到期的
+  const dueOf = type => due.map((it, i) => ({ it, html: dueHtml[i] })).filter(x => (effType(x.it) === 'A' ? 'A' : effType(x.it) === 'B' ? 'B' : 'C') === type);
+  const group = (cls, title, desc, rows) => rows.length === 0 ? '' : `
+    <div class="today-group ${cls}">
+      <div class="today-group-title">${title} <span class="today-group-count">${rows.length}</span><span class="today-group-desc">${desc}</span></div>
+      ${rows.join('')}
+    </div>`;
+  const aRows = dueOf('A').map(x => x.html).concat(waitingA.map(waitingRow));
+  box.innerHTML =
+    group('g-A', '⭐ A 类 重点跟', '客户有回复/有进展，3 天一轮', aRows) +
+    group('g-B', 'B 类', '我方跟进后没回，7 天一轮', dueOf('B').map(x => x.html)) +
+    group('g-C', 'C 类', '长期培育，15 / 30 天一轮', dueOf('C').map(x => x.html));
 }
 
 function render() {
