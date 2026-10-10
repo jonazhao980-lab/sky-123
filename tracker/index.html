@@ -361,29 +361,16 @@
   .next-action-banner input[type="date"] { height: 30px; font-size: 12.5px; background: #fff; }
   .next-action-banner input[type="text"] { flex: 1; min-width: 140px; height: 30px; font-size: 13px; background: #fff; }
 
-  .today-card {
-    background: var(--surface-2);
-    border: 0.5px solid var(--border);
-    border-left: 3px solid var(--amber-text);
-    border-radius: 12px;
-    padding: 0.9rem 1.1rem;
-    margin: 18px 0 1.2rem;
-  }
-  .today-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-  .today-count { font-size: 12px; font-weight: 600; background: var(--amber-bg); color: var(--amber-text); border-radius: 999px; padding: 1px 9px; }
-  #today-list { max-height: 420px; overflow-y: auto; }
-  .today-group + .today-group { margin-top: 10px; padding-top: 8px; border-top: 0.5px dashed var(--border-strong); }
-  .today-group-title { font-size: 12.5px; font-weight: 700; color: var(--text-primary); display: flex; align-items: baseline; gap: 6px; padding: 0 6px 3px; }
-  .today-group-count { font-size: 11.5px; font-weight: 600; color: var(--text-muted); }
-  .today-group-desc { font-size: 11.5px; font-weight: 400; color: var(--text-muted); }
-  .today-group.g-A .today-group-title { color: #b3261e; }
-  .today-row { display: flex; align-items: baseline; gap: 8px; padding: 5px 6px; border-radius: 6px; font-size: 13px; cursor: pointer; flex-wrap: wrap; }
-  .today-row:hover { background: var(--surface-1); }
-  .today-when { font-size: 11.5px; font-weight: 600; color: var(--amber-text); background: var(--amber-bg); border-radius: 4px; padding: 0 6px; white-space: nowrap; }
-  .today-row.late .today-when { color: #b3261e; background: #fdf0ef; }
-  .today-name { font-weight: 600; }
-  .today-tags { font-size: 12px; color: var(--text-muted); }
-  .today-action { color: var(--text-secondary); }
+  .fu-box { background: var(--surface-2); border: 0.5px solid var(--border); border-left: 3px solid var(--gray-text); border-radius: 12px; padding: 0.8rem 1.1rem; margin: 0 0 12px; }
+  .fu-box.g-A { border-left-color: #b3261e; }
+  .fu-box.g-B { border-left-color: var(--amber-text); }
+  .fu-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .fu-box.g-A .fu-title { color: #b3261e; }
+  .fu-count { font-size: 12px; font-weight: 600; background: var(--surface-1); color: var(--text-secondary); border-radius: 999px; padding: 1px 9px; }
+  .fu-due { font-size: 12px; font-weight: 600; color: #b3261e; }
+  .fu-desc { font-size: 11.5px; font-weight: 400; color: var(--text-muted); }
+  .fu-list { max-height: 320px; overflow-y: auto; }
+  .today-inbox-link { display: block; margin: 18px 0 8px; text-align: right; }
   .today-empty { font-size: 13px; color: var(--text-muted); padding: 4px 6px; }
 
   .stage-pill { font-size: 11px; background: var(--purple-bg); color: var(--purple-text); border-radius: 999px; padding: 0 8px; margin-left: 4px; white-space: nowrap; }
@@ -458,7 +445,7 @@
   .proj-add, .add-sub { margin-top: 10px; }
   @media (max-width: 640px) { .cust-row { flex-direction: column; gap: 6px; } .cust-side { align-items: flex-start; } }
 
-  .today-inbox-link { margin-left: auto; font-size: 12.5px; font-weight: 500; color: var(--accent-text); cursor: pointer; }
+  .today-inbox-link { font-size: 12.5px; font-weight: 500; color: var(--accent-text); cursor: pointer; }
   .today-row.hot { background: #fff6e8; border-left: 3px solid #e08a00; padding-left: 8px; }
   .today-row.hot.waiting { background: #fffaf1; }
   .today-when.soon { color: var(--text-muted); background: var(--surface-1); }
@@ -495,12 +482,8 @@
   <div class="wrap">
     <a class="back-link" href="../">← 返回工作台首页</a>
     <h1><span class="sync-dot offline" id="sync-dot"></span>SKY 市场部开发项目进度看板</h1>
-    <div class="today-card" id="today-card">
-      <div class="today-title">📌 今日待跟进 <span class="today-count" id="today-count">0</span>
-        <a class="today-inbox-link" id="today-inbox-link" onclick="switchView('inbox')" hidden></a>
-      </div>
-      <div id="today-list"></div>
-    </div>
+    <a class="today-inbox-link" id="today-inbox-link" onclick="switchView('inbox')" hidden></a>
+    <div id="fu-boxes"></div>
     <div class="view-tabs">
       <button class="view-tab-btn active" id="tab-board" onclick="switchView('board')">看板</button>
       <button class="view-tab-btn" id="tab-overview" onclick="switchView('overview')">🚚 拖车总览</button>
@@ -1045,18 +1028,17 @@ function searchResultsHTML(term) {
 
 // 今日待跟进：下次跟进日期 ≤ 今天，且客户还没成交/夭折/结案
 function renderToday() {
-  const box = document.getElementById('today-list');
+  const box = document.getElementById('fu-boxes');
   if (!box) return;
   const today = todayStr();
   const todayMs = new Date(today + 'T00:00:00').getTime();
-  const due = allItemsWithProject().filter(it =>
-    it.next_action_date && it.next_action_date <= today && isTracked(it)
-  ).sort((a, b) => ((effType(a) === 'A') === (effType(b) === 'A') ? 0 : effType(a) === 'A' ? -1 : 1)
-                || a.next_action_date.localeCompare(b.next_action_date));
-  document.getElementById('today-count').textContent = due.length;
-  // A 类（重点跟）没到期的也一直显示在最前面，避免"在等结果"的重点客户从眼前消失
-  const waitingA = allItemsWithProject().filter(it => isTracked(it) && effType(it) === 'A' && !(it.next_action_date && it.next_action_date <= today))
-    .sort((a, b) => (a.next_action_date || '9999').localeCompare(b.next_action_date || '9999'));
+  const tracked = allItemsWithProject().filter(isTracked);
+  const typeOf = it => (effType(it) === 'A' ? 'A' : effType(it) === 'B' ? 'B' : 'C');
+  const isDue = it => it.next_action_date && it.next_action_date <= today;
+  const byDate = (a, b) => (a.next_action_date || '9999').localeCompare(b.next_action_date || '9999');
+  // 每类一个框：到期（待跟进）的排最上面，逾期最久的最前；A 类没到期的"等待中"排在后面，不让重点客户消失
+  const due = tracked.filter(isDue).sort(byDate);
+  const waitingA = tracked.filter(it => typeOf(it) === 'A' && !isDue(it)).sort(byDate);
   const waitingRow = it => {
     const days = it.next_action_date ? Math.round((new Date(it.next_action_date + 'T00:00:00') - todayMs) / 86400000) : null;
     return `
@@ -1069,10 +1051,6 @@ function renderToday() {
         <span class="today-action">→ ${escHtml(it.next_action_note || '保持关注，等对方回复')}</span>
       </div>`;
   };
-  if (due.length === 0 && waitingA.length === 0) {
-    box.innerHTML = `<div class="today-empty">今天没有到期的待跟进 🎉</div>`;
-    return;
-  }
   const dueHtml = due.map(it => {
     const diff = Math.round((todayMs - new Date(it.next_action_date + 'T00:00:00').getTime()) / 86400000);
     const lastDays = it.last_contact ? Math.floor((todayMs - new Date(it.last_contact + 'T00:00:00').getTime()) / 86400000) : null;
@@ -1088,18 +1066,21 @@ function renderToday() {
         <span class="today-action">→ ${escHtml(followAdvice(it, lastDays) + note)}</span>
       </div>`;
   });
-  // 按 A / B / C 分三组：A 组 = 到期的 A + 没到期的 A（等待中）；B、C 组 = 各自到期的
-  const dueOf = type => due.map((it, i) => ({ it, html: dueHtml[i] })).filter(x => (effType(x.it) === 'A' ? 'A' : effType(x.it) === 'B' ? 'B' : 'C') === type);
-  const group = (cls, title, desc, rows) => rows.length === 0 ? '' : `
-    <div class="today-group ${cls}">
-      <div class="today-group-title">${title} <span class="today-group-count">${rows.length}</span><span class="today-group-desc">${desc}</span></div>
-      ${rows.join('')}
+  const dueOf = type => due.map((it, i) => ({ it, html: dueHtml[i] })).filter(x => typeOf(x.it) === type).map(x => x.html);
+  const boxHtml = (type, title, desc, rows, dueN) => `
+    <div class="fu-box g-${type}">
+      <div class="fu-title">${title}
+        <span class="fu-count">${rows.length}</span>
+        ${dueN ? `<span class="fu-due">${dueN} 个待跟进</span>` : ''}
+        <span class="fu-desc">${desc}</span>
+      </div>
+      <div class="fu-list">${rows.length ? rows.join('') : '<div class="today-empty">暂无</div>'}</div>
     </div>`;
-  const aRows = dueOf('A').map(x => x.html).concat(waitingA.map(waitingRow));
+  const aDue = dueOf('A'), bDue = dueOf('B'), cDue = dueOf('C');
   box.innerHTML =
-    group('g-A', '⭐ A 类 重点跟', '客户有回复/有进展，3 天一轮', aRows) +
-    group('g-B', 'B 类', '我方跟进后没回，7 天一轮', dueOf('B').map(x => x.html)) +
-    group('g-C', 'C 类', '长期培育，15 / 30 天一轮', dueOf('C').map(x => x.html));
+    boxHtml('A', '⭐ A 类 · 重点跟', '客户有回复/有进展，3 天一轮', aDue.concat(waitingA.map(waitingRow)), aDue.length) +
+    boxHtml('B', 'B 类', '我方跟进后没回，7 天一轮', bDue, bDue.length) +
+    boxHtml('C', 'C 类', '长期培育，15 / 30 天一轮', cDue, cDue.length);
 }
 
 function render() {
