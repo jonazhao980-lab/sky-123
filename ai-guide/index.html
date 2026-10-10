@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 使用大全</title>
+<style>
+  :root {
+    --surface-0: #f5f4f0; --surface-1: #eeece5; --surface-2: #ffffff;
+    --text-primary: #1c1c1a; --text-secondary: #5f5e5a; --text-muted: #888780;
+    --border: #dedcd3; --border-strong: #c7c4b8;
+    --accent-bg: #e6f1fb; --accent-text: #0c447c;
+    --code-bg: #f2f0ea;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface-0); color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.7; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .back-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; }
+  .back-link:hover { color: var(--text-primary); }
+  h1.page-title { font-size: 22px; font-weight: 600; margin: 10px 0 4px; }
+  .page-sub { font-size: 13px; color: var(--text-secondary); margin: 0 0 1.5rem; }
+  .layout { display: grid; grid-template-columns: 240px 1fr; gap: 20px; align-items: start; }
+  .side { position: sticky; top: 16px; }
+  .side-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin: 0 0 8px; letter-spacing: .04em; }
+  .doc-link { display: block; width: 100%; text-align: left; font: inherit; font-size: 13.5px; background: var(--surface-2);
+    border: 0.5px solid var(--border); border-radius: 10px; padding: 9px 12px; margin-bottom: 8px; cursor: pointer; color: var(--text-primary); }
+  .doc-link:hover { border-color: var(--border-strong); }
+  .doc-link.active { background: var(--accent-bg); border-color: var(--accent-text); color: var(--accent-text); font-weight: 600; }
+  .doc-link small { display: block; font-weight: 400; color: var(--text-muted); font-size: 11.5px; margin-top: 2px; }
+  .toc { margin-top: 14px; padding-top: 12px; border-top: 0.5px solid var(--border); }
+  .toc a { display: block; font-size: 12.5px; color: var(--text-secondary); text-decoration: none; padding: 3px 0; line-height: 1.4; }
+  .toc a:hover { color: var(--accent-text); }
+  .article { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.6rem 2rem 2rem; min-width: 0; }
+  .article h1 { font-size: 22px; margin: 0 0 .8rem; line-height: 1.4; }
+  .article h2 { font-size: 18px; margin: 2rem 0 .6rem; padding-top: .4rem; border-top: 0.5px solid var(--border); scroll-margin-top: 12px; }
+  .article h3 { font-size: 15.5px; margin: 1.4rem 0 .4rem; scroll-margin-top: 12px; }
+  .article p, .article li { font-size: 14.5px; }
+  .article ul, .article ol { padding-left: 1.4rem; }
+  .article blockquote { margin: .8rem 0; padding: .4rem 1rem; border-left: 3px solid var(--accent-text); background: var(--accent-bg); color: #1c3d5e; border-radius: 0 8px 8px 0; }
+  .article blockquote p { margin: .3rem 0; }
+  .article code { background: var(--code-bg); border-radius: 4px; padding: 1px 5px; font-size: 13px; }
+  .article pre { position: relative; background: var(--code-bg); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; overflow-x: auto; }
+  .article pre code { background: none; padding: 0; white-space: pre-wrap; word-break: break-word; font-size: 13px; line-height: 1.65; }
+  .copy-btn { position: absolute; top: 8px; right: 8px; font: inherit; font-size: 12px; background: var(--surface-2); border: 0.5px solid var(--border-strong);
+    border-radius: 6px; padding: 2px 10px; cursor: pointer; color: var(--text-secondary); }
+  .copy-btn:hover { color: var(--text-primary); }
+  .article hr { border: none; border-top: 0.5px solid var(--border); margin: 1.6rem 0; }
+  .article table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  .article th, .article td { border: 0.5px solid var(--border); padding: 6px 10px; text-align: left; }
+  .article input[type=checkbox] { margin-right: 6px; }
+  .loading { color: var(--text-muted); font-size: 13px; }
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .side { position: static; }
+    .article { padding: 1.2rem 1rem 1.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="../">← 返回工作台首页</a>
+  <h1 class="page-title">AI 使用大全</h1>
+  <p class="page-sub">团队用 AI 干活的方法、省钱技巧和避坑清单。</p>
+  <div class="layout">
+    <aside class="side">
+      <p class="side-title">文章</p>
+      <div id="doc-list"></div>
+      <div class="toc" id="toc" hidden></div>
+    </aside>
+    <main class="article" id="article"><p class="loading">加载中…</p></main>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+<script>
+// 新增文章：把 .md 放进 docs/ 文件夹，再在这里加一行
+const DOCS = [
+  { id: 'web-batch-saving', title: '网页批量数据操作省钱手册', desc: '批量读取/打分/写回网站数据：找接口，别让 AI 模拟点页面', file: 'docs/web-batch-saving.md' },
+];
+
+function renderList(activeId) {
+  document.getElementById('doc-list').innerHTML = DOCS.map(d =>
+    `<button class="doc-link ${d.id === activeId ? 'active' : ''}" onclick="openDoc('${d.id}')">${d.title}<small>${d.desc}</small></button>`).join('');
+}
+
+async function openDoc(id, pushHash = true) {
+  const doc = DOCS.find(d => d.id === id) || DOCS[0];
+  renderList(doc.id);
+  if (pushHash) { try { history.replaceState(null, '', '#' + doc.id); } catch (e) {} }
+  const box = document.getElementById('article');
+  box.innerHTML = '<p class="loading">加载中…</p>';
+  try {
+    const res = await fetch(doc.file + '?v=' + Date.now());
+    if (!res.ok) throw new Error(res.status);
+    box.innerHTML = marked.parse(await res.text());
+  } catch (e) {
+    box.innerHTML = '<p class="loading">文章加载失败，请刷新重试。</p>';
+    return;
+  }
+  // 代码块加"复制"按钮（那段给 AI 的专用指令可以整段复制）
+  box.querySelectorAll('pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn'; btn.textContent = '复制';
+    btn.onclick = async () => {
+      try { await navigator.clipboard.writeText(pre.querySelector('code').innerText); btn.textContent = '已复制 ✓'; }
+      catch (e) { btn.textContent = '复制失败'; }
+      setTimeout(() => btn.textContent = '复制', 1600);
+    };
+    pre.appendChild(btn);
+  });
+  // 目录：取二级标题
+  const toc = document.getElementById('toc');
+  const hs = [...box.querySelectorAll('h2')];
+  toc.hidden = hs.length === 0;
+  toc.innerHTML = hs.map(h => `<a href="#${h.id}" onclick="event.preventDefault(); document.getElementById('${h.id}').scrollIntoView({behavior:'smooth'})">${h.textContent}</a>`).join('');
+  window.scrollTo(0, 0);
+}
+
+openDoc((location.hash || '').slice(1), false);
+</script>
+</body>
+</html>
