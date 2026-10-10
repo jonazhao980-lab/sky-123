@@ -168,6 +168,7 @@ function render(){
   c.innerHTML=`<div id="flowmsg" class="flow zh" hidden>这一节听完了。现在做填空巩固一下，做完今天的练习就完成了。</div>
   <div class="sectitle"><span class="ts">${esc(s.ts)}</span><h2>${esc(s.name)}</h2></div>
   <p class="hint zh">${esc(s.zhname)}。${HINTS[st.mode]}</p>
+  <div class="secplay zh"><button class="btn" id="secOnce">▶ 播放这一节</button><button class="btn primary" id="secLoop">🔁 循环播放这一节</button></div>
   ${s.lines.map((l,k)=>lineHTML(l,k,st.mode)).join("")}
   ${st.mode==="dictation"?`<button class="btn primary zh" id="check">检查答案</button><div class="score zh" id="score"></div>`:""}
   <div class="pn">${sec>0?`<button class="btn zh" id="prev">上一节</button>`:""}${sec<N-1?`<button class="btn zh" id="next">下一节</button>`:""}</div>`;
@@ -175,6 +176,9 @@ function render(){
   c.querySelectorAll("[data-from]").forEach(b=>b.onclick=()=>{flow=null;playFrom(+b.dataset.from)});
   c.querySelectorAll("[data-loop]").forEach(b=>b.onclick=()=>{flow=null;$("loop").value="line";$("loop").dispatchEvent(new Event("change"));playLine(ls().sec,+b.dataset.loop)});
   c.querySelectorAll(".en.hidden").forEach(e=>{const r=()=>e.classList.remove("hidden");e.onclick=r;e.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();r()}}});
+  const setLoop=v=>{$("loop").value=v;$("loop").dispatchEvent(new Event("change"))};
+  $("secOnce").onclick=()=>{stop();if($("loop").value!=="off")setLoop("off");playSec(ls().sec)};
+  $("secLoop").onclick=()=>{stop();setLoop("sec");playSec(ls().sec)};
   const nv=d=>{stop();ls().sec+=d;save();render();setSrc();window.scrollTo({top:$("content").offsetTop-90})};
   $("prev")&&($("prev").onclick=()=>nv(-1));$("next")&&($("next").onclick=()=>nv(1));
   $("check")&&($("check").onclick=()=>{let ok=0,t=0;c.querySelectorAll(".ans").forEach(a=>a.remove());
