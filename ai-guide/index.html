@@ -50,6 +50,13 @@
   .article th, .article td { border: 0.5px solid var(--border); padding: 6px 10px; text-align: left; }
   .article input[type=checkbox] { margin-right: 6px; }
   .loading { color: var(--text-muted); font-size: 13px; }
+  #lock-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .lock-card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 2rem; width: 100%; max-width: 320px; text-align: center; }
+  .lock-card h2 { font-size: 16px; font-weight: 500; margin: 0 0 1.2rem; }
+  .lock-card input { width: 100%; text-align: center; margin-bottom: 10px; height: 36px; font: inherit; border: 0.5px solid var(--border-strong); border-radius: 8px; }
+  .lock-card button.unlock-btn { width: 100%; background: var(--text-primary); color: #fff; height: 36px; border: none; border-radius: 8px; font: inherit; cursor: pointer; }
+  .lock-error { color: #b3261e; font-size: 13px; margin: 8px 0 0; min-height: 16px; }
+  #main-app { display: none; }
   @media (max-width: 800px) {
     .layout { grid-template-columns: 1fr; }
     .side { position: static; }
@@ -58,6 +65,15 @@
 </style>
 </head>
 <body>
+<div id="lock-screen">
+  <div class="lock-card">
+    <h2>请输入团队密码</h2>
+    <input type="password" id="pwd-input" placeholder="密码" onkeydown="if(event.key==='Enter') unlock()" />
+    <button class="unlock-btn" onclick="unlock()">进入</button>
+    <p class="lock-error" id="lock-error"></p>
+  </div>
+</div>
+<div id="main-app">
 <div class="wrap">
   <a class="back-link" href="../">← 返回工作台首页</a>
   <h1 class="page-title">AI 使用大全</h1>
@@ -71,13 +87,42 @@
     <main class="article" id="article"><p class="loading">加载中…</p></main>
   </div>
 </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
 <script>
-// 新增文章：把 .md 放进 docs/ 文件夹，再在这里加一行
-const DOCS = [
-  { id: 'web-batch-saving', title: '网页批量数据操作省钱手册', desc: '批量读取/打分/写回网站数据：找接口，别让 AI 模拟点页面', file: 'docs/web-batch-saving.md' },
-];
+const SUPABASE_URL = 'https://lnfnstmhxuaxeubjxjiu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_yLkQNC-S0Y03ebDV5UNOPA_WpYzVkp9';
+const TEAM_EMAIL = 'team@customer-dev-tracker.app';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// 文章存在 Supabase 的 ai_guides 表里（登录后才读得到）；新增文章让 Claude 往表里写一行即可
+let DOCS = [];
+
+async function unlock() {
+  const pwd = document.getElementById('pwd-input').value;
+  const errEl = document.getElementById('lock-error');
+  errEl.textContent = '';
+  if (!pwd) return;
+  const { error } = await sb.auth.signInWithPassword({ email: TEAM_EMAIL, password: pwd });
+  if (error) { errEl.textContent = '密码错误，请重试'; return; }
+  showApp();
+}
+
+async function showApp() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  const { data, error } = await sb.from('ai_guides').select('*').order('sort_order').order('created_at');
+  const box = document.getElementById('article');
+  if (error) {
+    box.innerHTML = '<p class="loading">文章库还没准备好（' + error.message + '）。</p>';
+    return;
+  }
+  DOCS = data.map(d => ({ id: d.id, title: d.title, desc: d.description || '', content: d.content }));
+  if (DOCS.length === 0) { box.innerHTML = '<p class="loading">还没有文章。</p>'; return; }
+  openDoc((location.hash || '').slice(1), false);
+}
 
 function renderList(activeId) {
   document.getElementById('doc-list').innerHTML = DOCS.map(d =>
@@ -89,15 +134,7 @@ async function openDoc(id, pushHash = true) {
   renderList(doc.id);
   if (pushHash) { try { history.replaceState(null, '', '#' + doc.id); } catch (e) {} }
   const box = document.getElementById('article');
-  box.innerHTML = '<p class="loading">加载中…</p>';
-  try {
-    const res = await fetch(doc.file + '?v=' + Date.now());
-    if (!res.ok) throw new Error(res.status);
-    box.innerHTML = marked.parse(await res.text());
-  } catch (e) {
-    box.innerHTML = '<p class="loading">文章加载失败，请刷新重试。</p>';
-    return;
-  }
+  box.innerHTML = marked.parse(doc.content);
   // 代码块加"复制"按钮（那段给 AI 的专用指令可以整段复制）
   box.querySelectorAll('pre').forEach(pre => {
     const btn = document.createElement('button');
@@ -117,7 +154,7 @@ async function openDoc(id, pushHash = true) {
   window.scrollTo(0, 0);
 }
 
-openDoc((location.hash || '').slice(1), false);
+sb.auth.getSession().then(({ data }) => { if (data.session) showApp(); });
 </script>
 </body>
 </html>
