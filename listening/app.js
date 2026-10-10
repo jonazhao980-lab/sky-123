@@ -62,6 +62,11 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
 /* ---------- audio ---------- */
 const au=$("au"),va=new Audio();
 let stopAt=null,curSrc=null,flow=null,lastT=null,lastK=-2;
+/* 循环：off 不循环 / line 单句循环 / sec 本节循环。loopLine 是正在循环的那一句 {src,s,e} */
+let loopLine=null,loopT=null,loopN=1;const GAP=1.2;
+const loopMode=()=>$("loop").value;
+function loopBadge(){$("loopN").textContent=loopMode()!=="off"&&loopN>1?`第 ${loopN} 遍`:""}
+function again(fn){au.pause();clearTimeout(loopT);loopT=setTimeout(()=>{loopN++;loopBadge();fn()},GAP*1000)}  // 停顿一下再重播，方便跟读
 const secSrc=sec=>url(L.sections[sec].audio);
 function meta(title){
   if(!("mediaSession" in navigator))return;
@@ -70,28 +75,37 @@ function meta(title){
 }
 function load(src,title){if(curSrc!==src){au.src=src;curSrc=src}au.playbackRate=+$("rate").value;meta(title)}
 function setSrc(sec=ls().sec){const s=L.sections[sec];load(secSrc(sec),s.ts+" "+s.name)}
-function seekPlay(src,title,t,end){load(src,title);stopAt=end;
+function seekPlay(src,title,t,end){load(src,title);stopAt=end;clearTimeout(loopT);
   // 手机浏览器常常不预加载，必须在点击里直接 play() 才会开始加载，拿到时长后再跳到句子位置
   if(au.readyState>=1)au.currentTime=Math.max(0,t);
   else{if(au.networkState===0||au.networkState===3)au.load();au.addEventListener("loadedmetadata",()=>{au.currentTime=Math.max(0,t)},{once:true})}
   au.play().catch(()=>{})}
-function playSec(sec,t=0,end=null){const s=L.sections[sec];seekPlay(secSrc(sec),s.ts+" "+s.name,t,end)}
-function stop(){au.pause();va.pause();stopAt=null;flow=null;hl(-1)}
+function playSec(sec,t=0,end=null){const s=L.sections[sec];if(end===null)loopLine=null;loopN=1;loopBadge();seekPlay(secSrc(sec),s.ts+" "+s.name,t,end)}
+function playRange(src,title,t0,t1){loopLine={src,s:t0,e:t1};loopN=1;loopBadge();seekPlay(src,title,t0-.05,t1+.15)}
+function stop(){au.pause();va.pause();stopAt=null;flow=null;loopLine=null;clearTimeout(loopT);loopN=1;loopBadge();hl(-1)}
 const playFrom=k=>playSec(ls().sec,k<0?0:L.sections[ls().sec].lines[k].t[0]-.05);
-function playLine(sec,k){const t=L.sections[sec].lines[k].t;playSec(sec,t[0]-.05,t[1]+.15)}
+function playLine(sec,k){const t=L.sections[sec].lines[k].t,s=L.sections[sec];playRange(secSrc(sec),s.ts+" "+s.name,t[0],t[1])}
 function hl(k){document.querySelectorAll(".line[id^=l]").forEach((e,i)=>e.classList.toggle("playing",i===k))}
 au.addEventListener("play",()=>lastT=null);
-au.addEventListener("timeupdate",()=>{const t=au.currentTime;
+au.addEventListener("timeupdate",()=>{if(au.seeking)return;const t=au.currentTime;
   if(lastT!==null&&!au.paused){const d=t-lastT;if(d>0&&d<1.5)addListen(d/au.playbackRate)}lastT=t;
-  if(stopAt!==null&&t>=stopAt){au.pause();stopAt=null;hl(-1);lastK=-2;return}
-  if(!L||curSrc!==secSrc(ls().sec)||!["blind","intensive","dictation"].includes(st.mode))return;
+  const inSec=L&&curSrc===secSrc(ls().sec);
+  // 单句循环：没指定句子时，锁定正在播的这一句
+  if(loopMode()==="line"&&!loopLine&&inSec&&!au.paused){const x=L.sections[ls().sec].lines.find(x=>t>=x.t[0]-.05&&t<=x.t[1]);if(x)loopLine={src:curSrc,s:x.t[0],e:x.t[1]}}
+  if(loopMode()==="line"&&loopLine&&loopLine.src===curSrc&&!au.paused&&t>=loopLine.e+.15&&t<loopLine.e+3){const ll=loopLine;again(()=>{au.currentTime=Math.max(0,ll.s-.05);au.play().catch(()=>{})});return}
+  if(stopAt!==null&&t>=stopAt&&loopMode()!=="line"){au.pause();stopAt=null;hl(-1);lastK=-2;return}
+  if(!inSec||!["blind","intensive","dictation"].includes(st.mode))return;
   const k=L.sections[ls().sec].lines.findIndex(x=>t>=x.t[0]-.05&&t<=x.t[1]+.6);
   if(k!==lastK){lastK=k;hl(k);const el=$("l"+k);if(el&&k>=0&&!document.hidden)el.scrollIntoView({block:"nearest",behavior:"smooth"})}});
 au.addEventListener("ended",()=>{hl(-1);
+  if(loopMode()==="line"&&loopLine&&loopLine.src===curSrc){const ll=loopLine;again(()=>{au.currentTime=Math.max(0,ll.s-.05);au.play().catch(()=>{})});return}
+  if(loopMode()==="sec"){const src=curSrc;again(()=>{au.currentTime=0;if(curSrc===src)au.play().catch(()=>{})});return}
   if(flow==="commute"){flow=null;return}
   if(flow==="today"){flow=null;st.mode="dictation";save();render();$("flowmsg").hidden=false;window.scrollTo({top:$("content").offsetTop-90,behavior:"smooth"});return}
   if(curSrc===secSrc(ls().sec)&&$("auto").checked&&ls().sec<L.sections.length-1){ls().sec++;save();render();playSec(ls().sec)}});
 $("rate").addEventListener("change",()=>{au.playbackRate=+$("rate").value;va.playbackRate=1;try{localStorage.setItem("listen-rate",$("rate").value)}catch(e){}});
+$("loop").addEventListener("change",()=>{loopLine=null;loopN=1;loopBadge();if(loopMode()==="off"){clearTimeout(loopT)}try{localStorage.setItem("listen-loop",$("loop").value)}catch(e){}});
+try{const v=localStorage.getItem("listen-loop");if(v)$("loop").value=v}catch(e){}
 try{const r=localStorage.getItem("listen-rate");if(r&&[...$("rate").options].some(o=>o.value===r))$("rate").value=r}catch(e){}  // 记住上次选的语速
 if("mediaSession" in navigator){const ms=navigator.mediaSession,h=(a,f)=>{try{ms.setActionHandler(a,f)}catch(e){}};
   h("play",()=>au.play());h("pause",()=>au.pause());
@@ -125,6 +139,7 @@ $("commute").onclick=()=>{stop();st.mode="blind";save();
 /* ---------- views ---------- */
 const icoPlay='<svg viewBox="0 0 16 16"><path d="M4 2.5v11l9-5.5z"/></svg>';
 const icoFrom='<svg viewBox="0 0 16 16"><path d="M2 3h2v10H2zM6 2.5v11l8-5.5z"/></svg>';
+const icoLoop='<svg viewBox="0 0 16 16"><path d="M4 5h6V3l3.5 3L10 9V7H4a1 1 0 0 0-1 1v1H1V8a3 3 0 0 1 3-3zm8 6H6v2l-3.5-3L6 7v2h6a1 1 0 0 0 1-1V7h2v1a3 3 0 0 1-3 3z"/></svg>';
 const blank=(w,key)=>`<input class="blank" data-a="${esc(w)}" data-key="${esc(key)}" size="${Math.max(4,w.length)}" aria-label="填空" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">`;
 function renderNav(){const nav=$("nav");nav.innerHTML="";
   nav.style.display=["blind","intensive","dictation"].includes(st.mode)?"":"none";
@@ -139,7 +154,8 @@ function lineHTML(l,k,mode){const showZh=$("showZh").checked;let body;
   <div class="en${mode==="blind"?" hidden":""}" ${mode==="blind"?'title="点击显示原文" tabindex="0" role="button"':''}>${body}</div>
   ${showZh&&mode!=="dictation"?`<div class="zhline zh">${esc(l.zh)}</div>`:""}</div>
   <div class="lbtns"><button class="icon" aria-label="播放这一句" data-one="${k}">${icoPlay}</button>
-  <button class="icon" aria-label="从这一句开始播放" data-from="${k}">${icoFrom}</button></div></div>`}
+  <button class="icon" aria-label="从这一句开始播放" data-from="${k}">${icoFrom}</button>
+  <button class="icon" aria-label="循环播放这一句" title="循环这一句" data-loop="${k}">${icoLoop}</button></div></div>`}
 const HINTS={blind:"先不看原文听完整节，试着说出每个人的要点。听不懂的句子，点模糊的文字显示原文。",
   intensive:"逐句播放，跟读，一句不漏听懂再往下。可以打开中文对照。",
   dictation:"听句子，把空格里的关键词写出来。写错的词会自动进错词本。"};
@@ -157,6 +173,7 @@ function render(){
   <div class="pn">${sec>0?`<button class="btn zh" id="prev">上一节</button>`:""}${sec<N-1?`<button class="btn zh" id="next">下一节</button>`:""}</div>`;
   c.querySelectorAll("[data-one]").forEach(b=>b.onclick=()=>{flow=null;playLine(ls().sec,+b.dataset.one)});
   c.querySelectorAll("[data-from]").forEach(b=>b.onclick=()=>{flow=null;playFrom(+b.dataset.from)});
+  c.querySelectorAll("[data-loop]").forEach(b=>b.onclick=()=>{flow=null;$("loop").value="line";$("loop").dispatchEvent(new Event("change"));playLine(ls().sec,+b.dataset.loop)});
   c.querySelectorAll(".en.hidden").forEach(e=>{const r=()=>e.classList.remove("hidden");e.onclick=r;e.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();r()}}});
   const nv=d=>{stop();ls().sec+=d;save();render();setSrc();window.scrollTo({top:$("content").offsetTop-90})};
   $("prev")&&($("prev").onclick=()=>nv(-1));$("next")&&($("next").onclick=()=>nv(1));
@@ -177,7 +194,7 @@ function renderWrong(c){const items=Object.entries(st.wrong);
     return `<div class="line"><div class="bar-c" style="background:${it.color}"></div><div><div class="who" style="color:${it.color}">${esc(it.who)}<span class="meta zh">　${esc(it.lt)} ${esc(it.ts)}　已对 ${it.hits}/2</span></div><div class="en">${body}</div><div class="zhline zh">${esc(it.zh)}</div></div>
     <div class="lbtns"><button class="icon" aria-label="播放这一句" data-wkey="${esc(key)}">${icoPlay}</button></div></div>`}).join("")+
   `<button class="btn primary zh" id="wcheck">检查答案</button><div class="score zh" id="wscore"></div>`;
-  c.querySelectorAll("[data-wkey]").forEach(b=>b.onclick=()=>{flow=null;const it=st.wrong[b.dataset.wkey];if(it)seekPlay(it.src,it.lt+" "+it.ts,it.t[0]-.05,it.t[1]+.15)});
+  c.querySelectorAll("[data-wkey]").forEach(b=>b.onclick=()=>{flow=null;const it=st.wrong[b.dataset.wkey];if(it)playRange(it.src,it.lt+" "+it.ts,it.t[0],it.t[1])});
   $("wcheck").onclick=()=>{let ok=0,t=0,gone=0;c.querySelectorAll(".ans").forEach(a=>a.remove());
     c.querySelectorAll(".blank").forEach(i=>{t++;const key=i.dataset.key,a=i.dataset.a;if(!st.wrong[key])return;
       if(norm(i.value)===norm(a)){ok++;i.className="blank ok";st.wrong[key].hits++;if(st.wrong[key].hits>=2){delete st.wrong[key];gone++}}

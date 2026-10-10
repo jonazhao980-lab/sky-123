@@ -144,3 +144,5 @@ dialog code{font-size:17px;font-weight:600;letter-spacing:.03em;background:var(-
 .lessons button small{display:block;color:var(--muted);font-size:12px;font-weight:400}
 .lessons button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#fff}
 .lessons button[aria-pressed="true"] small{color:#fff;opacity:.85}
+.loopn{font-size:13px;color:var(--accent);font-weight:600;min-width:0}
+.lbtns .icon[data-loop]{color:var(--accent)}

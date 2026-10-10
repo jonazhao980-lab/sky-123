@@ -28,6 +28,7 @@
 <button data-mode="blind" class="zh">盲听</button><button data-mode="intensive" class="zh">精听</button><button data-mode="dictation" class="zh">填空</button><button data-mode="wrong" class="zh">错词本<span id="wrongBadge"></span></button><button data-mode="quiz" class="zh">理解题</button><button data-mode="vocab" class="zh">词汇</button></div>
 <div class="ctrl"><button class="btn zh" id="playAll">播放本节</button><button class="btn zh" id="stop">停止</button>
 <select id="rate" aria-label="语速"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2.0×</option></select>
+<select id="loop" aria-label="循环" class="zh"><option value="off">不循环</option><option value="line">单句循环</option><option value="sec">本节循环</option></select><span id="loopN" class="loopn zh"></span>
 <label class="tg zh"><input type="checkbox" id="showZh">中文</label><label class="tg zh"><input type="checkbox" id="auto" checked>自动连播</label></div>
 <audio id="au" controls preload="metadata" playsinline style="width:100%"></audio>
 </div>
