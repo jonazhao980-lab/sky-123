@@ -369,7 +369,8 @@
   .fu-count { font-size: 12px; font-weight: 600; background: var(--surface-1); color: var(--text-secondary); border-radius: 999px; padding: 1px 9px; }
   .fu-due { font-size: 12px; font-weight: 600; color: #b3261e; }
   .fu-desc { font-size: 11.5px; font-weight: 400; color: var(--text-muted); }
-  .fu-list { max-height: 320px; overflow-y: auto; }
+  .fu-list { max-height: 420px; overflow-y: auto; }
+  .fu-more { margin-top: 6px; height: 28px; width: auto; padding: 0 12px; font-size: 12px; color: var(--text-secondary); background: transparent; border: 0.5px solid var(--border); border-radius: 999px; cursor: pointer; }
   .today-inbox-link { display: block; margin: 18px 0 8px; text-align: right; }
   .today-empty { font-size: 13px; color: var(--text-muted); padding: 4px 6px; }
 
@@ -1027,6 +1028,8 @@ function searchResultsHTML(term) {
 }
 
 // 今日待跟进：下次跟进日期 ≤ 今天，且客户还没成交/夭折/结案
+const fuOpen = new Set();
+function toggleFuOpen(t) { fuOpen.has(t) ? fuOpen.delete(t) : fuOpen.add(t); renderToday(); }
 function renderToday() {
   const box = document.getElementById('fu-boxes');
   if (!box) return;
@@ -1067,20 +1070,26 @@ function renderToday() {
       </div>`;
   });
   const dueOf = type => due.map((it, i) => ({ it, html: dueHtml[i] })).filter(x => typeOf(x.it) === type).map(x => x.html);
-  const boxHtml = (type, title, desc, rows, dueN) => `
+  // B / C 类默认只显示前几条，其余折叠（点"展开"才看全部）；A 类重点客户永远全部显示
+  const boxHtml = (type, title, desc, rows, dueN, limit) => {
+    const open = fuOpen.has(type) || !limit || rows.length <= limit;
+    const shown = open ? rows : rows.slice(0, limit);
+    return `
     <div class="fu-box g-${type}">
       <div class="fu-title">${title}
         <span class="fu-count">${rows.length}</span>
         ${dueN ? `<span class="fu-due">${dueN} 个待跟进</span>` : ''}
         <span class="fu-desc">${desc}</span>
       </div>
-      <div class="fu-list">${rows.length ? rows.join('') : '<div class="today-empty">暂无</div>'}</div>
+      <div class="fu-list">${shown.length ? shown.join('') : '<div class="today-empty">暂无</div>'}</div>
+      ${limit && rows.length > limit ? `<button class="fu-more" onclick="toggleFuOpen('${type}')">${open ? '收起 ▴' : `展开其余 ${rows.length - limit} 个 ▾`}</button>` : ''}
     </div>`;
+  };
   const aDue = dueOf('A'), bDue = dueOf('B'), cDue = dueOf('C');
   box.innerHTML =
     boxHtml('A', '⭐ A 类 · 重点跟', '客户有回复/有进展，3 天一轮', aDue.concat(waitingA.map(waitingRow)), aDue.length) +
-    boxHtml('B', 'B 类', '我方跟进后没回，7 天一轮', bDue, bDue.length) +
-    boxHtml('C', 'C 类', '长期培育，15 / 30 天一轮', cDue, cDue.length);
+    boxHtml('B', 'B 类', '我方跟进后没回，7 天一轮', bDue, bDue.length, 6) +
+    boxHtml('C', 'C 类', '长期培育，15 / 30 天一轮', cDue, cDue.length, 5);
 }
 
 function render() {
