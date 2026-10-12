@@ -1041,13 +1041,14 @@ function renderToday() {
   const byDate = (a, b) => (a.next_action_date || '9999').localeCompare(b.next_action_date || '9999');
   // 每类一个框：到期（待跟进）的排最上面，逾期最久的最前；A 类没到期的"等待中"排在后面，不让重点客户消失
   const due = tracked.filter(isDue).sort(byDate);
-  const waitingA = tracked.filter(it => typeOf(it) === 'A' && !isDue(it)).sort(byDate);
+  const waitingOf = type => tracked.filter(it => typeOf(it) === type && !isDue(it)).sort(byDate);
   const waitingRow = it => {
     const days = it.next_action_date ? Math.round((new Date(it.next_action_date + 'T00:00:00') - todayMs) / 86400000) : null;
+    const hot = typeOf(it) === 'A';
     return `
-      <div class="today-row hot waiting" onclick="openCustomerModal('${it.id}')">
+      <div class="today-row ${hot ? 'hot' : ''} waiting" onclick="openCustomerModal('${it.id}')">
         <span class="today-when soon">${days == null ? '等待中' : `${days}天后`}</span>
-        <span class="hot-badge">⭐ 重点跟</span>
+        ${hot ? '<span class="hot-badge">⭐ 重点跟</span>' : ''}
         <span class="today-name">${escHtml(it.name)}</span>
         <span class="today-proj">${escHtml(projectPath(it.project_id))}</span>
         ${typePill(it)}
@@ -1087,9 +1088,9 @@ function renderToday() {
   };
   const aDue = dueOf('A'), bDue = dueOf('B'), cDue = dueOf('C');
   box.innerHTML =
-    boxHtml('A', '⭐ A 类 · 重点跟', '客户有回复/有进展，3 天一轮', aDue.concat(waitingA.map(waitingRow)), aDue.length) +
-    boxHtml('B', 'B 类', '我方跟进后没回，7 天一轮', bDue, bDue.length, 6) +
-    boxHtml('C', 'C 类', '长期培育，15 / 30 天一轮', cDue, cDue.length, 5);
+    boxHtml('A', '⭐ A 类 · 重点跟', '热询盘/频繁互动，3 天一轮', aDue.concat(waitingOf('A').map(waitingRow)), aDue.length) +
+    boxHtml('B', 'B 类', '老客户重新触达/首次触达，7 天一轮', bDue.concat(waitingOf('B').map(waitingRow)), bDue.length, 6) +
+    boxHtml('C', 'C 类', '长期培育，15 / 30 天一轮', cDue.concat(waitingOf('C').map(waitingRow)), cDue.length, 5);
 }
 
 function render() {
