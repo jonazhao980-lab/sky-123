@@ -1,0 +1,922 @@
+{
+ "id": "2026-10-19-australia",
+ "title": "Australia pricing strategy meeting",
+ "zhtitle": "澳洲经销商价格策略会谈",
+ "date": "2026-10-19",
+ "intro": "与澳洲经销商讨论销量下滑和价格竞争：大项目联合定价、小单流失、沟通机制和库存补差。",
+ "note": "根据会议英文转写整理，措辞有精简；具体价格、公司名和人名已隐去。音频为 AI 合成语音。",
+ "speakers": [
+  {
+   "name": "Richard",
+   "role": "澳方",
+   "color": "#2E5E8C"
+  },
+  {
+   "name": "Alfred",
+   "role": "澳方",
+   "color": "#6B7C8C"
+  },
+  {
+   "name": "Flora",
+   "role": "中方",
+   "color": "#2C7F71"
+  },
+  {
+   "name": "Susan",
+   "role": "翻译",
+   "color": "#A87A22"
+  }
+ ],
+ "full": "full.mp3",
+ "sections": [
+  {
+   "ts": "00:00",
+   "name": "Rethinking pricing on large projects",
+   "zhname": "重新审视大项目定价",
+   "audio": "s1.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "It would be helpful to review pricing across the board, especially for larger projects. We want to be fair and [[transparent]] wherever possible.",
+     "zh": "全面审视一下价格会很有帮助，尤其是大项目。我们希望尽可能公平、透明。",
+     "t": [
+      3.72,
+      12.34
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "We should avoid simply saying that our price is fixed and nothing can be done.",
+     "zh": "我们不应该只是说价格是固定的、没得商量。",
+     "t": [
+      13.04,
+      17.73
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Over time, [[competitors]] may take over the relationships we have built by offering a lower price and approaching our customers directly.",
+     "zh": "时间久了，竞争对手可能会报更低的价、直接找我们的客户，把我们建立的客户关系抢走。",
+     "t": [
+      18.43,
+      27.13
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Instead, we should be prepared to compete on selected jobs, so that we can keep our relationships and help [[stabilize]] market pricing.",
+     "zh": "相反，我们应该准备好在部分项目上去竞争，这样才能保住客户关系，也有助于稳定市场价格。",
+     "t": [
+      27.83,
+      35.94
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Installers and builders often look at price first. It may take five or ten years for them to realize that a cheaper product is of lower [[quality]].",
+     "zh": "安装商和建筑商往往先看价格。他们可能要五到十年才会发现便宜的产品质量更差。",
+     "t": [
+      36.64,
+      46.04
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "There are cases where we win despite being more expensive, but there are also cases where we simply lose the project. That is becoming quite common.",
+     "zh": "有时候我们贵也能拿下，但也有时候直接丢了项目。现在这种情况越来越常见。",
+     "t": [
+      46.74,
+      56.07
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "It would be a waste of time to keep a [[fixed price]] for several months and only then discover that it is not working.",
+     "zh": "如果固定一个价格好几个月，最后才发现行不通，那就是浪费时间。",
+     "t": [
+      56.77,
+      63.66
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "02:34",
+   "name": "Working together on special projects",
+   "zhname": "特殊项目联合支持",
+   "audio": "s2.mp3",
+   "lines": [
+    {
+     "who": "Susan",
+     "en": "My colleague explained that closer [[cooperation]] would benefit both companies.",
+     "zh": "我同事解释说，更紧密的合作对双方都有好处。",
+     "t": [
+      3.47,
+      7.49
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "The aim is to reduce costs in a fair and open way, rather than one side hiding costs or keeping the remaining [[margin]] for itself.",
+     "zh": "目的是用公平、公开的方式降低成本，而不是一方隐藏成本或把剩下的利润留给自己。",
+     "t": [
+      8.19,
+      15.29
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "For example, if a special project of around five thousand square metres comes up, the customer could ask for our [[support]] on price.",
+     "zh": "比如，如果出现一个五千平方米左右的特殊项目，客户可以请我们在价格上给予支持。",
+     "t": [
+      15.99,
+      22.86
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Prices for core products and [[regular orders]] could stay at the current level.",
+     "zh": "核心产品和常规订单的价格可以保持现有水平。",
+     "t": [
+      23.56,
+      27.34
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "For special projects, however, the teams should discuss a [[project-specific]] reduction to improve the chance of winning.",
+     "zh": "但对于特殊项目，双方团队应该商量针对单个项目的降价，提高中标的机会。",
+     "t": [
+      28.04,
+      33.81
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "04:23",
+   "name": "Small orders lost without notice",
+   "zhname": "悄悄流失的小单",
+   "audio": "s3.mp3",
+   "lines": [
+    {
+     "who": "Susan",
+     "en": "Smaller projects are also being lost. The customer may think the price is too high and the order is too small to ask for a [[discount]].",
+     "zh": "小项目也在流失。客户可能觉得价格太高、订单又太小，不好意思要折扣。",
+     "t": [
+      3.38,
+      10.16
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "So the customer never asks, and the project is lost without us even knowing that price was the reason.",
+     "zh": "所以客户根本不来问，项目丢了，我们甚至不知道是价格的原因。",
+     "t": [
+      10.86,
+      16.19
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Since our [[sales volume]] has been declining, we certainly want to win more of the large-project opportunities.",
+     "zh": "既然我们的销量一直在下滑，我们当然想多拿一些大项目机会。",
+     "t": [
+      16.89,
+      22.53
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "However, this cannot be achieved by us alone. We may need to work with our entire [[supply network]] for that particular project.",
+     "zh": "但这不是我们一家能做到的。针对那个项目，我们可能需要整个供应链一起支持。",
+     "t": [
+      23.23,
+      29.97
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "A customer may take only a few hundred square metres from [[stock]] each month, but several such orders can add up to thousands of square metres.",
+     "zh": "一个客户每个月可能只从库存拿几百平方米，但好几个这样的订单加起来就是几千平方米。",
+     "t": [
+      30.67,
+      38.16
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "07:15",
+   "name": "A faster channel for market information",
+   "zhname": "更快的市场信息渠道",
+   "audio": "s4.mp3",
+   "lines": [
+    {
+     "who": "Flora",
+     "en": "My plan is to discuss with our suppliers how we can provide regular pricing support for small and [[medium-sized]] projects.",
+     "zh": "我的计划是和我们的供应商商量，怎样给中小项目提供常规的价格支持。",
+     "t": [
+      3.78,
+      10.67
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "For large projects, we should establish a separate [[communication channel]].",
+     "zh": "大项目方面，我们应该建立一个单独的沟通渠道。",
+     "t": [
+      11.37,
+      15.18
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Your product manager and purchasing manager could tell us directly how much support is needed and what competitors are offering.",
+     "zh": "你们的产品经理和采购经理可以直接告诉我们需要多少支持、竞争对手报的是什么条件。",
+     "t": [
+      15.88,
+      23.0
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Order volumes have been declining for about a year. Once [[market share]] has been lost to competitors, winning it back can be difficult.",
+     "zh": "订单量已经下滑了大约一年。市场份额一旦被竞争对手拿走，再抢回来就难了。",
+     "t": [
+      23.7,
+      30.91
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "If we had known earlier, we could have responded quickly and kept strong relationships with installers and [[designers]].",
+     "zh": "如果我们早点知道，就能快速反应，和安装商、设计师保持牢固的关系。",
+     "t": [
+      31.61,
+      37.64
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "I will update the [[pricing structure]] as soon as possible this week, by Wednesday.",
+     "zh": "我会在这周尽快更新价格体系，周三之前。",
+     "t": [
+      38.34,
+      42.3
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "13:20",
+   "name": "Reviewing the pipeline and sharing margins",
+   "zhname": "梳理在跟项目、共担利润",
+   "audio": "s5.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "Going forward, we should pull together all projects in the [[pipeline]], including those being quoted, and segment them by project size.",
+     "zh": "接下来，我们要把所有在跟的项目汇总起来，包括正在报价的，按项目大小分类。",
+     "t": [
+      3.85,
+      12.33
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "For each category, we should communicate with you more frequently and discuss how we can compete more [[aggressively]].",
+     "zh": "每一类我们都应该和你们更频繁地沟通，讨论怎样更积极地去竞争。",
+     "t": [
+      13.03,
+      20.09
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "If a competitor offers a lower price, we should discuss whether we can [[match]] it.",
+     "zh": "如果竞争对手报了更低的价，我们应该讨论能不能跟上。",
+     "t": [
+      20.79,
+      25.7
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "This does not mean asking you to absorb the entire discount. Both sides should share the impact on [[margins]].",
+     "zh": "这不是要你们承担全部折扣，双方应该共同分担利润上的影响。",
+     "t": [
+      26.4,
+      33.57
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "We may have to accept a lower margin on that particular project, but at least we would have a chance to [[retain]] the market share.",
+     "zh": "在那个项目上我们可能得接受更低的利润，但至少有机会保住市场份额。",
+     "t": [
+      34.27,
+      40.64
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "15:41",
+   "name": "Quarterly meetings and next steps",
+   "zhname": "季度会议与后续安排",
+   "audio": "s6.mp3",
+   "lines": [
+    {
+     "who": "Flora",
+     "en": "I think this is the right approach. First, I look forward to receiving an email with the relevant information.",
+     "zh": "我觉得这个方向是对的。第一，我等着收到包含相关信息的邮件。",
+     "t": [
+      3.37,
+      9.05
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Second, we already hold [[quarterly meetings]]. I would like to invite someone from the sales team to join them.",
+     "zh": "第二，我们本来就有季度会议，我想邀请销售团队的人也一起参加。",
+     "t": [
+      9.75,
+      15.36
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "We should be able to [[extract]] the project and colour information from the system by the end of this week.",
+     "zh": "我们应该能在这周末前从系统里导出项目和颜色信息。",
+     "t": [
+      16.06,
+      21.87
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "We could catch up once a month, or communicate by email whenever something [[urgent]] comes up.",
+     "zh": "我们可以每月碰一次，或者有急事的时候发邮件沟通。",
+     "t": [
+      22.57,
+      28.38
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Instead of acting only as supplier and customer, we should work together to compete for these projects.",
+     "zh": "我们不应该只是供应商和客户的关系，而应该一起去争取这些项目。",
+     "t": [
+      29.08,
+      35.19
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "17:30",
+   "name": "Asking for credit on stock",
+   "zhname": "库存补差的请求",
+   "audio": "s7.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "Most of the products we sell are probably already in stock. Perhaps you could provide some [[credit]] on future orders to help us compete.",
+     "zh": "我们卖的大部分产品可能都已经在库存里了。也许你们可以在以后的订单上给一些抵扣，帮我们去竞争。",
+     "t": [
+      3.17,
+      11.58
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "For example, if a project requires five thousand square metres and we have stock available, we would like to be able to sell it.",
+     "zh": "比如一个项目需要五千平方米，而我们有现货，我们希望能把它卖出去。",
+     "t": [
+      12.28,
+      19.96
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "If we are competing for rail projects and already have several thousand square metres in stock, we want to make sure we are [[aligned]] first.",
+     "zh": "如果我们在争取铁路项目、手上已经有几千平方米库存，我们想先确保双方意见一致。",
+     "t": [
+      20.66,
+      28.75
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Could you clarify what you mean by a credit? Do you mean that you need more time to pay?",
+     "zh": "能解释一下你说的抵扣是什么意思吗？是指需要更长的付款时间吗？",
+     "t": [
+      29.45,
+      33.97
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "20:30",
+   "name": "Explaining the credit arrangement",
+   "zhname": "解释补差安排",
+   "audio": "s8.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "Let me explain. Say we have a project for three thousand square metres in a [[standard colour]] and want to compete by reducing the price.",
+     "zh": "我解释一下。假设有个三千平方米的标准色项目，我们想通过降价去竞争。",
+     "t": [
+      3.05,
+      11.27
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Both of our margins will be lower. And the stock in our [[warehouse]] was already bought at the old, higher price.",
+     "zh": "我们双方的利润都会变低。而且我们仓库里的库存是之前按更高的价格买的。",
+     "t": [
+      11.97,
+      18.79
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "So if you agree to lower the price for this project, we are asking for a credit for the [[difference]] on that stock.",
+     "zh": "所以如果你们同意给这个项目降价，我们希望库存那部分的差价能给我们抵扣。",
+     "t": [
+      19.49,
+      25.75
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Yes, I understand. It is similar to a credit against stock already held, to be used on the [[next order]].",
+     "zh": "明白了。就类似于对已有库存给一个抵扣，用在下一个订单上。",
+     "t": [
+      26.45,
+      32.17
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "We would only offer that project price after confirming that you agree. We would not compete aggressively without first aligning with you.",
+     "zh": "我们只会在确认你们同意之后才报那个项目价。不会在没和你们对齐之前就去压价竞争。",
+     "t": [
+      32.87,
+      41.16
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "He means that when a special project comes up, the teams can discuss a [[temporary]], project-specific arrangement.",
+     "zh": "他的意思是，遇到特殊项目时，双方可以商量一个临时的、只针对这个项目的安排。",
+     "t": [
+      41.86,
+      47.49
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "24:13",
+   "name": "Communication and trust",
+   "zhname": "沟通与信任",
+   "audio": "s9.mp3",
+   "lines": [
+    {
+     "who": "Flora",
+     "en": "Communication is probably the most important part of this process.",
+     "zh": "沟通可能是这里面最重要的。",
+     "t": [
+      2.97,
+      6.69
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Most of our competitors also [[purchase]] from China, so under comparable conditions we should have certain advantages.",
+     "zh": "我们大多数竞争对手也是从中国采购，所以同等条件下我们应该有一定优势。",
+     "t": [
+      7.39,
+      13.72
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Some competitors are smaller companies where the CEO handles both sales and purchasing, which makes them more [[flexible]].",
+     "zh": "有些竞争对手是小公司，CEO 同时管销售和采购，所以更灵活。",
+     "t": [
+      14.42,
+      21.14
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Losing a project without making any effort to win it is a waste of an opportunity. Winning it together would benefit both sides.",
+     "zh": "不做任何努力就丢掉项目是浪费机会。一起拿下订单对双方都有好处。",
+     "t": [
+      21.84,
+      28.74
+     ]
+    },
+    {
+     "who": "Alfred",
+     "en": "Will you still review the [[base pricing]], or are we only looking at large projects? I just want to make sure I understand.",
+     "zh": "你们还会审核基础价格吗，还是只看大项目？我只是想确认我理解对了。",
+     "t": [
+      29.44,
+      36.48
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "We will review both. I will prepare the pricing information and send it to you this week.",
+     "zh": "两个都会看。我会准备好价格资料，这周发给你们。",
+     "t": [
+      37.18,
+      41.7
+     ]
+    }
+   ]
+  },
+  {
+   "ts": "28:24",
+   "name": "Closing: flexibility and regular reviews",
+   "zhname": "结尾：灵活定价与定期复盘",
+   "audio": "s10.mp3",
+   "lines": [
+    {
+     "who": "Richard",
+     "en": "Thank you for being [[open-minded]]. Competing for large building projects is challenging, and we need flexibility in pricing and service.",
+     "zh": "感谢你们的开放态度。争取大型建筑项目很难，我们在价格和服务上都需要灵活。",
+     "t": [
+      4.15,
+      12.81
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "We can take care of the service side, but pricing is more difficult.",
+     "zh": "服务这边我们能搞定，但价格更难。",
+     "t": [
+      13.51,
+      17.7
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "Once you update the pricing, we will review the projects and gather information about competitors: where they [[source]] their products, what quality they offer, and what prices they can reach.",
+     "zh": "你们更新价格后，我们会梳理项目，收集竞争对手的信息：他们从哪里进货、质量怎样、能报到什么价。",
+     "t": [
+      18.4,
+      29.58
+     ]
+    },
+    {
+     "who": "Richard",
+     "en": "I think we should meet at least once a month or once every two months to review pricing and trading strategies.",
+     "zh": "我觉得我们至少每月或每两个月见一次，复盘价格和贸易策略。",
+     "t": [
+      30.28,
+      37.21
+     ]
+    },
+    {
+     "who": "Flora",
+     "en": "Very good. I completely agree.",
+     "zh": "很好，我完全同意。",
+     "t": [
+      37.91,
+      39.76
+     ]
+    },
+    {
+     "who": "Susan",
+     "en": "Thank you very much. We appreciate your time.",
+     "zh": "非常感谢，感谢大家抽出时间。",
+     "t": [
+      40.46,
+      42.79
+     ]
+    }
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "q": "According to Richard, how long might it take installers to notice that a cheaper product is lower quality?",
+   "options": [
+    "One or two months",
+    "About a year",
+    "Five or ten years",
+    "They notice immediately"
+   ],
+   "answer": 2,
+   "explain": "安装商和建筑商往往先看价格，可能要五到十年才发现便宜产品质量差。"
+  },
+  {
+   "q": "Why are small orders being lost without anyone noticing?",
+   "options": [
+    "The products are out of stock",
+    "Customers think the order is too small to ask for a discount",
+    "Delivery is too slow",
+    "The colours are not available"
+   ],
+   "answer": 1,
+   "explain": "客户觉得价格高、单子又小，不好意思问折扣，项目就悄悄丢了。"
+  },
+  {
+   "q": "How long have order volumes been declining?",
+   "options": [
+    "About a month",
+    "About three months",
+    "About a year",
+    "About five years"
+   ],
+   "answer": 2,
+   "explain": "订单量下滑了大约一年才被发现。"
+  },
+  {
+   "q": "By when will Flora update the pricing structure?",
+   "options": [
+    "By Monday",
+    "By Wednesday this week",
+    "By the end of the month",
+    "At the next quarterly meeting"
+   ],
+   "answer": 1,
+   "explain": "她说这周尽快更新价格体系，周三之前。"
+  },
+  {
+   "q": "What does Richard suggest for competing on special projects?",
+   "options": [
+    "The supplier absorbs the whole discount",
+    "Both sides share the impact on margins",
+    "The distributor absorbs the whole discount",
+    "Keep the fixed price"
+   ],
+   "answer": 1,
+   "explain": "不是让一方承担全部折扣，而是双方共担利润影响。"
+  },
+  {
+   "q": "Who will Flora invite to join the existing quarterly meetings?",
+   "options": [
+    "The finance team",
+    "Someone from the sales team",
+    "The installers",
+    "The competitors"
+   ],
+   "answer": 1,
+   "explain": "邀请销售团队的人参加季度会议，及时了解市场。"
+  },
+  {
+   "q": "What does 'credit' mean in Richard's proposal?",
+   "options": [
+    "A longer payment period",
+    "A bank loan",
+    "Compensation for the price difference on stock already bought at a higher price",
+    "Free samples"
+   ],
+   "answer": 2,
+   "explain": "不是延长账期，而是对按旧价买进的库存给差价抵扣，用在下一个订单上。"
+  },
+  {
+   "q": "Why can some smaller competitors react more flexibly?",
+   "options": [
+    "They have bigger warehouses",
+    "Their CEO handles both sales and purchasing",
+    "They don't buy from China",
+    "They have lower taxes"
+   ],
+   "answer": 1,
+   "explain": "小公司 CEO 同时管销售和采购，决策更快。"
+  },
+  {
+   "q": "How often does Richard suggest meeting to review pricing?",
+   "options": [
+    "Every week",
+    "Once a month or every two months",
+    "Once a year",
+    "Only when there is a problem"
+   ],
+   "answer": 1,
+   "explain": "至少每月或每两个月见一次，复盘价格和贸易策略。"
+  }
+ ],
+ "vocab": {
+  "audio": "vocab.mp3",
+  "items": [
+   {
+    "en": "pricing across the board",
+    "zh": "全面定价",
+    "t": [
+     0.0,
+     1.37
+    ]
+   },
+   {
+    "en": "transparent",
+    "zh": "透明的",
+    "t": [
+     1.97,
+     2.83
+    ]
+   },
+   {
+    "en": "stabilize market pricing",
+    "zh": "稳定市场价格",
+    "t": [
+     3.43,
+     5.04
+    ]
+   },
+   {
+    "en": "installer / builder",
+    "zh": "安装商 / 建筑商",
+    "t": [
+     5.64,
+     6.75
+    ]
+   },
+   {
+    "en": "fixed price",
+    "zh": "固定价格",
+    "t": [
+     7.35,
+     8.28
+    ]
+   },
+   {
+    "en": "margin",
+    "zh": "利润 / 毛利",
+    "t": [
+     8.88,
+     9.62
+    ]
+   },
+   {
+    "en": "project-specific reduction",
+    "zh": "单项目降价",
+    "t": [
+     10.22,
+     11.75
+    ]
+   },
+   {
+    "en": "regular orders",
+    "zh": "常规订单",
+    "t": [
+     12.35,
+     13.43
+    ]
+   },
+   {
+    "en": "sales volume",
+    "zh": "销量",
+    "t": [
+     14.03,
+     14.98
+    ]
+   },
+   {
+    "en": "supply network",
+    "zh": "供应链网络",
+    "t": [
+     15.58,
+     16.66
+    ]
+   },
+   {
+    "en": "medium-sized projects",
+    "zh": "中型项目",
+    "t": [
+     17.26,
+     18.69
+    ]
+   },
+   {
+    "en": "communication channel",
+    "zh": "沟通渠道",
+    "t": [
+     19.29,
+     20.59
+    ]
+   },
+   {
+    "en": "market share",
+    "zh": "市场份额",
+    "t": [
+     21.19,
+     22.1
+    ]
+   },
+   {
+    "en": "pricing structure",
+    "zh": "价格体系",
+    "t": [
+     22.7,
+     23.86
+    ]
+   },
+   {
+    "en": "pipeline",
+    "zh": "在跟项目 / 项目储备",
+    "t": [
+     24.46,
+     25.21
+    ]
+   },
+   {
+    "en": "segment by project size",
+    "zh": "按项目规模分类",
+    "t": [
+     25.81,
+     27.45
+    ]
+   },
+   {
+    "en": "match a price",
+    "zh": "跟价",
+    "t": [
+     28.05,
+     29.01
+    ]
+   },
+   {
+    "en": "absorb the discount",
+    "zh": "承担折扣",
+    "t": [
+     29.61,
+     30.79
+    ]
+   },
+   {
+    "en": "quarterly meeting",
+    "zh": "季度会议",
+    "t": [
+     31.39,
+     32.35
+    ]
+   },
+   {
+    "en": "credit on future orders",
+    "zh": "后续订单抵扣",
+    "t": [
+     32.95,
+     34.46
+    ]
+   },
+   {
+    "en": "standard colour",
+    "zh": "标准色",
+    "t": [
+     35.06,
+     36.07
+    ]
+   },
+   {
+    "en": "temporary arrangement",
+    "zh": "临时安排",
+    "t": [
+     36.67,
+     37.91
+    ]
+   },
+   {
+    "en": "base pricing",
+    "zh": "基础价格",
+    "t": [
+     38.51,
+     39.45
+    ]
+   },
+   {
+    "en": "source products",
+    "zh": "采购 / 进货",
+    "t": [
+     40.05,
+     41.03
+    ]
+   },
+   {
+    "en": "open-minded",
+    "zh": "开明的 / 态度开放",
+    "t": [
+     41.63,
+     42.54
+    ]
+   },
+   {
+    "en": "trading strategy",
+    "zh": "贸易策略",
+    "t": [
+     43.14,
+     44.3
+    ]
+   }
+  ]
+ }
+}
